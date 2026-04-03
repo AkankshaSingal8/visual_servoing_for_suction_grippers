@@ -10,7 +10,7 @@ Usage:
     python dinov2_match_segment.py \
         --scene zed_input.png \
         --reference input_image_transparent.png \
-        [--output output_dir] [--no-display]
+        --output output_dinov2 --resnet-weight 0.0
 """
 import sys
 import os
@@ -92,10 +92,36 @@ def extract_patch_features(image_bgr: np.ndarray, patch_size: int = 14):
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Color similarity (patch-level)
+#  ResNet18 feature similarity (patch-level)
 # ═════════════════════════════════════════════════════════════════════
 
-def compute_color_similarity(
+_resnet_model = None
+
+def _get_resnet():
+    """Load ResNet18 (truncated before avgpool) as a dense feature extractor."""
+    global _resnet_model
+    if _resnet_model is None:
+        import torchvision.models as models
+        resnet = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+        # Keep everything up to layer4 (output stride 32, 512-d features)
+        _resnet_model = torch.nn.Sequential(
+            resnet.conv1, resnet.bn1, resnet.relu, resnet.maxpool,
+            resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4,
+        ).to(DEVICE).eval()
+        print(f"ResNet18 feature extractor loaded on {DEVICE}")
+    return _resnet_model
+
+
+def _resnet_preprocess(image_bgr: np.ndarray):
+    """Preprocess BGR image → (1, 3, H, W) tensor with ImageNet normalization."""
+    rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
+    mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+    std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+    rgb = (rgb - mean) / std
+    return torch.from_numpy(rgb).permute(2, 0, 1).unsqueeze(0).to(DEVICE)
+
+
+def compute_resnet_similarity(
     ref_bgr: np.ndarray,
     ref_alpha: np.ndarray,
     scene_bgr: np.ndarray,
@@ -104,53 +130,61 @@ def compute_color_similarity(
     patch_size: int = 14,
 ):
     """
-    Compute per-patch color similarity between reference foreground and scene.
+    Compute per-patch feature similarity using ResNet18 conv features.
 
-    For each scene patch, compute the histogram correlation in LAB color space
-    against the reference foreground histogram. This discriminates objects that
-    are semantically identical but differ in color (e.g. same product, different
-    color variants).
+    Extracts dense ResNet18 feature maps from reference foreground and scene,
+    then computes cosine similarity between the mean reference foreground
+    feature and each spatial location in the scene.  The result is resampled
+    to DINOv2 patch resolution so it can be combined with the DINOv2 map.
 
     Returns
     -------
-    color_map : (n_patches_h, n_patches_w) color similarity per scene patch
+    resnet_map : (n_patches_h, n_patches_w) similarity per DINOv2 patch
     """
-    # Convert to LAB for perceptual color comparison
-    ref_lab = cv2.cvtColor(ref_bgr, cv2.COLOR_BGR2LAB)
-    scene_lab = cv2.cvtColor(
-        cv2.resize(scene_bgr, (scene_proc_w, scene_proc_h)),
-        cv2.COLOR_BGR2LAB,
-    )
+    model = _get_resnet()
+    sh_patches = scene_proc_h // patch_size
+    sw_patches = scene_proc_w // patch_size
 
-    # Reference foreground mean color in LAB
-    ref_alpha_resized = cv2.resize(ref_alpha, (ref_lab.shape[1], ref_lab.shape[0]),
-                                   interpolation=cv2.INTER_NEAREST)
-    fg_pixels = ref_lab[ref_alpha_resized > 128].astype(np.float32)
-    if len(fg_pixels) == 0:
-        sh = scene_proc_h // patch_size
-        sw = scene_proc_w // patch_size
-        return np.ones((sh, sw), dtype=np.float32)
+    with torch.no_grad():
+        # ── Reference foreground feature ──────────────────────────────
+        ref_tensor = _resnet_preprocess(ref_bgr)
+        ref_feats = model(ref_tensor)  # (1, 512, fh, fw)
 
-    ref_mean = fg_pixels.mean(axis=0)
-    ref_std = fg_pixels.std(axis=0) + 1e-6
+        # Build a spatial foreground mask at feature-map resolution
+        fh, fw = ref_feats.shape[2], ref_feats.shape[3]
+        ref_alpha_resized = cv2.resize(
+            ref_alpha, (fw, fh), interpolation=cv2.INTER_NEAREST)
+        fg_mask = torch.from_numpy(
+            (ref_alpha_resized > 128).astype(np.float32)
+        ).to(DEVICE)  # (fh, fw)
 
-    # Per-patch color distance in scene
-    sh = scene_proc_h // patch_size
-    sw = scene_proc_w // patch_size
-    color_map = np.zeros((sh, sw), dtype=np.float32)
+        if fg_mask.sum() < 1:
+            return np.ones((sh_patches, sw_patches), dtype=np.float32)
 
-    for py in range(sh):
-        for px in range(sw):
-            patch = scene_lab[
-                py * patch_size:(py + 1) * patch_size,
-                px * patch_size:(px + 1) * patch_size,
-            ].reshape(-1, 3).astype(np.float32)
-            patch_mean = patch.mean(axis=0)
-            # Normalized Euclidean distance in LAB, converted to similarity
-            dist = np.sqrt(np.sum(((patch_mean - ref_mean) / ref_std) ** 2))
-            color_map[py, px] = np.exp(-dist * 0.5)  # Gaussian kernel
+        # Mean-pool foreground features → single 512-d vector
+        ref_feats_flat = ref_feats[0]  # (512, fh, fw)
+        fg_mask_3d = fg_mask.unsqueeze(0)  # (1, fh, fw)
+        ref_fg_feat = (ref_feats_flat * fg_mask_3d).sum(dim=(1, 2)) / fg_mask.sum()
+        ref_fg_feat = F.normalize(ref_fg_feat, dim=0)  # (512,)
 
-    return color_map
+        # ── Scene feature map ─────────────────────────────────────────
+        scene_resized = cv2.resize(
+            scene_bgr, (scene_proc_w, scene_proc_h),
+            interpolation=cv2.INTER_LINEAR)
+        scene_tensor = _resnet_preprocess(scene_resized)
+        scene_feats = model(scene_tensor)  # (1, 512, sh', sw')
+
+        # Cosine similarity at each spatial location
+        scene_feats_norm = F.normalize(scene_feats[0], dim=0)  # (512, sh', sw')
+        sim = torch.einsum('d,dhw->hw', ref_fg_feat, scene_feats_norm)  # (sh', sw')
+        sim = sim.cpu().numpy()
+
+        # Resample to DINOv2 patch grid
+        resnet_map = cv2.resize(
+            sim, (sw_patches, sh_patches),
+            interpolation=cv2.INTER_LINEAR)
+
+    return resnet_map
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -200,15 +234,15 @@ def compute_similarity_map(
     return sim_map
 
 
-def combine_similarity_maps(dinov2_sim, color_sim, alpha=0.5):
+def combine_similarity_maps(dinov2_sim, resnet_sim, alpha=0.5):
     """
-    Combine DINOv2 semantic similarity with color similarity.
+    Combine DINOv2 semantic similarity with ResNet18 feature similarity.
 
     Parameters
     ----------
     dinov2_sim : (sh, sw) DINOv2 patch similarity
-    color_sim  : (sh, sw) color similarity
-    alpha      : weight for DINOv2 (1-alpha for color)
+    resnet_sim : (sh, sw) ResNet18 feature similarity
+    alpha      : weight for DINOv2 (1-alpha for ResNet18)
 
     Returns
     -------
@@ -221,13 +255,13 @@ def combine_similarity_maps(dinov2_sim, color_sim, alpha=0.5):
     else:
         d_norm = np.zeros_like(dinov2_sim)
 
-    c_min, c_max = color_sim.min(), color_sim.max()
-    if c_max - c_min > 1e-8:
-        c_norm = (color_sim - c_min) / (c_max - c_min)
+    r_min, r_max = resnet_sim.min(), resnet_sim.max()
+    if r_max - r_min > 1e-8:
+        r_norm = (resnet_sim - r_min) / (r_max - r_min)
     else:
-        c_norm = np.ones_like(color_sim)
+        r_norm = np.ones_like(resnet_sim)
 
-    combined = alpha * d_norm + (1.0 - alpha) * c_norm
+    combined = alpha * d_norm + (1.0 - alpha) * r_norm
     return combined
 
 
@@ -321,19 +355,52 @@ def _get_sam2():
     return _sam2_pred
 
 
-def refine_with_sam2(image_bgr: np.ndarray, bbox):
+def _select_topmost_mask(mask: np.ndarray) -> np.ndarray:
+    """
+    Given a binary mask that may cover multiple stacked objects, return a
+    mask containing only the topmost connected component.
+    """
+    n_cc, labels, stats, centroids = cv2.connectedComponentsWithStats(mask)
+    if n_cc <= 2:
+        # 0 or 1 foreground component — nothing to split
+        return mask
+
+    # Pick the component with the smallest top-y coordinate
+    best_cc = 1
+    best_top_y = stats[1, cv2.CC_STAT_TOP]
+    for cc_id in range(2, n_cc):
+        area = stats[cc_id, cv2.CC_STAT_AREA]
+        if area < 100:  # skip tiny noise
+            continue
+        top_y = stats[cc_id, cv2.CC_STAT_TOP]
+        if top_y < best_top_y:
+            best_top_y = top_y
+            best_cc = cc_id
+
+    return (labels == best_cc).astype(np.uint8) * 255
+
+
+def refine_with_sam2(image_bgr: np.ndarray, bbox, select_topmost: bool = True,
+                     return_logits: bool = False):
     """
     Use SAM2 with a bounding box prompt to get a precise mask.
+
+    When select_topmost is True and the initial mask spans multiple objects
+    (e.g. a stack of boxes), a second SAM2 pass uses a point prompt at the
+    top of the mask to isolate just the topmost object.
 
     Parameters
     ----------
     image_bgr : scene image
     bbox      : (x1, y1, x2, y2)
+    select_topmost : if True, re-segment to isolate the topmost object
+    return_logits  : if True, return (mask, score, logits) instead of (mask, score)
 
     Returns
     -------
     mask   : (H, W) uint8 binary mask (0/255)
     score  : confidence score
+    logits : (1, 256, 256) low-res logits (only when return_logits=True)
     """
     x1, y1, x2, y2 = bbox
     box_np = np.array([x1, y1, x2, y2], dtype=np.float32)
@@ -350,6 +417,7 @@ def refine_with_sam2(image_bgr: np.ndarray, bbox):
     best_idx = int(np.argmax(scores))
     mask = (masks[best_idx] > 0).astype(np.uint8) * 255
     score = float(scores[best_idx])
+    best_logits = logits[best_idx:best_idx + 1]
     print(f"SAM2: best mask score = {score:.3f}")
 
     # Morphological cleanup
@@ -358,7 +426,76 @@ def refine_with_sam2(image_bgr: np.ndarray, bbox):
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(mask, contours, -1, 255, cv2.FILLED)
 
-    return mask, score
+    def _ret(m, s, lg):
+        return (m, s, lg) if return_logits else (m, s)
+
+    if not select_topmost:
+        return _ret(mask, score, best_logits)
+
+    # ── Topmost-object selection ──────────────────────────────────────
+    # When the bbox covers multiple stacked objects, SAM2 may segment
+    # them all.  We attempt to isolate just the topmost object by:
+    #   1. Splitting into connected components (if objects are separated)
+    #   2. Point-prompting the top band of the mask (if a single blob)
+    fg_rows = np.any(mask > 0, axis=1)
+    fg_cols = np.any(mask > 0, axis=0)
+    if not np.any(fg_rows):
+        return _ret(mask, score, best_logits)
+    mask_y1 = int(np.argmax(fg_rows))
+    mask_y2 = int(len(fg_rows) - np.argmax(fg_rows[::-1]))
+    mask_x1 = int(np.argmax(fg_cols))
+    mask_x2 = int(len(fg_cols) - np.argmax(fg_cols[::-1]))
+    mask_h = mask_y2 - mask_y1
+    mask_w = mask_x2 - mask_x1
+    original_area = np.count_nonzero(mask)
+
+    if mask_w == 0 or mask_h == 0:
+        return _ret(mask, score, best_logits)
+
+    # Strategy 1: connected components (works when objects are separated)
+    top_mask = _select_topmost_mask(mask)
+    n_cc = cv2.connectedComponentsWithStats(mask)[0] - 1
+    if n_cc > 1:
+        print(f"  Split into {n_cc} components, selected topmost")
+        fg = np.argwhere(top_mask > 0)
+        cy, cx = fg.mean(axis=0).astype(int)
+        point = np.array([[cx, cy]], dtype=np.float32)
+        label = np.array([1], dtype=np.int32)
+        masks2, scores2, logits2 = pred.predict(
+            point_coords=point, point_labels=label,
+            multimask_output=True)
+        best2 = int(np.argmax(scores2))
+        refined = (masks2[best2] > 0).astype(np.uint8) * 255
+        refined = cv2.morphologyEx(refined, cv2.MORPH_CLOSE, kern, iterations=2)
+        print(f"  Refined topmost mask: score={scores2[best2]:.3f}")
+        return _ret(refined, float(scores2[best2]), logits2[best2:best2 + 1])
+
+    # Strategy 2: re-run SAM2 with a cropped bbox covering only the top
+    # portion of the mask. SAM2 bbox prompts give much cleaner isolation
+    # than point prompts for touching/stacked objects.
+    # Use the top 40% of the mask height as the cropped bbox — generous
+    # enough to fully contain one object.
+    crop_y2 = min(mask_y1 + int(mask_h * 0.4), image_bgr.shape[0])
+    top_box = np.array([mask_x1, mask_y1, mask_x2, crop_y2], dtype=np.float32)
+    print(f"  Top-crop bbox: ({mask_x1}, {mask_y1}, {mask_x2}, {crop_y2})")
+
+    masks2, scores2, logits2 = pred.predict(
+        box=top_box, multimask_output=True)
+
+    if masks2 is not None and len(masks2) > 0:
+        best2 = int(np.argmax(scores2))
+        refined = (masks2[best2] > 0).astype(np.uint8) * 255
+        refined = cv2.morphologyEx(refined, cv2.MORPH_CLOSE, kern, iterations=2)
+        cnts, _ = cv2.findContours(refined, cv2.RETR_EXTERNAL,
+                                   cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(refined, cnts, -1, 255, cv2.FILLED)
+        refined_area = np.count_nonzero(refined)
+        print(f"  Topmost mask: score={scores2[best2]:.3f}, "
+              f"area ratio={refined_area / max(original_area, 1):.2f}")
+        return _ret(refined, float(scores2[best2]), logits2[best2:best2 + 1])
+
+    print("  Could not isolate topmost — using full mask")
+    return _ret(mask, score, best_logits)
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -525,10 +662,10 @@ def main():
                         help="Output directory (default: same as scene)")
     parser.add_argument("--no-display", action="store_true",
                         help="Don't show the matplotlib window")
-    parser.add_argument("--threshold-pct", type=float, default=93,
-                        help="Percentile threshold for similarity map (default: 93)")
-    parser.add_argument("--color-weight", type=float, default=0.7,
-                        help="Weight for color similarity (0=DINOv2 only, 1=color only, default: 0.7)")
+    parser.add_argument("--threshold-pct", type=float, default=80,
+                        help="Percentile threshold for similarity map (default: 80)")
+    parser.add_argument("--resnet-weight", type=float, default=0.5,
+                        help="Weight for ResNet18 similarity (0=DINOv2 only, 1=ResNet only, default: 0.5)")
     args = parser.parse_args()
 
     # ── Load images ──────────────────────────────────────────────────
@@ -596,17 +733,17 @@ def main():
     dinov2_sim = compute_similarity_map(ref_features, ref_mask_patches, scene_features)
     print(f"  DINOv2 similarity range: [{dinov2_sim.min():.3f}, {dinov2_sim.max():.3f}]")
 
-    # ── Step 2b: Compute color similarity map ─────────────────────────
-    print("\n--- Step 2b: Computing color similarity map ---")
-    color_sim = compute_color_similarity(
+    # ── Step 2b: Compute ResNet18 feature similarity map ────────────────
+    print("\n--- Step 2b: Computing ResNet18 feature similarity map ---")
+    resnet_sim = compute_resnet_similarity(
         ref_bgr, ref_alpha, scene_bgr,
         scene_proc_h, scene_proc_w, patch_size,
     )
-    print(f"  Color similarity range: [{color_sim.min():.3f}, {color_sim.max():.3f}]")
+    print(f"  ResNet18 similarity range: [{resnet_sim.min():.3f}, {resnet_sim.max():.3f}]")
 
-    # ── Step 2c: Combine DINOv2 + color ───────────────────────────────
-    print("\n--- Step 2c: Combining DINOv2 + color similarity ---")
-    sim_map = combine_similarity_maps(dinov2_sim, color_sim, alpha=1.0 - args.color_weight)
+    # ── Step 2c: Combine DINOv2 + ResNet18 ────────────────────────────
+    print("\n--- Step 2c: Combining DINOv2 + ResNet18 similarity ---")
+    sim_map = combine_similarity_maps(dinov2_sim, resnet_sim, alpha=1.0 - args.resnet_weight)
     print(f"  Combined similarity range: [{sim_map.min():.3f}, {sim_map.max():.3f}]")
 
     # ── Step 3: Extract bounding box from similarity ─────────────────
@@ -618,7 +755,7 @@ def main():
 
     # ── Step 4: SAM2 mask refinement ─────────────────────────────────
     print("\n--- Step 4: SAM2 mask refinement ---")
-    sam_mask, sam_score = refine_with_sam2(scene_bgr, bbox)
+    sam_mask, sam_score = refine_with_sam2(scene_bgr, bbox, select_topmost=True)
     mask_area = np.count_nonzero(sam_mask)
     print(f"  Mask area: {mask_area} px ({100.0 * mask_area / (sh * sw):.1f}%)")
 
@@ -629,7 +766,7 @@ def main():
     import json
     metrics["sam_score"] = sam_score
     metrics["threshold_pct"] = args.threshold_pct
-    metrics["color_weight"] = args.color_weight
+    metrics["resnet_weight"] = args.resnet_weight
     metrics_path = os.path.join(output_dir, "metrics.json")
     def _json_safe(v):
         if isinstance(v, (np.integer,)):

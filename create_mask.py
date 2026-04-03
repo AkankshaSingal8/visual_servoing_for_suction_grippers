@@ -307,6 +307,49 @@ def _checkerboard(h: int, w: int, sq: int = 16) -> np.ndarray:
             board[y: y + sq, x: x + sq] = colour
     return board
 
+def process_single_image(image_path, output_dir, display=True):
+    image_bgr = cv2.imread(image_path)
+    if image_bgr is None:
+        print(f"Skipping (cannot load): {image_path}")
+        return
+
+    h, w = image_bgr.shape[:2]
+    print(f"\nProcessing: {image_path} ({w}x{h})")
+
+    basename = os.path.splitext(os.path.basename(image_path))[0]
+
+    # Step 1: Foreground detection
+    fg_mask, bbox = detect_foreground(image_bgr)
+
+    # Step 2: SAM2 segmentation
+    mask_initial, mask_final, logits, points = segment_whole_object(
+        image_bgr, fg_mask, bbox
+    )
+
+    # Step 3: Transparent image
+    transparent = make_transparent(image_bgr, mask_final)
+
+    # Save outputs
+    # mask_path  = os.path.join(output_dir, f"{basename}_mask.png")
+    trans_path = os.path.join(output_dir, f"{basename}.png")
+
+    # cv2.imwrite(mask_path, mask_final)
+    cv2.imwrite(trans_path, transparent)
+
+    # print(f"Saved: {mask_path}")
+    print(f"Saved: {trans_path}")
+
+    # Step 4: Visualization (optional per image)
+    # visualise(
+    #     image_bgr,
+    #     fg_mask,
+    #     points,
+    #     mask_initial,
+    #     mask_final,
+    #     transparent,
+    #     output_dir=os.path.join(output_dir, f"{basename}_viz"),
+    #     display=display,
+    # )
 
 # ═════════════════════════════════════════════════════════════════════
 #  Main
@@ -314,61 +357,43 @@ def _checkerboard(h: int, w: int, sq: int = 16) -> np.ndarray:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Segment the main object in an image and save with "
-                    "transparent background (no text prompt needed)")
-    parser.add_argument("image", help="Path to input image")
-    parser.add_argument("--output", "-o", default=None,
-                        help="Output directory (default: same as input image)")
-    parser.add_argument("--no-display", action="store_true",
-                        help="Don't show the matplotlib window")
+        description="Batch segmentation on folder of images"
+    )
+    parser.add_argument("input_folder", help="Path to folder containing images")
+    parser.add_argument("--output", "-o", default="outputs",
+                        help="Output directory")
+    parser.add_argument("--no-display", action="store_true")
+
     args = parser.parse_args()
 
-    # Load image
-    image_bgr = cv2.imread(args.image)
-    if image_bgr is None:
-        print(f"ERROR: could not load image: {args.image}")
+    input_folder = args.input_folder
+    output_dir = args.output
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Supported extensions
+    valid_exts = (".jpg", ".jpeg", ".png", ".bmp")
+
+    image_files = [
+        os.path.join(input_folder, f)
+        for f in os.listdir(input_folder)
+        if f.lower().endswith(valid_exts)
+    ]
+
+    if not image_files:
+        print("No images found in folder.")
         sys.exit(1)
 
-    h, w = image_bgr.shape[:2]
-    print(f"Image loaded: {args.image}  ({w}x{h})")
+    print(f"Found {len(image_files)} images")
 
-    output_dir = args.output or os.path.dirname(os.path.abspath(args.image))
-    os.makedirs(output_dir, exist_ok=True)
-    basename = os.path.splitext(os.path.basename(args.image))[0]
+    for img_path in image_files:
+        process_single_image(
+            img_path,
+            output_dir,
+            display=not args.no_display
+        )
 
-    # Step 1: Detect foreground (no text prompt)
-    print("\n--- Step 1: Foreground detection ---")
-    fg_mask, bbox = detect_foreground(image_bgr)
-    fg_area = np.count_nonzero(fg_mask)
-    print(f"Foreground: bbox={bbox}, area={fg_area} px "
-          f"({100 * fg_area / (h * w):.1f}% of image)")
-
-    # Step 2: SAM2 segmentation with multi-point prompts
-    print("\n--- Step 2: SAM2 segmentation ---")
-    mask_initial, mask_final, logits, points = segment_whole_object(
-        image_bgr, fg_mask, bbox)
-
-    mask_area = np.count_nonzero(mask_final)
-    print(f"Final mask: {mask_area} px ({100 * mask_area / (h * w):.1f}%)")
-
-    # Step 3: Create transparent-background image
-    print("\n--- Step 3: Transparent background ---")
-    transparent = make_transparent(image_bgr, mask_final)
-
-    # Save outputs
-    mask_path  = os.path.join(output_dir, f"{basename}_mask.png")
-    trans_path = os.path.join(output_dir, f"{basename}_transparent.png")
-    cv2.imwrite(mask_path,  mask_final)
-    cv2.imwrite(trans_path, transparent)
-    print(f"Mask saved  : {mask_path}")
-    print(f"Transparent : {trans_path}")
-
-    # Step 4: Visualise
-    print("\n--- Step 4: Visualisation ---")
-    visualise(image_bgr, fg_mask, points, mask_initial, mask_final,
-              transparent, output_dir, display=not args.no_display)
-
-    print("\nDone.")
+    print("\nBatch processing complete.")
 
 
 if __name__ == "__main__":
