@@ -1,63 +1,38 @@
 #!/usr/bin/env python3
 """
 SemVS – Semantic Visual Servoing
-Updated: image-conditioned detection, stable-anchor mask propagation,
-         PyZED camera + SVO recording, ≥512 px annotated video.
+Single-path pipeline:
+  detector (GroundingDINO/OWLv2) → SAM2 (box + center point, single mask)
+  → depth → grasp point.
 
-Changes from baseline:
-  • Transparent / black-background reference image support
-  • All print() → structured logging (file + console)
-  • Reference-image logits are used only on the reference image, not as live
-    frame mask_input
-  • Phase 2: Bootstrap multi-point grid on first N frames
-  • Phase 5: Ref-aware multi-mask selection (IoU + similarity scoring)
-  • Phase 3: Ref-aspect-ratio box splitting for stacked-box scenarios
-  • Phase 4: Adaptive coverage threshold from ref mask fill ratio
+The reference image is only used to:
+  • optionally guide image-conditioned detection (OWLv2),
+  • provide a ResNet-18 feature vector to pick the correct detection box
+    when the detector returns several candidates.
 
-Correct usage:
-  1. Offline single-image smoke test, no robot:
-       python foundation_model/servo_pipeline.py \
-         --ref-image foundation_model/input_image_transparent.png \
-         --ref-mask-mode auto \
-         --input-image foundation_model/zed_input.png \
-         --output-dir runs/offline_smoke
+The reference image is NOT used to seed SAM2 on live frames. SAM2 is invoked
+with `box=detected_box, point_coords=[box_center], point_labels=[1],
+multimask_output=False`, matching the official SAM2 image_predictor example.
+A box prompt already disambiguates the target, so multimask selection
+heuristics are removed: this avoids SAM2 returning a printed graphic or
+background patch as a higher-scoring "part" mask.
 
-  2. Offline video or directory evaluation, no robot:
-       python foundation_model/servo_pipeline.py \
-         --ref-image path/to/target_box_reference.png \
-         --ref-mask-mode auto \
-         --input-video path/to/zed_video.mp4 \
-         --output-dir runs/offline_video
+Usage:
+  Offline single image:
+    python foundation_model/servo_pipeline.py \
+      --ref-image path/to/target_box_reference.png \
+      --input-image path/to/frame.png \
+      --output-dir runs/offline_smoke
 
-       python foundation_model/servo_pipeline.py \
-         --ref-image path/to/target_box_reference.png \
-         --ref-mask-mode auto \
-         --input-dir path/to/image_frames \
-         --output-dir runs/offline_frames
+  Offline video / frames:
+    python foundation_model/servo_pipeline.py --ref-image REF \
+      --input-video VIDEO --output-dir OUT
+    python foundation_model/servo_pipeline.py --ref-image REF \
+      --input-dir DIR --output-dir OUT
 
-  3. Live camera, perception only:
-       python foundation_model/servo_pipeline.py \
-         --ref-image path/to/target_box_reference.png \
-         --ref-mask-mode auto \
-         --dry-run
-
-  4. Live camera and robot:
-       python foundation_model/servo_pipeline.py \
-         --ref-image path/to/target_box_reference.png \
-         --ref-mask-mode auto
-
-Reference-mask modes:
-  • auto: recommended for cropped product/box references. Generic cropped
-    references are treated as the full target box so SAM does not prefer
-    printed package art such as a protein-bar image on the box.
-  • full: force the entire reference image to be the target mask.
-  • foreground: force Otsu foreground extraction. Use only when the reference
-    image has a clean foreground/background separation.
-
-Important SAM note:
-  SAM mask_input is a spatial prior in the current image, not an identity prompt.
-  Do not reuse reference-image logits as live-frame mask_input; this can make SAM
-  select printed sub-objects on packaging instead of the full box.
+  Live camera (perception only / with robot):
+    python foundation_model/servo_pipeline.py --ref-image REF --dry-run
+    python foundation_model/servo_pipeline.py --ref-image REF
 """
 import time
 import sys
@@ -162,19 +137,10 @@ IOU_DRIFT_THRESH      = 0.35
 ANCHOR_IOU_THRESH  = 0.82
 ANCHOR_LOCK_FRAMES = 5
 
-# ── Bootstrap parameters (Phase 2) ───────────────────────────────────
-BOOTSTRAP_GRID_ROWS  = 3       # grid rows inside detected box during bootstrap
-BOOTSTRAP_GRID_COLS  = 3       # grid cols inside detected box during bootstrap
-
 # ── Video recording ───────────────────────────────────────────────────
 MIN_RECORDING_DIM = 512
 ZED_RESOLUTION    = "HD720"
 
-# ── Reference image foreground detection ──────────────────────────────
-REF_BG_DARK_THRESH  = 15       # pixel intensity below this = background
-REF_BG_BORDER_CHECK = 20       # border strip width to auto-detect black bg
-REF_ALPHA_THRESH    = 128      # alpha channel threshold for foreground
-REF_MASK_MODE       = "auto"   # auto | full | foreground
 
 # ── ZED calibration for lens undistortion (OpenCV path) ───────────────
 ZED_SETTINGS_DIRS = [
@@ -405,16 +371,17 @@ def _mask_iou(m1: np.ndarray, m2: np.ndarray) -> float:
 
 class MaskTracker:
     """
-    Maintains inter-frame state for stable SAM2 mask propagation.
-
-    Live anchors are created only from live-frame masks.  Reference-image masks
-    are used for expected shape/fill scoring, not as spatial tracker anchors.
+    Maintains inter-frame state for SAM2 mask propagation: previous mask,
+    previous logits, last detected box, anchor logits, and IoU streak for
+    drift detection. Anchors are derived only from live-frame masks; the
+    reference image is never used as a spatial prior on live frames.
     """
 
     def __init__(self):
         self.prev_logits:    np.ndarray | None = None
         self.prev_mask:      np.ndarray | None = None
         self.prev_centroid:  tuple | None      = None
+        self.last_box:       np.ndarray | None = None
         self.frame_count:    int               = 0
         self.mask_history:   list              = []
 
@@ -427,25 +394,13 @@ class MaskTracker:
         # Track whether a live anchor has been established.
         self._anchor_source: str | None        = None  # currently "live"
 
-    # ── Compatibility no-op for old reference-anchor flow ────────────
-    def seed_from_ref(self, ref_logits: np.ndarray | None,
-                      ref_mask: np.ndarray | None):
-        """
-        Reference logits are not a valid live-frame mask prior: SAM2 mask_input
-        is spatial, not object-identity conditioning.  Keep this method as a
-        compatibility no-op so older callers do not accidentally anchor the
-        tracker to reference-image coordinates.
-        """
-        if ref_logits is not None or ref_mask is not None:
-            log.info("MaskTracker: reference mask loaded; live anchor will be "
-                     "created only from live frames")
-
     # ── housekeeping ─────────────────────────────────────────────────
     def reset(self, keep_anchor: bool = True):
         """Reset live tracking state.  Optionally keep the anchor."""
         self.prev_logits    = None
         self.prev_mask      = None
         self.prev_centroid  = None
+        self.last_box       = None
         self.frame_count    = 0
         self.mask_history.clear()
         self._iou_streak    = 0
@@ -743,276 +698,47 @@ def _cosine_similarity(f1: np.ndarray, f2: np.ndarray) -> float:
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Reference-image conditioning  (updated for transparent / black bg)
+#  Reference-image conditioning
 # ═════════════════════════════════════════════════════════════════════
 
-def _full_reference_mask(ref_bgr: np.ndarray, inset_frac: float = 0.02) -> np.ndarray:
-    h, w = ref_bgr.shape[:2]
-    mask = np.zeros((h, w), dtype=np.uint8)
-    dx = int(w * inset_frac)
-    dy = int(h * inset_frac)
-    mask[dy:max(dy + 1, h - dy), dx:max(dx + 1, w - dx)] = 255
-    return mask
-
-
-def _load_ref_image(path: str, mask_mode: str = "auto"):
+def _load_ref_image(path: str):
     """
-    Load a reference image, handling both BGRA (transparent) and BGR
-    (black-background) formats.
-
-    Returns
-    -------
-    bgr      : np.ndarray   3-channel BGR image
-    fg_mask  : np.ndarray   uint8 0/255 foreground mask
+    Load a reference image as 3-channel BGR. Strips alpha if present.
+    Returns None on failure.
     """
     raw = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     if raw is None:
         log.error("Could not load reference image: %s", path)
-        return None, None
-
-    if mask_mode not in {"auto", "full", "foreground"}:
-        raise ValueError(f"Unknown ref mask mode: {mask_mode}")
-
-    bgr = raw[:, :, :3].copy() if raw.ndim == 3 and raw.shape[2] == 4 else raw
-    bgr = bgr if bgr.ndim == 3 else cv2.cvtColor(bgr, cv2.COLOR_GRAY2BGR)
-
-    if mask_mode == "full":
-        log.info("Ref image: using full-image box mask (--ref-mask-mode full)")
-        return bgr, _full_reference_mask(bgr)
-
-    # ── Case 1: 4-channel image with alpha ──
-    if raw.ndim == 3 and raw.shape[2] == 4:
-        alpha = raw[:, :, 3]
-        fg_mask = (alpha >= REF_ALPHA_THRESH).astype(np.uint8) * 255
-        fg_pct  = np.count_nonzero(fg_mask) / fg_mask.size
-        log.info("Ref image: BGRA format, alpha→fg mask (%.1f%% foreground)",
-                 fg_pct * 100)
-        return bgr, fg_mask
-
-    # ── Case 2: 3-channel BGR — check for black / dark background ──
-    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-
-    # Detect if the border is consistently dark
-    h, w = gray.shape
-    b = REF_BG_BORDER_CHECK
-    border = np.concatenate([
-        gray[:b, :].ravel(), gray[-b:, :].ravel(),
-        gray[:, :b].ravel(), gray[:, -b:].ravel(),
-    ])
-    border_dark_frac = np.count_nonzero(border < REF_BG_DARK_THRESH) / len(border)
-
-    if border_dark_frac > 0.90:
-        # Black background — threshold to extract foreground
-        fg_mask = (gray >= REF_BG_DARK_THRESH).astype(np.uint8) * 255
-        # Clean up: close small gaps, remove small noise blobs
-        kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-        fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kern, iterations=2)
-        fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_OPEN,  kern, iterations=1)
-        # Keep only the largest connected component
-        n_cc, labels, stats, _ = cv2.connectedComponentsWithStats(fg_mask)
-        if n_cc > 1:
-            lbl = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
-            fg_mask = (labels == lbl).astype(np.uint8) * 255
-        fg_pct = np.count_nonzero(fg_mask) / fg_mask.size
-        log.info("Ref image: black-bg detected (border %.0f%% dark), "
-                 "threshold→fg mask (%.1f%% foreground)",
-                 border_dark_frac * 100, fg_pct * 100)
-        return bgr, fg_mask
-
-    if mask_mode == "auto":
-        log.info("Ref image: generic background; using full reference image "
-                 "as the target box mask. Use --ref-mask-mode foreground to "
-                 "force Otsu foreground extraction.")
-        return bgr, _full_reference_mask(bgr)
-
-    # ── Case 3: forced foreground extraction for non-trivial backgrounds ──
-    return bgr, _detect_foreground_otsu(bgr)
+        return None
+    if raw.ndim == 2:
+        return cv2.cvtColor(raw, cv2.COLOR_GRAY2BGR)
+    if raw.shape[2] == 4:
+        return raw[:, :, :3].copy()
+    return raw
 
 
-def _detect_foreground_otsu(ref_bgr: np.ndarray):
-    """Legacy Otsu-based foreground detection for generic backgrounds."""
-    gray = cv2.cvtColor(ref_bgr, cv2.COLOR_BGR2GRAY)
-    _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    if np.count_nonzero(otsu) > otsu.size // 2:
-        otsu = cv2.bitwise_not(otsu)
-    kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-    otsu = cv2.morphologyEx(otsu, cv2.MORPH_CLOSE, kern, iterations=2)
-    otsu = cv2.morphologyEx(otsu, cv2.MORPH_OPEN,  kern, iterations=1)
-    n, labels, stats, _ = cv2.connectedComponentsWithStats(otsu)
-    if n <= 1:
-        h, w = ref_bgr.shape[:2]
-        fm = np.zeros((h, w), dtype=np.uint8)
-        fm[int(h * 0.2):int(h * 0.8), int(w * 0.2):int(w * 0.8)] = 255
-        return fm
-    lbl = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
-    fm  = (labels == lbl).astype(np.uint8) * 255
-    log.debug("Ref image: Otsu fg mask (%.1f%% foreground)",
-              np.count_nonzero(fm) / fm.size * 100)
-    return fm
-
-
-def extract_ref_logits(ref_bgr: np.ndarray,
-                       fg_mask: np.ndarray,
-                       box_np: np.ndarray | None = None):
+def process_ref_image(ref_bgr: np.ndarray, prompt: str):
     """
-    Run SAM2 on the reference image using multi-point prompts that span
-    the entire object.  Uses the provided fg_mask (from alpha channel or
-    black-background extraction) instead of re-computing Otsu internally.
+    Reference-image preprocessing. Detect the target object in the
+    reference image and extract a ResNet-18 feature vector from the
+    detected crop. The crop is also returned for image-conditioned
+    detection (OWLv2). No SAM2 mask is produced here: SAM2 runs only
+    on live frames with the live detector box.
 
     Returns
     -------
-    logits : np.ndarray | None   shape (1, 256, 256)
-    mask   : np.ndarray | None   uint8, 0/255
-    """
-    try:
-        pred = _get_sam2()
-        h, w = ref_bgr.shape[:2]
-        rgb  = cv2.cvtColor(ref_bgr, cv2.COLOR_BGR2RGB)
-        pred.set_image(rgb)
-
-        # --- Bounding box from fg_mask ---
-        if box_np is not None:
-            bx1, by1, bx2, by2 = box_np.astype(int)
-        else:
-            fg_bbox = cv2.boundingRect(fg_mask)
-            bx, by, bw, bh = fg_bbox
-            bx1, by1 = bx, by
-            bx2, by2 = bx + bw, by + bh
-        pad = 10
-        bx1, by1 = max(0, bx1 - pad), max(0, by1 - pad)
-        bx2, by2 = min(w, bx2 + pad), min(h, by2 + pad)
-        sam_box = np.array([bx1, by1, bx2, by2], dtype=np.float32)
-        box_w, box_h = bx2 - bx1, by2 - by1
-
-        # --- Multi-point grid (3 cols × 5 rows) inside the fg mask ---
-        points = []
-        for fy in [0.15, 0.30, 0.50, 0.70, 0.85]:
-            for fx in [0.25, 0.50, 0.75]:
-                px = int(bx1 + fx * box_w)
-                py = int(by1 + fy * box_h)
-                px = min(max(px, 0), w - 1)
-                py = min(max(py, 0), h - 1)
-                if fg_mask[py, px] > 0:
-                    points.append([px, py])
-        if not points:
-            points.append([int((bx1 + bx2) / 2), int((by1 + by2) / 2)])
-
-        log.info("Ref SAM2: box=[%d,%d,%d,%d], %d positive points",
-                 bx1, by1, bx2, by2, len(points))
-
-        sam_kwargs = dict(
-            box=sam_box,
-            point_coords=np.array(points, dtype=np.float32),
-            point_labels=np.ones(len(points), dtype=np.int32),
-            multimask_output=True,
-            return_logits=True,
-        )
-
-        masks, scores, logits = pred.predict(**sam_kwargs)
-
-        if masks is None or len(masks) == 0:
-            log.warning("Ref SAM2: no mask returned")
-            return None, None
-
-        # SAM often assigns the highest confidence to a distinctive printed
-        # sub-object on packaging.  For a box reference, choose the candidate
-        # that best covers the reference foreground instead of blindly taking
-        # the highest SAM score.
-        total_fg = max(1, np.count_nonzero(fg_mask > 0))
-        ref_scores = []
-        for i, mask in enumerate(masks):
-            mask_i = (mask > 0).astype(np.uint8) * 255
-            inter = np.count_nonzero((fg_mask > 0) & (mask_i > 0))
-            mask_area = max(1, np.count_nonzero(mask_i > 0))
-            coverage = inter / total_fg
-            precision = inter / mask_area
-            ref_scores.append(
-                0.50 * coverage + 0.30 * precision + 0.20 * float(scores[i]))
-            log.debug("Ref SAM2 mask[%d]: sam=%.3f coverage=%.3f "
-                      "precision=%.3f combined=%.3f",
-                      i, float(scores[i]), coverage, precision, ref_scores[-1])
-
-        best_idx = int(np.argmax(ref_scores))
-        if best_idx != int(np.argmax(scores)):
-            log.info("Ref SAM2: foreground-aware selection picked mask[%d] "
-                     "(SAM picked %d)", best_idx, int(np.argmax(scores)))
-        ref_mask   = (masks[best_idx] > 0).astype(np.uint8) * 255
-        ref_logits = logits[best_idx: best_idx + 1]
-
-        # --- Refinement: if coverage of foreground is low, re-run ---
-        covered  = np.count_nonzero((fg_mask > 0) & (ref_mask > 0))
-        coverage = covered / total_fg
-
-        if coverage < 0.70:
-            log.info("Ref SAM2: coverage=%.0f%%, adding uncovered points",
-                     coverage * 100)
-            uncovered  = (fg_mask > 0) & (ref_mask == 0)
-            unc_coords = np.argwhere(uncovered)
-            if len(unc_coords) > 0:
-                n_extra = min(5, len(unc_coords))
-                idx = np.linspace(0, len(unc_coords) - 1, n_extra, dtype=int)
-                for r, c in unc_coords[idx]:
-                    points.append([int(c), int(r)])
-                sam_kwargs["point_coords"] = np.array(points, dtype=np.float32)
-                sam_kwargs["point_labels"] = np.ones(len(points), dtype=np.int32)
-                sam_kwargs["mask_input"]   = ref_logits
-                sam_kwargs["multimask_output"] = False
-                pred.set_image(rgb)
-                masks2, scores2, logits2 = pred.predict(**sam_kwargs)
-                if masks2 is not None and len(masks2) > 0:
-                    best2      = int(np.argmax(scores2))
-                    ref_mask   = (masks2[best2] > 0).astype(np.uint8) * 255
-                    ref_logits = logits2[best2: best2 + 1]
-                    log.info("Ref SAM2 (refined): score=%.3f", scores2[best2])
-
-        # --- Morph close to bridge white-line gap ---
-        k_close  = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
-        ref_mask = cv2.morphologyEx(ref_mask, cv2.MORPH_CLOSE,
-                                    k_close, iterations=2)
-        contours, _ = cv2.findContours(ref_mask, cv2.RETR_EXTERNAL,
-                                       cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(ref_mask, contours, -1, 255, cv2.FILLED)
-
-        log.info("Ref image: SAM2 mask extracted (score=%.3f, area=%d px)",
-                 scores[best_idx], np.count_nonzero(ref_mask))
-        return ref_logits, ref_mask
-
-    except Exception as e:
-        log.error("Reference logit extraction failed: %s", e)
-        import traceback; traceback.print_exc()
-    return None, None
-
-
-def process_ref_image(ref_bgr: np.ndarray, fg_mask: np.ndarray,
-                      prompt: str):
-    """
-    Full reference-image processing pipeline.
-
-    1. Run the active detector on the reference image to locate the object.
-    2. Crop the object region  → ref_crop.
-    3. Run SAM2 on the reference image → ref_logits.
-    4. Extract deep features from the crop → ref_features.
-    5. Compute ref_fill_ratio for adaptive coverage (Phase 4).
-    6. Compute ref_aspect_ratio for box splitting (Phase 3).
-
-    Returns
-    -------
-    ref_crop        : np.ndarray | None
-    ref_logits      : np.ndarray | None
-    ref_mask        : np.ndarray | None
-    ref_features    : np.ndarray | None
-    ref_fill_ratio  : float              (Phase 4)
-    ref_aspect_ratio: float              (Phase 3)
+    ref_crop     : np.ndarray | None  (BGR crop of the reference object)
+    ref_features : np.ndarray | None  (512-d ResNet-18 feature vector)
     """
     log.info("Processing reference image …")
-    ref_box = None
+    h, w = ref_bgr.shape[:2]
 
-    # Step 1: detect object in reference image
     if DETECTOR == "owlv2":
         dets = _detect_owlv2(ref_bgr, prompt)
     else:
         dets = _detect_gdino(ref_bgr, prompt)
 
+    ref_box = None
     if dets:
         pick = _disambiguate_top_box(dets, ref_bgr.shape)
         if pick is not None:
@@ -1020,8 +746,6 @@ def process_ref_image(ref_bgr: np.ndarray, fg_mask: np.ndarray,
             log.info("Ref image: detected '%s' score=%.2f @ %s",
                      pick[2], pick[1], ref_box.astype(int))
 
-    # Step 2: build object crop
-    h, w = ref_bgr.shape[:2]
     if ref_box is not None:
         x1, y1, x2, y2 = ref_box.astype(int)
         pad = 10
@@ -1029,52 +753,17 @@ def process_ref_image(ref_bgr: np.ndarray, fg_mask: np.ndarray,
         x2, y2 = min(w, x2 + pad), min(h, y2 + pad)
         ref_crop = ref_bgr[y1:y2, x1:x2].copy()
     else:
-        # Use fg_mask bounding rect as crop region
-        fg_bbox = cv2.boundingRect(fg_mask)
-        bx, by, bw, bh = fg_bbox
-        pad = 10
-        x1, y1 = max(0, bx - pad), max(0, by - pad)
-        x2, y2 = min(w, bx + bw + pad), min(h, by + bh + pad)
-        ref_crop = ref_bgr[y1:y2, x1:x2].copy()
-        log.info("Ref crop: from fg_mask bbox (no detection in ref image)")
-    log.info("Ref crop shape: %s", ref_crop.shape)
+        log.info("Ref image: no detection — using full image as crop")
+        ref_crop = ref_bgr.copy()
 
-    # Step 3: SAM2 logits from reference image
-    ref_logits, ref_mask = extract_ref_logits(ref_bgr, fg_mask,
-                                              box_np=ref_box)
-
-    # Step 4: deep features
     ref_features = _extract_features(ref_crop)
     if ref_features is not None:
-        log.info("Ref features: 512-d vector extracted (norm=%.3f)",
+        log.info("Ref features: 512-d vector (norm=%.3f)",
                  np.linalg.norm(ref_features))
     else:
-        log.warning("Ref features: extraction failed — similarity scoring "
-                    "disabled")
+        log.warning("Ref features: extraction failed — similarity disabled")
 
-    # Phase 4: compute expected fill ratio from ref mask
-    if ref_box is not None and ref_mask is not None:
-        bx1, by1, bx2, by2 = ref_box.astype(int)
-        box_area       = max(1, (bx2 - bx1) * (by2 - by1))
-        ref_fill_ratio = np.count_nonzero(ref_mask) / box_area
-    elif ref_mask is not None:
-        fg_bbox        = cv2.boundingRect(fg_mask)
-        fg_area        = max(1, fg_bbox[2] * fg_bbox[3])
-        ref_fill_ratio = np.count_nonzero(ref_mask) / fg_area
-    else:
-        ref_fill_ratio = 0.7  # conservative default
-    log.info("Ref fill ratio: %.2f (for adaptive coverage check)", ref_fill_ratio)
-
-    # Phase 3: compute ref aspect ratio for box splitting
-    fg_bbox = cv2.boundingRect(fg_mask)
-    if fg_bbox[2] > 0 and fg_bbox[3] > 0:
-        ref_aspect_ratio = fg_bbox[2] / fg_bbox[3]  # width / height
-    else:
-        ref_aspect_ratio = 1.0
-    log.info("Ref aspect ratio: %.2f (w/h)", ref_aspect_ratio)
-
-    return ref_crop, ref_logits, ref_mask, ref_features, \
-        ref_fill_ratio, ref_aspect_ratio
+    return ref_crop, ref_features
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -1209,47 +898,8 @@ def _detect_owlv2_image_guided(image_bgr: np.ndarray,
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Phase 3: Box disambiguation + ref-aspect-ratio splitting
+#  Box disambiguation
 # ═════════════════════════════════════════════════════════════════════
-
-def _split_box_by_ref_aspect(box_np: np.ndarray,
-                             ref_aspect: float,
-                             tolerance: float = 0.6) -> np.ndarray:
-    """
-    Phase 3: If the detected box's aspect ratio is much more portrait than
-    the reference (suggesting it spans multiple stacked objects), crop
-    it from the top to match the reference aspect ratio.
-
-    Parameters
-    ----------
-    box_np     : [x1, y1, x2, y2]
-    ref_aspect : width/height of the reference object
-    tolerance  : if det_aspect < ref_aspect * tolerance, split
-
-    Returns
-    -------
-    Adjusted box_np (may be the same if no split is needed).
-    """
-    x1, y1, x2, y2 = box_np
-    det_w = x2 - x1
-    det_h = y2 - y1
-    if det_h < 1 or det_w < 1:
-        return box_np
-
-    det_aspect = det_w / det_h
-
-    # Only split if the detection is significantly taller than expected
-    if det_aspect < ref_aspect * tolerance:
-        # Crop from the top: expected height = det_w / ref_aspect
-        expected_h = det_w / ref_aspect
-        new_y2 = y1 + min(expected_h, det_h)
-        log.info("Phase 3: box aspect %.2f << ref aspect %.2f — "
-                 "cropping y2 from %.0f to %.0f",
-                 det_aspect, ref_aspect, y2, new_y2)
-        return np.array([x1, y1, x2, new_y2], dtype=box_np.dtype)
-
-    return box_np
-
 
 def _disambiguate_top_box(dets: list, image_shape: tuple,
                           prev_centroid: tuple | None = None,
@@ -1326,170 +976,32 @@ def _disambiguate_top_box(dets: list, image_shape: tuple,
     return best
 
 
-# ═════════════════════════════════════════════════════════════════════
-#  Phase 5: Ref-aware mask selection from SAM2 multimask output
-# ═════════════════════════════════════════════════════════════════════
-
-def _select_best_mask_with_ref(masks: np.ndarray,
-                               scores_sam: np.ndarray,
-                               logits: np.ndarray,
-                               image_bgr: np.ndarray,
-                               box_np: np.ndarray | None,
-                               ref_mask: np.ndarray | None,
-                               ref_features: np.ndarray | None,
-                               ref_fill_ratio: float = 0.7) -> int:
-    """
-    Phase 5: When multimask_output=True returns multiple candidates,
-    score them by a combination of SAM2 confidence, IoU with ref_mask,
-    and feature similarity.
-
-    During bootstrap (before anchor locks):
-      0.25 × SAM2_score + 0.35 × fill_match + 0.25 × box_coverage
-      + 0.15 × feat_sim
-
-    Returns the index of the best mask.
-    """
-    n_masks = len(masks)
-    if n_masks == 1:
-        return 0
-
-    h, w = image_bgr.shape[:2]
-    combined_scores = np.zeros(n_masks, dtype=np.float64)
-
-    for i in range(n_masks):
-        mask_i = (masks[i] > 0).astype(np.uint8) * 255
-        sam_s  = float(scores_sam[i])
-
-        # IoU with ref mask (resized to frame resolution)
-        ref_iou = 0.0
-        mask_fill = 0.0
-        if ref_mask is not None:
-            # Resize ref_mask to match the mask shape
-            ref_m_r = cv2.resize(ref_mask, (mask_i.shape[1], mask_i.shape[0]),
-                                 interpolation=cv2.INTER_NEAREST)
-            # We can't do pixel-level IoU directly since ref is from a
-            # different image.  Instead, compare the mask's fill pattern
-            # within the bounding box region.
-            if box_np is not None:
-                bx1, by1, bx2, by2 = box_np.astype(int)
-                bx1, by1 = max(0, bx1), max(0, by1)
-                bx2, by2 = min(w, bx2), min(h, by2)
-                # Compute fill ratio of this mask within the box
-                box_region = mask_i[by1:by2, bx1:bx2]
-                mask_fill  = np.count_nonzero(box_region) / max(1, box_region.size)
-                # Compute ref fill ratio (from ref mask within its bbox)
-                ref_bbox   = cv2.boundingRect(ref_m_r)
-                if ref_bbox[2] > 0 and ref_bbox[3] > 0:
-                    rx, ry, rw, rh = ref_bbox
-                    ref_region = ref_m_r[ry:ry+rh, rx:rx+rw]
-                    ref_fill   = np.count_nonzero(ref_region) / max(1, ref_region.size)
-                    # Score = 1 - |fill_diff|  (closer fill ratio = better)
-                    ref_iou = max(0.0, 1.0 - abs(mask_fill - ref_fill))
-                else:
-                    ref_iou = 0.5
-
-        if box_np is not None:
-            bx1, by1, bx2, by2 = box_np.astype(int)
-            bx1, by1 = max(0, bx1), max(0, by1)
-            bx2, by2 = min(w, bx2), min(h, by2)
-            if bx2 > bx1 and by2 > by1:
-                box_region = mask_i[by1:by2, bx1:bx2]
-                mask_fill = np.count_nonzero(box_region) / max(1, box_region.size)
-
-        expected_fill = max(0.05, min(float(ref_fill_ratio), 1.0))
-        fill_match = max(0.0, 1.0 - abs(mask_fill - expected_fill) / expected_fill)
-        coverage_score = min(mask_fill / expected_fill, 1.0)
-
-        # Feature similarity of masked crop
-        feat_sim = 0.0
-        if ref_features is not None and box_np is not None:
-            bx1, by1, bx2, by2 = box_np.astype(int)
-            bx1, by1 = max(0, bx1), max(0, by1)
-            bx2, by2 = min(w, bx2), min(h, by2)
-            # Use the full box crop (not masked) for feature extraction
-            crop = image_bgr[by1:by2, bx1:bx2]
-            if crop.size > 0:
-                # Apply mask to crop — zero out non-mask pixels
-                mask_crop = mask_i[by1:by2, bx1:bx2]
-                masked_crop = crop.copy()
-                masked_crop[mask_crop == 0] = 0
-                feat = _extract_features(masked_crop)
-                if feat is not None:
-                    feat_sim = max(0.0, _cosine_similarity(feat, ref_features))
-
-        combined = (0.25 * sam_s
-                    + 0.35 * max(ref_iou, fill_match)
-                    + 0.25 * coverage_score
-                    + 0.15 * feat_sim)
-        combined_scores[i] = combined
-        log.debug("  mask[%d] sam=%.3f fill=%.3f expected=%.3f "
-                  "match=%.3f coverage=%.3f feat=%.3f → %.3f",
-                  i, sam_s, mask_fill, expected_fill, max(ref_iou, fill_match),
-                  coverage_score, feat_sim, combined)
-
-    best_idx = int(np.argmax(combined_scores))
-    if best_idx != int(np.argmax(scores_sam)):
-        log.info("Phase 5: ref-aware selection picked mask[%d] (sam picked %d)",
-                 best_idx, int(np.argmax(scores_sam)))
-    return best_idx
-
 
 # ═════════════════════════════════════════════════════════════════════
-#  Phase 2: Bootstrap grid-point generation
+#  Core pipeline
 # ═════════════════════════════════════════════════════════════════════
 
-def _generate_bootstrap_points(box_np: np.ndarray,
-                               h: int, w: int,
-                               rows: int = BOOTSTRAP_GRID_ROWS,
-                               cols: int = BOOTSTRAP_GRID_COLS) -> np.ndarray:
-    """
-    Generate a grid of positive points inside the detected bounding box.
-    Used during bootstrap (before tracker warms up) to give SAM2 more
-    spatial guidance across the full object face.
+def _box_center(box_np: np.ndarray, h: int, w: int) -> np.ndarray:
+    x1, y1, x2, y2 = box_np
+    cx = float(min(max((x1 + x2) * 0.5, 0), w - 1))
+    cy = float(min(max((y1 + y2) * 0.5, 0), h - 1))
+    return np.array([[cx, cy]], dtype=np.float32)
 
-    Returns Nx2 np.float32 array of (x, y) points.
-    """
-    x1, y1, x2, y2 = box_np.astype(int)
-    x1, y1 = max(0, x1), max(0, y1)
-    x2, y2 = min(w, x2), min(h, y2)
-    bw, bh = x2 - x1, y2 - y1
-    if bw < 2 or bh < 2:
-        return np.array([[int((x1+x2)/2), int((y1+y2)/2)]], dtype=np.float32)
-
-    points = []
-    for ri in range(rows):
-        fy = (ri + 0.5) / rows
-        for ci in range(cols):
-            fx = (ci + 0.5) / cols
-            px = int(x1 + fx * bw)
-            py = int(y1 + fy * bh)
-            points.append([px, py])
-
-    return np.array(points, dtype=np.float32)
-
-
-# ═════════════════════════════════════════════════════════════════════
-#  Core pipeline  (with all 6 fix phases)
-# ═════════════════════════════════════════════════════════════════════
 
 def run_pipeline(image_bgr: np.ndarray, prompt: str,
                  tracker: MaskTracker | None = None,
-                 ref_logits: np.ndarray | None = None,
                  ref_crop: np.ndarray | None = None,
-                 ref_features: np.ndarray | None = None,
-                 ref_mask: np.ndarray | None = None,
-                 ref_fill_ratio: float = 0.7,
-                 ref_aspect_ratio: float = 1.0) -> dict:
+                 ref_features: np.ndarray | None = None) -> dict:
     """
     Detection → SAM2 segmentation → depth → grasp-point pipeline.
 
-    Fix phases integrated:
-      Phase 1: reference logits are kept out of live-frame mask_input
-      Phase 2: Bootstrap grid points on first N frames
-      Phase 3: Ref-aspect box splitting for stacked boxes
-      Phase 4: Adaptive coverage threshold from ref_fill_ratio
-      Phase 5: Ref-aware multi-mask selection
-      Phase 6: tracker anchors only after stable live masks
+    SAM2 is invoked with `box=detector_box, point_coords=[box_center],
+    point_labels=[1], multimask_output=False`. A box prompt already
+    disambiguates the target, matching the official SAM2 image_predictor
+    example, so there is no multimask reselection. Prior-frame logits are
+    not used as live-frame mask_input: that conflates "spatial prior on
+    the current image" with "object identity" and biases SAM toward
+    printed graphics on packaging.
     """
     res = dict(mask_np=None, depth_np=None,
                best_centroid=None, gdino_box=None,
@@ -1499,12 +1011,13 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
 
     # ── Decide whether to run the detector this frame ─────────────────
     need_detection = True
-    if tracker is not None and tracker.prev_logits is not None:
-        if tracker.frame_count % REDETECT_INTERVAL != 0:
-            need_detection = False
+    if (tracker is not None
+            and tracker.last_box is not None
+            and tracker.frame_count % REDETECT_INTERVAL != 0):
+        need_detection = False
 
     # ── Step 1: Detect bounding box ───────────────────────────────────
-    box_np = None
+    box_np = tracker.last_box if tracker is not None else None
     if need_detection:
         prev_c = tracker.prev_centroid if tracker else None
 
@@ -1523,10 +1036,6 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
                                      ref_features=ref_features)
         if pick is not None:
             box_np = pick[0]
-
-            # Phase 3: split box if it spans multiple stacked objects
-            box_np = _split_box_by_ref_aspect(box_np, ref_aspect_ratio)
-
             res["gdino_box"] = box_np
             if ref_features is not None:
                 x1, y1, x2, y2 = box_np.astype(int)
@@ -1541,136 +1050,52 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
                      DETECTOR.upper(), pick[2], pick[1],
                      box_np.astype(int), len(dets), sim_str)
 
-    # ── Step 2: SAM2 segmentation with all fix phases ─────────────────
+    if box_np is not None:
+        res["gdino_box"] = box_np
+        if tracker is not None:
+            tracker.last_box = box_np
+
+    # ── Step 2: SAM2 segmentation (single-mask, box + center point) ──
     tracker_logits = None
-    try:
-        pred = _get_sam2()
-        rgb  = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-        pred.set_image(rgb)
+    if box_np is not None:
+        try:
+            pred = _get_sam2()
+            rgb  = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+            pred.set_image(rgb)
 
-        # --- Build SAM2 prompt arrays ---
-        point_coords = []
-        point_labels = []
+            center_pt = _box_center(box_np, h, w)
+            masks, scores_sam, logits = pred.predict(
+                box=box_np.astype(np.float32),
+                point_coords=center_pt,
+                point_labels=np.array([1], dtype=np.int32),
+                multimask_output=False,
+                return_logits=True,
+            )
 
-        if tracker is not None:
-            pos_pts = tracker.sample_positive_points(h, w, n=1)
-            if pos_pts is not None:
-                for pt in pos_pts:
-                    point_coords.append(pt)
-                    point_labels.append(1)
+            if masks is not None and len(masks) > 0:
+                mask_out = (masks[0] > 0).astype(np.uint8) * 255
+                tracker_logits = logits[0:1]
 
-        if tracker is not None:
-            neg_pts = tracker.sample_negative_points(h, w, NEG_POINT_COUNT)
-            if neg_pts is not None:
-                for pt in neg_pts:
-                    point_coords.append(pt)
-                    point_labels.append(0)
-                log.debug("SAM2: +%d pos, +%d neg point prompts",
-                          len(pos_pts) if pos_pts is not None else 0,
-                          len(neg_pts))
+                if (tracker is not None and tracker.prev_mask is not None
+                        and not need_detection):
+                    iou = _mask_iou(mask_out, tracker.prev_mask)
+                    if iou < IOU_DRIFT_THRESH:
+                        log.info("SAM2: IoU=%.2f < %.2f — forcing redetect "
+                                 "next frame", iou, IOU_DRIFT_THRESH)
+                        tracker.reset(keep_anchor=True)
 
-        # Phase 2: Bootstrap grid points during first N frames
-        is_bootstrap = (tracker is not None and
-                        not tracker.warmed_up and
-                        box_np is not None)
-        if is_bootstrap:
-            grid_pts = _generate_bootstrap_points(box_np, h, w)
-            for pt in grid_pts:
-                point_coords.append(pt)
-                point_labels.append(1)
-            log.info("Phase 2: added %d bootstrap grid points", len(grid_pts))
-
-        sam_kwargs = dict(multimask_output=True, return_logits=True)
-
-        if box_np is not None:
-            sam_kwargs["box"] = box_np
-
-        if point_coords:
-            sam_kwargs["point_coords"] = np.array(point_coords, dtype=np.float32)
-            sam_kwargs["point_labels"] = np.array(point_labels, dtype=np.int32)
-
-        # SAM2 mask_input is a spatial prior in the current image, not a
-        # reference-image identity prompt.  Reference logits must not be used
-        # directly on live frames because they can bias SAM toward a printed
-        # package graphic at the wrong coordinates.
-        if need_detection and box_np is not None:
-            sam_kwargs["multimask_output"] = True
-            log.debug("SAM2: fresh detection — box/grid prompts only")
-        elif tracker is not None and tracker.prev_logits is not None:
-            sam_kwargs["mask_input"]      = tracker.prev_logits
-            sam_kwargs["multimask_output"] = False
-        elif tracker is not None and tracker.anchor_logits is not None:
-            sam_kwargs["mask_input"] = tracker.anchor_logits
-            log.debug("SAM2: using anchor logits as prior")
-
-        # --- Run SAM2 ---
-        masks, scores_sam, logits = pred.predict(**sam_kwargs)
-
-        if masks is not None and len(masks) > 0:
-            # Phase 5: ref-aware mask selection when multimask
-            if sam_kwargs.get("multimask_output", True) and len(masks) > 1:
-                best_idx = _select_best_mask_with_ref(
-                    masks, scores_sam, logits, image_bgr, box_np,
-                    ref_mask, ref_features, ref_fill_ratio)
+                res["mask_np"] = mask_out
+                log.info("SAM2: mask obtained (score=%.3f, area=%d px)",
+                         float(scores_sam[0]), int(np.count_nonzero(mask_out)))
             else:
-                best_idx = int(np.argmax(scores_sam))
+                log.warning("SAM2: no mask returned")
 
-            mask_out = (masks[best_idx] > 0).astype(np.uint8) * 255
-
-            # Phase 4: Adaptive coverage check
-            if box_np is not None:
-                bx1, by1, bx2, by2 = box_np.astype(int)
-                box_area  = max(1, (bx2 - bx1) * (by2 - by1))
-                mask_area = np.count_nonzero(mask_out)
-                coverage  = mask_area / box_area
-                # Adaptive threshold: 70% of the expected fill ratio
-                adaptive_thresh = ref_fill_ratio * 0.70
-                adaptive_thresh = max(0.20, min(adaptive_thresh, 0.60))
-                if coverage < adaptive_thresh:
-                    log.info("Phase 4: mask covers only %.0f%% of box "
-                             "(threshold=%.0f%%) — re-running box-only",
-                             coverage * 100, adaptive_thresh * 100)
-                    pred.set_image(rgb)
-                    masks2, scores2, logits2 = pred.predict(
-                        box=box_np, multimask_output=True, return_logits=True)
-                    if masks2 is not None and len(masks2) > 0:
-                        # Phase 5 again on the re-run
-                        best2 = _select_best_mask_with_ref(
-                            masks2, scores2, logits2, image_bgr, box_np,
-                            ref_mask, ref_features, ref_fill_ratio)
-                        mask_out = (masks2[best2] > 0).astype(np.uint8) * 255
-                        logits   = logits2
-                        scores_sam = scores2
-                        best_idx = best2
-                        log.info("SAM2: box-only re-run mask score=%.3f",
-                                 scores2[best2])
-
-            # Drift check
-            if tracker is not None and tracker.prev_mask is not None:
-                iou = _mask_iou(mask_out, tracker.prev_mask)
-                if iou < IOU_DRIFT_THRESH and not need_detection:
-                    log.info("SAM2: mask IoU=%.2f < %.2f — drift detected, "
-                             "resetting tracker (keeping anchor)",
-                             iou, IOU_DRIFT_THRESH)
-                    tracker.reset(keep_anchor=True)
-                    return run_pipeline(image_bgr, prompt, tracker,
-                                        ref_logits=ref_logits,
-                                        ref_crop=ref_crop,
-                                        ref_features=ref_features,
-                                        ref_mask=ref_mask,
-                                        ref_fill_ratio=ref_fill_ratio,
-                                        ref_aspect_ratio=ref_aspect_ratio)
-
-            res["mask_np"]   = mask_out
-            tracker_logits   = logits[best_idx: best_idx + 1]
-            log.info("SAM2: mask obtained (score=%.3f)", scores_sam[best_idx])
-        else:
-            log.warning("SAM2: no mask returned")
-
-    except Exception as e:
-        import traceback
-        log.error("SAM2 failed: %s", e)
-        traceback.print_exc()
+        except Exception as e:
+            import traceback
+            log.error("SAM2 failed: %s", e)
+            traceback.print_exc()
+    else:
+        log.warning("Detector returned no box — skipping SAM2 this frame")
 
     # ── Step 3: Depth ─────────────────────────────────────────────────
     dm = _get_depth_model()
@@ -1972,12 +1397,8 @@ class CameraStreamer(threading.Thread):
         self._undistorter = None
 
         # Populated by _process_ref_image()
-        self.ref_logits       = None
         self.ref_crop         = None
         self.ref_features     = None
-        self.ref_mask         = None
-        self.ref_fill_ratio   = 0.7
-        self.ref_aspect_ratio = 1.0
 
     # ── helpers ──────────────────────────────────────────────────────
     def _get_frame(self):
@@ -1997,18 +1418,10 @@ class CameraStreamer(threading.Thread):
         if self.ref_image_path is None:
             return
         try:
-            ref_bgr, fg_mask = _load_ref_image(self.ref_image_path,
-                                               REF_MASK_MODE)
+            ref_bgr = _load_ref_image(self.ref_image_path)
             if ref_bgr is None:
                 return
-
-            (self.ref_crop, self.ref_logits, self.ref_mask,
-             self.ref_features, self.ref_fill_ratio,
-             self.ref_aspect_ratio) = process_ref_image(ref_bgr, fg_mask,
-                                                         PROMPT)
-
-            self._tracker.seed_from_ref(self.ref_logits, self.ref_mask)
-
+            self.ref_crop, self.ref_features = process_ref_image(ref_bgr, PROMPT)
         except Exception as e:
             log.error("Reference image processing error: %s", e)
             import traceback; traceback.print_exc()
@@ -2025,12 +1438,8 @@ class CameraStreamer(threading.Thread):
                 continue
             try:
                 res = run_pipeline(frame, PROMPT, self._tracker,
-                                   ref_logits=self.ref_logits,
                                    ref_crop=self.ref_crop,
-                                   ref_features=self.ref_features,
-                                   ref_mask=self.ref_mask,
-                                   ref_fill_ratio=self.ref_fill_ratio,
-                                   ref_aspect_ratio=self.ref_aspect_ratio)
+                                   ref_features=self.ref_features)
                 with self.data_lock:
                     self._result = res
                 if not self._models_ready.is_set():
@@ -2317,7 +1726,7 @@ class CameraStreamer(threading.Thread):
         cv2.putText(display, trk_txt, (8, h - 56),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200, 180, 0), 1)
 
-        if self.ref_logits is not None:
+        if self.ref_features is not None:
             sim_val = res.get("similarity")
             ref_txt = "REF" if sim_val is None else f"REF sim={sim_val:.2f}"
             cv2.putText(display, ref_txt, (8, 40),
@@ -2424,12 +1833,8 @@ def _run_offline_frame(streamer: CameraStreamer, frame: np.ndarray,
         frame,
         PROMPT,
         streamer._tracker,
-        ref_logits=streamer.ref_logits,
         ref_crop=streamer.ref_crop,
         ref_features=streamer.ref_features,
-        ref_mask=streamer.ref_mask,
-        ref_fill_ratio=streamer.ref_fill_ratio,
-        ref_aspect_ratio=streamer.ref_aspect_ratio,
     )
     elapsed_s = time.time() - start
     summary = _result_summary(
@@ -2528,14 +1933,9 @@ if __name__ == "__main__":
     parser.add_argument("--detector", choices=["gdino", "owlv2"], default=None,
                         help="Override detector (default: env DETECTOR or gdino)")
     parser.add_argument("--ref-image", "--ref_image", metavar="PATH",
-                        help="Path to a reference image of the target object "
-                             "(supports transparent PNG or black background)")
-    parser.add_argument("--ref-mask-mode",
-                        choices=["auto", "full", "foreground"],
-                        default=REF_MASK_MODE,
-                        help="How to construct the reference target mask. "
-                             "auto/full treat cropped package references as "
-                             "the full box; foreground forces Otsu extraction.")
+                        help="Path to a reference image of the target object. "
+                             "Used to bias detector choice via ResNet "
+                             "feature similarity. Alpha is ignored.")
     parser.add_argument("--no-pyzed", action="store_true",
                         help="Force OpenCV camera capture even if PyZED is "
                              "available")
@@ -2567,11 +1967,9 @@ if __name__ == "__main__":
         DETECTOR = args.detector
     if args.prompt:
         PROMPT = args.prompt
-    REF_MASK_MODE = args.ref_mask_mode
 
     log.info("Detector : %s", DETECTOR.upper())
     log.info("Prompt   : %s", PROMPT)
-    log.info("Ref mask : %s", REF_MASK_MODE)
     log.info("PyZED    : %s%s",
              "available" if PYZED_AVAILABLE else "not available",
              " (disabled by --no-pyzed)" if args.no_pyzed else "")
