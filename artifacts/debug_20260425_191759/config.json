@@ -1,0 +1,29 @@
+{
+  "timestamp": "20260425_191759",
+  "cwd": "/data/user/akanksha/repo/visual_servoing_for_suction_grippers",
+  "detector": "gdino",
+  "prompt": "box",
+  "redetect_interval": 30,
+  "iou_drift_thresh": 0.35,
+  "min_z_mm": 0.0,
+  "args": {
+    "cam_index": 0,
+    "detector": null,
+    "ref_image": "masked_objects/protein_bar_2.png",
+    "no_pyzed": false,
+    "no_robot": false,
+    "dry_run": false,
+    "input_image": null,
+    "input_dir": null,
+    "input_video": null,
+    "output_dir": null,
+    "max_frames": null,
+    "no_overlays": false,
+    "prompt": null,
+    "log_dir": "logs",
+    "debug": true,
+    "debug_dir": "artifacts",
+    "debug_every": 30
+  },
+  "log_file": "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/semvs_20260425_191758.log"
+}

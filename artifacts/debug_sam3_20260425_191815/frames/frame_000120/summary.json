@@ -1,0 +1,18 @@
+{
+  "frame_index": 120,
+  "source": "live",
+  "detector_used": "sam3",
+  "detection_was_skipped": false,
+  "candidates": [],
+  "chosen_box_xyxy": null,
+  "sam_center_pt": null,
+  "sam_score": null,
+  "similarity": null,
+  "best_centroid": null,
+  "mask_area_px": 0,
+  "frame_shape": [
+    720,
+    1280,
+    3
+  ]
+}

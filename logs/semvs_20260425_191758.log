@@ -1,0 +1,10 @@
+19:17:58.146 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/semvs_20260425_191758.log
+19:17:58.146 [INFO ] Detector : GDINO
+19:17:58.146 [INFO ] Prompt   : box
+19:17:58.146 [INFO ] PyZED    : available
+19:17:58.146 [INFO ] Reference image: masked_objects/protein_bar_2.png
+19:17:59.217 [INFO ] Robot connected: 192.168.1.241
+19:17:59.218 [INFO ] Debug dump: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_20260425_191759
+19:17:59.218 [INFO ] Debug dump: share this absolute path to send results back.
+19:18:01.015 [INFO ] PyZED SVO recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_recording_20260425_191800.svo2
+19:18:01.015 [INFO ] Calibration thread: waiting for models …
