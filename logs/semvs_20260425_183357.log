@@ -1,0 +1,629 @@
+18:33:57.134 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/semvs_20260425_183357.log
+18:33:57.134 [INFO ] Detector : GDINO
+18:33:57.134 [INFO ] Prompt   : box
+18:33:57.134 [INFO ] PyZED    : available
+18:33:57.134 [INFO ] Reference image: foundation_model/input_image_transparent.png
+18:33:58.200 [INFO ] Robot connected: 192.168.1.241
+18:34:00.398 [INFO ] PyZED SVO recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_recording_20260425_183400.svo2
+18:34:00.398 [INFO ] Calibration thread: waiting for models …
+18:34:00.411 [INFO ] Processing reference image …
+18:34:00.638 [INFO ] Annotated recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_annotated_20260425_183400.mp4  (1280×720)
+18:34:02.081 [DEBUG] BERT compat patch applied
+18:34:03.700 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:03.702 [INFO ] Ref image: no detection — using full image as crop
+18:34:03.789 [INFO ] Feature extractor (ResNet-18) loaded
+18:34:03.810 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:34:03.858 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:03.859 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.085 [INFO ] Models ready — calibration may now proceed.
+18:34:04.085 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:34:04.085 [INFO ] === Calibration: waiting for camera frame ===
+18:34:04.086 [INFO ] Home: [205.3, 5.6, -52.9] mm
+18:34:04.134 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.135 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.209 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.210 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.291 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.291 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.366 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.367 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.387 [INFO ]   [Y] moving +8 mm...
+18:34:04.442 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.443 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.520 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.520 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.596 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.596 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.671 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.672 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.748 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.749 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.826 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.826 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.903 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.903 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:04.978 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:04.978 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.058 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.058 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.135 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.135 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.212 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.212 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.291 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.292 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.368 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.368 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.443 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.443 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.519 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.519 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.597 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.598 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.671 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.671 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.744 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.745 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.822 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.823 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.899 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.900 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:05.974 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:05.975 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.048 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.049 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.125 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.126 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.202 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.202 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.276 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.277 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.352 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.353 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.430 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.430 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.495 [INFO ]   [Y] returning home...
+18:34:06.505 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.506 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.580 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.580 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.658 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.658 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.732 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.733 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.807 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.807 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.882 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.882 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:06.958 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:06.959 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.033 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.033 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.108 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.109 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.111 [INFO ]   [Y] flow: (+16.2, +3.0) px / 8 mm  → J[:,{col}]=[+2.0269, +0.3729]
+18:34:07.187 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.188 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.265 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.265 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.340 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.340 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.412 [INFO ]   [Z] moving +8 mm...
+18:34:07.413 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.414 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.491 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.492 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.566 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.566 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.640 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.640 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.715 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.716 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.793 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.793 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.871 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.872 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:07.947 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:07.947 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.025 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.026 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.100 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.101 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.176 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.176 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.251 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.252 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.328 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.329 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.405 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.406 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.485 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.485 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.563 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.564 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.640 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.641 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.719 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.720 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.796 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.796 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.871 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.871 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:08.946 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:08.947 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.025 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.026 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.101 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.102 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.176 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.176 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.253 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.254 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.330 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.331 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.405 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.405 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.480 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.481 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.519 [INFO ]   [Z] returning home...
+18:34:09.559 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.560 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.632 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.633 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.707 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.707 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.780 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.781 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.858 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.858 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:09.933 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:09.933 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.009 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.009 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.085 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.086 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.132 [INFO ]   [Z] flow: (-0.3, +7.9) px / 8 mm  → J[:,{col}]=[-0.0328, +0.9855]
+18:34:10.132 [INFO ] J_yz (px/mm):
+[[ 2.02694702 -0.03284454]
+ [ 0.37285548  0.98546219]]
+18:34:10.132 [INFO ] J_yz_inv (mm/px):
+[[ 0.49034656  0.0163428 ]
+ [-0.18552554  1.00856888]]
+18:34:10.133 [INFO ] === Calibration complete [calibrated] ===
+18:34:10.163 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.164 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.237 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.238 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.312 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.312 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.392 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.392 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.467 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.467 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.542 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.543 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.618 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.619 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.697 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.697 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.771 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.772 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.846 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.846 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.922 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.923 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:10.998 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:10.998 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.073 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.073 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.146 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.146 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.225 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.226 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.299 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.300 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.374 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.374 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.448 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.449 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.533 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.533 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.609 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.609 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.683 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.684 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.760 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.761 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.835 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.836 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.911 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.911 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:11.988 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:11.989 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.068 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.068 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.145 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.145 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.222 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.223 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.298 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.298 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.372 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.373 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.447 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.448 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.526 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.527 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.602 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.603 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.679 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.679 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.757 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.758 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.833 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.833 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.909 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.909 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:12.987 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:12.987 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.064 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.065 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.138 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.139 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.212 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.212 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.288 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.289 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.366 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.366 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.442 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.443 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.518 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.519 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.596 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.596 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.670 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.670 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.745 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.745 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.820 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.821 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.896 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.897 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:13.970 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:13.971 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.043 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.044 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.120 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.121 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.198 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.199 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.273 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.274 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.347 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.348 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.425 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.425 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.499 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.500 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.574 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.574 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.648 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.649 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.725 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.725 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.799 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.800 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.874 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.875 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:14.949 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:14.950 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.026 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.027 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.100 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.100 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.175 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.175 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.251 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.251 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.327 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.328 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.403 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.404 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.479 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.479 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.555 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.556 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.632 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.632 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.708 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.708 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.783 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.784 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.862 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.863 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:15.938 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:15.938 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.011 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.012 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.086 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.087 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.163 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.164 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.239 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.240 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.313 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.313 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.392 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.393 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.467 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.467 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.542 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.542 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.618 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.619 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.696 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.697 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.770 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.771 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.846 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.846 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.924 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:16.924 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:16.999 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.000 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.074 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.075 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.149 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.150 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.227 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.227 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.302 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.303 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.377 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.377 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.453 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.454 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.531 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.531 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.606 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.606 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.679 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.680 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.757 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.758 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.832 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.833 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.906 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.907 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:17.980 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:17.980 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.058 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.059 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.133 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.134 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.207 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.208 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.283 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.284 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.363 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.363 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.437 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.438 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.512 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.512 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.589 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.589 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.664 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.664 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.738 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.738 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.812 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.812 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.889 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.890 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:18.963 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:18.964 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.037 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.038 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.112 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.113 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.189 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.190 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.264 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.264 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.338 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.339 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.413 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.414 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.492 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.492 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.568 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.568 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.642 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.643 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.718 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.719 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.796 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.796 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.872 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.872 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:19.945 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:19.946 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.022 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.023 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.097 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.098 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.172 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.172 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.244 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.244 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.322 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.323 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.397 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.398 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.474 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.475 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.553 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.554 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.630 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.631 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.704 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.705 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.778 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.779 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.855 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.855 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:20.930 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:20.931 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.004 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.004 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.079 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.079 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.156 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.156 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.230 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.231 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.304 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.305 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.379 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.379 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.456 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.457 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.530 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.531 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.604 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.605 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.679 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.679 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.754 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.755 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.831 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.831 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.905 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.906 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:21.980 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:21.980 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.057 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.058 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.133 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.133 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.207 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.208 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.281 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.281 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.359 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.359 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.435 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.435 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.509 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.509 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.583 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.584 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.660 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.660 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.735 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.736 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.809 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.810 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.884 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.884 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:22.960 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:22.960 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.035 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.035 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.108 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.109 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.183 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.183 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.260 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.261 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.338 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.338 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.412 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.413 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.489 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.490 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.566 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.567 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.642 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.642 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.716 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.717 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.793 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.794 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.870 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.870 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:23.944 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:23.945 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.021 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.021 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.098 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.099 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.171 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.172 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.246 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.246 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.324 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.325 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.400 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.401 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.477 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.478 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.557 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.557 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.633 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.634 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.709 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.710 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.787 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.788 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.868 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.868 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:24.942 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:24.942 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.017 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.018 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.095 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.096 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.171 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.171 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.246 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.246 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.322 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.323 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.401 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.401 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.478 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.478 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.555 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.556 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.633 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.635 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.710 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.711 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.787 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.788 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.864 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.864 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:25.939 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:25.940 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.014 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.014 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.093 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.093 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.174 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.174 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.249 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.250 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.328 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.329 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.404 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.405 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.479 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.479 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.557 [INFO ] Interrupted by user
+18:34:26.557 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:34:26.558 [WARNING] Detector returned no box — skipping SAM2 this frame
+18:34:26.558 [INFO ] Robot stopped.
+18:34:26.558 [INFO ] Done.

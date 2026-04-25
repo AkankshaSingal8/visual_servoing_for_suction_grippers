@@ -1,0 +1,495 @@
+18:39:58.847 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/semvs_20260425_183958.log
+18:39:58.847 [INFO ] Detector : GDINO
+18:39:58.847 [INFO ] Prompt   : box
+18:39:58.847 [INFO ] PyZED    : available
+18:39:58.847 [INFO ] Reference image: foundation_model/input_image_transparent.png
+18:39:59.906 [INFO ] Robot connected: 192.168.1.241
+18:40:02.929 [INFO ] PyZED SVO recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_recording_20260425_184002.svo2
+18:40:02.930 [INFO ] Calibration thread: waiting for models …
+18:40:02.942 [INFO ] Processing reference image …
+18:40:03.158 [INFO ] Annotated recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_annotated_20260425_184002.mp4  (1280×720)
+18:40:04.615 [DEBUG] BERT compat patch applied
+18:40:06.188 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.189 [INFO ] Ref image: no detection — using full image as crop
+18:40:06.269 [INFO ] Feature extractor (ResNet-18) loaded
+18:40:06.289 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:40:06.338 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.338 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.553 [INFO ] Models ready — calibration may now proceed.
+18:40:06.553 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:40:06.553 [INFO ] === Calibration: waiting for camera frame ===
+18:40:06.554 [INFO ] Home: [205.3, 5.6, -52.9] mm
+18:40:06.599 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.600 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.677 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.678 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.753 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.753 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.828 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.828 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.855 [INFO ]   [Y] moving +8 mm...
+18:40:06.903 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.903 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:06.980 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:06.980 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.055 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.056 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.130 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.131 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.207 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.208 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.283 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.284 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.359 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.359 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.431 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.432 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.506 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.506 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.582 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.582 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.657 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.658 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.732 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.732 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.807 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.808 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.883 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.883 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:07.958 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:07.959 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.032 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.033 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.108 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.109 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.189 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.189 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.264 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.264 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.338 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.339 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.417 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.417 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.492 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.492 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.565 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.565 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.642 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.642 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.717 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.718 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.793 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.793 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.866 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.866 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.943 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:08.943 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:08.963 [INFO ]   [Y] returning home...
+18:40:09.017 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.017 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.091 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.092 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.166 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.167 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.243 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.243 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.317 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.318 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.393 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.394 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.465 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.466 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.542 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.542 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.578 [INFO ]   [Y] flow: (+10.2, +0.9) px / 8 mm  → J[:,{col}]=[+1.2755, +0.1176]
+18:40:09.618 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.618 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.692 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.692 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.765 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.766 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.842 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.842 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.879 [INFO ]   [Z] moving +8 mm...
+18:40:09.917 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.918 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:09.992 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:09.992 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.065 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.065 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.141 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.141 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.215 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.216 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.291 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.291 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.366 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.367 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.444 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.444 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.524 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.524 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.600 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.600 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.677 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.678 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.752 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.753 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.828 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.829 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.903 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.903 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:10.980 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:10.981 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.054 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.055 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.129 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.130 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.204 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.205 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.283 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.283 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.357 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.357 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.433 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.433 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.512 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.513 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.587 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.587 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.660 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.661 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.734 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.734 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.812 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.813 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.886 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.887 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.960 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:11.961 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:11.985 [INFO ]   [Z] returning home...
+18:40:12.033 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.034 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.112 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.112 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.187 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.188 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.262 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.263 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.338 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.339 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.415 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.415 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.490 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.491 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.566 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.566 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.597 [INFO ]   [Z] flow: (-1.5, +9.6) px / 8 mm  → J[:,{col}]=[-0.1862, +1.2003]
+18:40:12.598 [INFO ] J_yz (px/mm):
+[[ 1.27545929 -0.18619537]
+ [ 0.11761093  1.20026398]]
+18:40:12.598 [INFO ] J_yz_inv (mm/px):
+[[ 0.77297427  0.11991048]
+ [-0.07574186  0.82140032]]
+18:40:12.599 [INFO ] === Calibration complete [calibrated] ===
+18:40:12.646 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.647 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.721 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.721 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.796 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.797 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.871 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.871 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:12.952 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:12.952 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.028 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.028 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.106 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.107 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.182 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.183 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.257 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.258 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.333 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.333 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.411 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.412 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.486 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.486 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.560 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.561 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.634 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.634 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.712 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.713 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.786 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.787 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.862 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.863 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:13.939 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:13.940 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.016 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.016 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.091 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.091 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.165 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.165 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.241 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.242 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.317 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.318 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.392 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.392 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.466 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.466 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.543 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.543 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.619 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.620 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.694 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.695 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.768 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.769 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.846 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.846 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.920 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.921 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:14.995 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:14.996 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.070 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.070 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.148 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.148 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.224 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.224 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.298 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.299 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.376 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.377 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.452 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.453 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.527 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.528 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.601 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.601 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.679 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.680 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.756 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.757 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.834 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.834 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.911 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.912 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:15.985 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:15.986 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.059 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.060 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.132 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.132 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.208 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.208 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.283 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.284 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.357 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.358 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.432 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.432 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.508 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.509 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.585 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.585 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.660 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.660 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.736 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.736 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.814 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.815 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.889 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.890 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:16.963 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:16.964 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.038 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.038 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.114 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.115 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.190 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.190 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.265 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.266 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.342 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.343 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.418 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.419 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.493 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.494 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.566 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.566 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.642 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.642 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.717 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.717 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.791 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.792 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.866 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.867 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:17.942 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:17.943 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.018 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.018 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.093 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.094 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.168 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.168 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.246 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.246 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.321 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.321 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.396 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.396 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.471 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.472 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.551 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.552 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.627 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.627 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.701 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.701 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.780 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.781 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.860 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.860 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:18.935 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:18.935 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.013 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.014 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.089 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.089 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.165 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.165 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.241 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.242 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.319 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.320 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.396 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.397 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.472 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.473 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.548 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.549 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.624 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.625 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.699 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.700 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.776 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.776 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.852 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.852 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:19.927 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:19.928 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.009 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.010 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.084 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.085 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.160 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.161 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.234 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.235 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.313 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.314 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.389 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.390 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.464 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.465 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.540 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.541 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.616 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.616 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.691 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.691 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.764 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.764 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.840 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.840 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.917 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.917 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:20.993 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:20.993 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.066 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.066 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.141 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.142 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.217 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.218 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.293 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.293 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.367 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.367 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.444 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.444 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.519 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.520 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.595 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.595 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.668 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.669 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.747 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.747 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.823 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.823 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.897 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.898 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:21.972 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:21.972 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.049 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.050 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.125 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.125 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.198 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.199 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.273 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.274 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.351 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.351 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.426 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.427 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.499 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.500 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.576 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.577 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.652 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.652 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.727 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.727 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.801 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.801 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.878 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.879 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:22.956 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:22.957 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.032 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.032 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.108 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.109 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.184 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.185 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.260 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.260 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.333 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.333 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.409 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.409 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.485 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.485 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.560 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.561 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.635 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.635 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.713 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.714 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.789 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.789 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:23.863 [ERROR] GroundingDINO failed: name '_C' is not defined
+18:40:23.864 [WARNING] Detector returned no box and no prior tracker box; skipping SAM2 this frame. Try a more descriptive --prompt, lower thresholds, or DETECTOR=owlv2.
+18:40:24.237 [INFO ] Annotated recording saved: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_annotated_20260425_184002.mp4
+18:40:24.239 [INFO ] Robot stopped.
+18:40:24.239 [INFO ] Done.
