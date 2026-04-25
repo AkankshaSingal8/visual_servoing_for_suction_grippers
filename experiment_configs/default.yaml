@@ -1,0 +1,51 @@
+# Visual servoing training configuration
+
+experiment:
+  run_name: base_dual_stream_v1
+  seed: 42
+  output_dir: runs/visual_servoing_experiment
+
+data:
+  datagen_path: datagen2_isaacsim
+  isIsaacSim: true
+  val_split: 0.2
+  batch_size: 4
+  num_workers: 1
+  shuffle_seed: 42
+
+model:
+  architecture: DualStreamCNN
+  input_channels: 3
+  output_dim: 3
+
+training:
+  num_epochs: 120
+  learning_rate: 0.0001
+  optimizer: Adam
+  weight_decay: 0.0
+  scheduler_patience: 10
+  scheduler_factor: 0.5
+  checkpoint_dir: checkpoints
+  gradient_clip_norm: null
+  mixed_precision: false
+
+logging:
+  backend: tensorboard  # options: wandb, tensorboard, both, none
+  wandb:
+    project: visual-servoing-report
+    entity: jeffke613-carnegie-mellon-university
+    run_name: base_dual_stream_v1
+    notes: Baseline dual-stream CNN training run.
+  tensorboard:
+    log_dir: runs/visual_servoing_experiment
+    flush_secs: 30
+  print_frequency: 20
+  save_best_only: true
+
+transforms:
+  resize: [224, 224]
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+  augmentation:
+    random_horizontal_flip: false
+    random_rotation_degrees: 0

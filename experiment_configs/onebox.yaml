@@ -1,0 +1,65 @@
+# first run with isaac sim.
+# did you:
+#   change checkpoint_dir?
+#   change run_name in logging.wandb.run_name?
+#   change logging.tensorboard.log_dir?
+
+experiment:
+  seed: 42
+
+data:
+  dataset_path: datasets/onebox
+  background_dir: backgrounds_pngs
+  # num_backgrounds: 10
+  # num_aug_per_bg: 2
+  isIsaacSim: true
+  val_split: 0.2
+  batch_size: 32
+  num_workers: 16
+  prefetch_factor: 4
+  persistent_workers: true
+  pin_memory: true
+  offset_ranges: [0.30, 0.30, 0.13] 
+
+model:
+  architecture: CFCNetwork
+  input_channels: 3
+  output_dim: 3
+  dropout_rate: 0.1
+  # CFC-specific hyperparameters
+  cfc:
+    sparsity_level: 0.3    # 0.0 = dense, 1.0 = very sparse (default: 0.5)
+    ncp_mode: "default"    # Options: "default" or "pure" (default: "default")
+
+training:
+  num_epochs: 300
+  learning_rate: 0.0003
+  optimizer: Adam
+  # beta: 0.02
+  # weight_decay: 0.0001
+  # scheduler_patience: 20
+  # scheduler_factor: 0.5
+  # early_stopping: false
+  # early_stopping_patience: 40  # Stop after 30 epochs without improvement
+  # early_stopping_min_delta: 0.000001  # Minimum improvement threshold
+  # gradient_clip_val: null
+  # mixed_precision: false
+
+logging:
+  backend: wandb  # options: wandb, tensorboard, both, none
+  run_name: jan29_onebox_applybg_transforms_v4_cfc_batch32_lr0.0003_dropout0.1_sparsity0.3_default_epoch300
+  wandb:
+    project: visual-servoing
+    entity: jeffke613-carnegie-mellon-university
+  tensorboard:
+    flush_secs: 30
+  print_frequency: 20
+  save_best_only: true
+
+transforms:
+  resize: [224, 224]
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+  # augmentation:
+  #   random_horizontal_flip: false
+  #   random_rotation_degrees: 0
