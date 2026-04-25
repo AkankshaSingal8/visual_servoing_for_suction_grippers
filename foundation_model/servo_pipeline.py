@@ -85,6 +85,7 @@ def _setup_logger(name: str = "semvs",
     logger.addHandler(fh)
 
     logger.info(f"Logging to {os.path.abspath(log_path)}")
+    logger._semvs_log_path = os.path.abspath(log_path)  # for debug-dump
     return logger
 
 log = logging.getLogger("semvs")
@@ -1038,7 +1039,12 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
     """
     res = dict(mask_np=None, depth_np=None,
                best_centroid=None, gdino_box=None,
-               similarity=None)
+               similarity=None,
+               dets_all=None,           # list[(xyxy, score, label)]
+               sam_score=None,          # float
+               sam_center_pt=None,      # (cx, cy) used as positive prompt
+               detector_used=None,      # "gdino" / "owlv2" / "owlv2_image"
+               detection_was_skipped=False)
 
     h, w = image_bgr.shape[:2]
 
@@ -1048,20 +1054,30 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
             and tracker.last_box is not None
             and tracker.frame_count % REDETECT_INTERVAL != 0):
         need_detection = False
+        res["detection_was_skipped"] = True
 
     # ── Step 1: Detect bounding box ───────────────────────────────────
     box_np = tracker.last_box if tracker is not None else None
+    dets = []
     if need_detection:
         prev_c = tracker.prev_centroid if tracker else None
 
         if ref_crop is not None and DETECTOR == "owlv2":
             dets = _detect_owlv2_image_guided(image_bgr, ref_crop)
+            res["detector_used"] = "owlv2_image"
             if not dets:
                 dets = _detect_owlv2(image_bgr, prompt)
+                res["detector_used"] = "owlv2"
         elif DETECTOR == "owlv2":
             dets = _detect_owlv2(image_bgr, prompt)
+            res["detector_used"] = "owlv2"
         else:
             dets = _detect_gdino(image_bgr, prompt)
+            res["detector_used"] = "gdino"
+
+        res["dets_all"] = [
+            (np.asarray(d[0], dtype=np.float32).tolist(),
+             float(d[1]), str(d[2])) for d in dets]
 
         pick = _disambiguate_top_box(dets, image_bgr.shape,
                                      prev_centroid=prev_c,
@@ -1097,6 +1113,8 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
             pred.set_image(rgb)
 
             center_pt = _box_center(box_np, h, w)
+            res["sam_center_pt"] = (float(center_pt[0, 0]),
+                                    float(center_pt[0, 1]))
             masks, scores_sam, logits = pred.predict(
                 box=box_np.astype(np.float32),
                 point_coords=center_pt,
@@ -1108,6 +1126,7 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
             if masks is not None and len(masks) > 0:
                 mask_out = (masks[0] > 0).astype(np.uint8) * 255
                 tracker_logits = logits[0:1]
+                res["sam_score"] = float(scores_sam[0])
 
                 if (tracker is not None and tracker.prev_mask is not None
                         and not need_detection):
@@ -1414,7 +1433,9 @@ class CameraStreamer(threading.Thread):
     def __init__(self, cam_index: int, stop_event: threading.Event,
                  robot: RobotController,
                  ref_image_path: str | None = None,
-                 use_pyzed: bool = True):
+                 use_pyzed: bool = True,
+                 debug_dir: str | None = None,
+                 debug_every: int = 30):
         super().__init__(daemon=True)
         self.cam_index      = cam_index
         self.stop_event     = stop_event
@@ -1434,6 +1455,11 @@ class CameraStreamer(threading.Thread):
         # Populated by _process_ref_image()
         self.ref_crop         = None
         self.ref_features     = None
+
+        # Debug-dump state (live capture). Set by _init_debug_dir from CLI.
+        self._debug_dir       = debug_dir
+        self._debug_every     = max(1, int(debug_every or 1))
+        self._debug_frame_idx = 0
 
     # ── helpers ──────────────────────────────────────────────────────
     def _get_frame(self):
@@ -1477,6 +1503,20 @@ class CameraStreamer(threading.Thread):
                                    ref_features=self.ref_features)
                 with self.data_lock:
                     self._result = res
+
+                if (self._debug_dir
+                        and self._debug_frame_idx % self._debug_every == 0):
+                    overlay = None
+                    try:
+                        overlay = self._render(frame, res)
+                    except Exception:
+                        overlay = None
+                    _dump_debug_frame(self._debug_dir,
+                                      self._debug_frame_idx,
+                                      frame, res, overlay_bgr=overlay,
+                                      source="live")
+                self._debug_frame_idx += 1
+
                 if not self._models_ready.is_set():
                     log.info("Models ready — calibration may now proceed.")
                     self._models_ready.set()
@@ -1847,6 +1887,244 @@ def _result_summary(res: dict, frame_shape: tuple, tracker: MaskTracker,
     return summary
 
 
+# ═════════════════════════════════════════════════════════════════════
+#  Debug dump (per-frame artifacts for sharing with reviewers)
+# ═════════════════════════════════════════════════════════════════════
+
+DEBUG_PALETTE = [
+    (0, 255, 0), (0, 200, 255), (255, 200, 0), (255, 0, 200),
+    (0, 255, 255), (255, 100, 100), (100, 255, 100), (180, 180, 0),
+]
+
+
+def _init_debug_dir(base_dir: str | None,
+                    args,
+                    ref_image_path: str | None) -> str | None:
+    """
+    Create artifacts/debug_<ts>/ (or under <base_dir>) and seed it with
+    config.json, args.json, a copy of the active log file, and the
+    reference image. Returns the absolute path of the debug dir, or None
+    if base_dir is empty.
+    """
+    if not base_dir:
+        return None
+
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    debug_dir = os.path.abspath(os.path.join(base_dir, f"debug_{ts}"))
+    os.makedirs(debug_dir, exist_ok=True)
+    os.makedirs(os.path.join(debug_dir, "frames"), exist_ok=True)
+    os.makedirs(os.path.join(debug_dir, "ref"), exist_ok=True)
+
+    cfg = {
+        "timestamp": ts,
+        "cwd": os.getcwd(),
+        "detector": DETECTOR,
+        "prompt": PROMPT,
+        "redetect_interval": REDETECT_INTERVAL,
+        "iou_drift_thresh": IOU_DRIFT_THRESH,
+        "min_z_mm": MIN_Z_MM,
+        "args": {k: getattr(args, k, None) for k in vars(args)} if args else {},
+    }
+    log_path = getattr(log, "_semvs_log_path", None)
+    if log_path:
+        cfg["log_file"] = log_path
+
+    with open(os.path.join(debug_dir, "config.json"), "w") as f:
+        json.dump(cfg, f, indent=2, default=str)
+
+    if ref_image_path and os.path.exists(ref_image_path):
+        try:
+            import shutil
+            shutil.copy(ref_image_path,
+                        os.path.join(debug_dir, "ref",
+                                     os.path.basename(ref_image_path)))
+        except Exception as e:
+            log.warning("debug-dump: could not copy ref image: %s", e)
+
+    log.info("Debug dump: %s", debug_dir)
+    log.info("Debug dump: share this absolute path to send results back.")
+    return debug_dir
+
+
+def _finalize_debug_dir(debug_dir: str | None) -> None:
+    """
+    Copy the active log file into the debug dir at the end of the run.
+    Safe to call even if no log file is registered.
+    """
+    if not debug_dir:
+        return
+    log_path = getattr(log, "_semvs_log_path", None)
+    if log_path and os.path.exists(log_path):
+        try:
+            import shutil
+            shutil.copy(log_path, os.path.join(debug_dir, "log.txt"))
+        except Exception as e:
+            log.warning("debug-dump: could not copy log file: %s", e)
+    log.info("Debug dump finalized: %s", debug_dir)
+    log.info("Push to share with Claude:  git add %s && git commit -m "
+             "'debug dump' && git push", debug_dir)
+
+
+def _write_debug_index(debug_dir: str | None,
+                       summaries: list,
+                       args,
+                       source: str) -> None:
+    """
+    Write INDEX.md inside the debug dir summarizing the run so a reviewer
+    can read one file and orient themselves before opening images.
+    """
+    if not debug_dir:
+        return
+    try:
+        n = len(summaries)
+        n_with_box = sum(1 for s in summaries if s.get("bbox") is not None)
+        n_with_centroid = sum(1 for s in summaries
+                              if s.get("centroid") is not None)
+        first_with_box = next((s for s in summaries
+                               if s.get("bbox") is not None), None)
+        first_no_box = next((s for s in summaries
+                             if s.get("bbox") is None), None)
+
+        lines = [
+            f"# SemVS debug dump",
+            f"",
+            f"- Source: `{source}`",
+            f"- Frames: **{n}**, with detector box: **{n_with_box}**, "
+            f"with centroid: **{n_with_centroid}**",
+            f"- Detector: `{DETECTOR}`",
+            f"- Prompt: `{PROMPT}`",
+            f"- CLI args: `{vars(args) if args else {}}`",
+            f"",
+            f"## What's here",
+            f"- `config.json` — run configuration",
+            f"- `log.txt` — full structured log (DEBUG and above)",
+            f"- `ref/` — copy of the --ref-image used",
+            f"- `frames/frame_NNNNNN/`",
+            f"  - `input.png` — input frame",
+            f"  - `detections.png` — input + every detector candidate "
+            f"(coloured, score-labelled), the chosen box in red, the SAM "
+            f"center prompt as a yellow dot",
+            f"  - `detections.json` — detector candidates, chosen box, "
+            f"SAM center, SAM score, similarity, centroid",
+            f"  - `sam_mask.png` — final 0/255 mask from SAM2",
+            f"  - `overlay.png` — high-level rendered overlay",
+            f"  - `summary.json` — per-frame summary",
+            f"",
+            f"## Frames worth looking at first",
+        ]
+        if first_with_box is not None:
+            i = first_with_box.get("frame_index")
+            lines.append(f"- First frame with a detection: "
+                         f"`frames/frame_{i:06d}/`")
+        if first_no_box is not None:
+            i = first_no_box.get("frame_index")
+            lines.append(f"- First frame with NO detection: "
+                         f"`frames/frame_{i:06d}/`")
+        if not (first_with_box or first_no_box):
+            lines.append("- (no frames recorded)")
+
+        with open(os.path.join(debug_dir, "INDEX.md"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+    except Exception as e:
+        log.warning("debug-dump: INDEX.md failed: %s", e)
+
+
+def _draw_box(img: np.ndarray, box, color, thickness: int = 2,
+              label: str | None = None):
+    x1, y1, x2, y2 = (int(round(v)) for v in box)
+    cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
+    if label:
+        cv2.putText(img, label, (x1, max(0, y1 - 6)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 1, cv2.LINE_AA)
+
+
+def _dump_debug_frame(debug_dir: str | None,
+                      frame_index: int,
+                      frame_bgr: np.ndarray,
+                      res: dict,
+                      overlay_bgr: np.ndarray | None = None,
+                      source: str | None = None) -> None:
+    """
+    Per-frame artifacts:
+      frames/frame_NNNNNN/
+        input.png             — the input frame
+        detections.png        — input with all detector candidates
+                                drawn (chosen box highlighted)
+        detections.json       — every detector candidate (xyxy, score, label)
+                                + the chosen box + center prompt
+        sam_mask.png          — final binary mask (0/255)
+        overlay.png           — the high-level rendered overlay if provided
+        summary.json          — full per-frame metadata
+    """
+    if not debug_dir:
+        return
+    try:
+        fdir = os.path.join(debug_dir, "frames", f"frame_{frame_index:06d}")
+        os.makedirs(fdir, exist_ok=True)
+
+        cv2.imwrite(os.path.join(fdir, "input.png"), frame_bgr)
+
+        det_overlay = frame_bgr.copy()
+        dets_all = res.get("dets_all") or []
+        for i, (box, score, label) in enumerate(dets_all):
+            color = DEBUG_PALETTE[i % len(DEBUG_PALETTE)]
+            _draw_box(det_overlay, box, color, 1,
+                      f"{label} {score:.2f}")
+        chosen = res.get("gdino_box")
+        if chosen is not None:
+            _draw_box(det_overlay, chosen.astype(float), (0, 0, 255), 3,
+                      "CHOSEN")
+        center_pt = res.get("sam_center_pt")
+        if center_pt is not None:
+            cx, cy = int(round(center_pt[0])), int(round(center_pt[1]))
+            cv2.circle(det_overlay, (cx, cy), 6, (0, 255, 255), -1)
+        cv2.imwrite(os.path.join(fdir, "detections.png"), det_overlay)
+
+        det_meta = {
+            "frame_index": frame_index,
+            "source": source,
+            "detector_used": res.get("detector_used"),
+            "detection_was_skipped": res.get("detection_was_skipped"),
+            "candidates": [
+                {"box_xyxy": list(map(float, box)),
+                 "score": float(score),
+                 "label": label}
+                for (box, score, label) in dets_all
+            ],
+            "chosen_box_xyxy": (chosen.astype(float).tolist()
+                                if chosen is not None else None),
+            "sam_center_pt": (list(center_pt)
+                              if center_pt is not None else None),
+            "sam_score": res.get("sam_score"),
+            "similarity": (float(res["similarity"])
+                           if res.get("similarity") is not None else None),
+            "best_centroid": (list(map(int, res["best_centroid"]))
+                              if res.get("best_centroid") is not None
+                              else None),
+        }
+        with open(os.path.join(fdir, "detections.json"), "w") as f:
+            json.dump(det_meta, f, indent=2)
+
+        mask = res.get("mask_np")
+        if mask is not None:
+            cv2.imwrite(os.path.join(fdir, "sam_mask.png"), mask)
+            mask_area = int(np.count_nonzero(mask))
+        else:
+            mask_area = 0
+
+        if overlay_bgr is not None:
+            cv2.imwrite(os.path.join(fdir, "overlay.png"), overlay_bgr)
+
+        summary = dict(det_meta)
+        summary["mask_area_px"] = mask_area
+        summary["frame_shape"] = list(frame_bgr.shape)
+        with open(os.path.join(fdir, "summary.json"), "w") as f:
+            json.dump(summary, f, indent=2)
+
+    except Exception as e:
+        log.warning("debug-dump: frame %d failed: %s", frame_index, e)
+
+
 def _make_offline_streamer(ref_image_path: str | None) -> CameraStreamer:
     stop_event = threading.Event()
     streamer = CameraStreamer(
@@ -1862,7 +2140,9 @@ def _make_offline_streamer(ref_image_path: str | None) -> CameraStreamer:
 
 def _run_offline_frame(streamer: CameraStreamer, frame: np.ndarray,
                        frame_index: int, source: str, output_dir: str,
-                       jsonl_fh, save_overlays: bool = True) -> dict:
+                       jsonl_fh, save_overlays: bool = True,
+                       debug_dir: str | None = None,
+                       debug_every: int = 1) -> dict:
     start = time.time()
     res = run_pipeline(
         frame,
@@ -1875,11 +2155,16 @@ def _run_offline_frame(streamer: CameraStreamer, frame: np.ndarray,
     summary = _result_summary(
         res, frame.shape, streamer._tracker, frame_index, source, elapsed_s)
 
+    overlay = None
     if save_overlays:
         overlay = streamer._render(frame, res)
         overlay_path = os.path.join(output_dir, f"overlay_{frame_index:06d}.png")
         cv2.imwrite(overlay_path, overlay)
         summary["overlay_path"] = overlay_path
+
+    if debug_dir and (debug_every <= 1 or frame_index % debug_every == 0):
+        _dump_debug_frame(debug_dir, frame_index, frame, res,
+                          overlay_bgr=overlay, source=source)
 
     jsonl_fh.write(json.dumps(summary) + "\n")
     jsonl_fh.flush()
@@ -1905,52 +2190,64 @@ def run_offline(args) -> None:
     os.makedirs(output_dir, exist_ok=True)
     jsonl_path = os.path.join(output_dir, "frames.jsonl")
 
+    debug_dir = _init_debug_dir(args.debug_dir, args, args.ref_image)
+
     streamer = _make_offline_streamer(args.ref_image)
     summaries = []
+    debug_every = max(1, int(getattr(args, "debug_every", 1) or 1))
 
-    with open(jsonl_path, "w") as jsonl_fh:
-        if args.input_video:
-            cap = cv2.VideoCapture(args.input_video)
-            if not cap.isOpened():
-                raise RuntimeError(f"Could not open video: {args.input_video}")
-            frame_index = 0
-            while True:
-                if args.max_frames is not None and frame_index >= args.max_frames:
-                    break
-                ok, frame = cap.read()
-                if not ok:
-                    break
-                summaries.append(_run_offline_frame(
-                    streamer, frame, frame_index, args.input_video, output_dir,
-                    jsonl_fh, save_overlays=not args.no_overlays))
-                frame_index += 1
-            cap.release()
-        else:
-            for frame_index, path in enumerate(
-                    _iter_image_paths(args.input_image, args.input_dir)):
-                if args.max_frames is not None and frame_index >= args.max_frames:
-                    break
-                frame = cv2.imread(path)
-                if frame is None:
-                    log.warning("Skipping unreadable image: %s", path)
-                    continue
-                summaries.append(_run_offline_frame(
-                    streamer, frame, frame_index, path, output_dir,
-                    jsonl_fh, save_overlays=not args.no_overlays))
+    try:
+        with open(jsonl_path, "w") as jsonl_fh:
+            if args.input_video:
+                cap = cv2.VideoCapture(args.input_video)
+                if not cap.isOpened():
+                    raise RuntimeError(f"Could not open video: {args.input_video}")
+                frame_index = 0
+                while True:
+                    if args.max_frames is not None and frame_index >= args.max_frames:
+                        break
+                    ok, frame = cap.read()
+                    if not ok:
+                        break
+                    summaries.append(_run_offline_frame(
+                        streamer, frame, frame_index, args.input_video, output_dir,
+                        jsonl_fh, save_overlays=not args.no_overlays,
+                        debug_dir=debug_dir, debug_every=debug_every))
+                    frame_index += 1
+                cap.release()
+            else:
+                for frame_index, path in enumerate(
+                        _iter_image_paths(args.input_image, args.input_dir)):
+                    if args.max_frames is not None and frame_index >= args.max_frames:
+                        break
+                    frame = cv2.imread(path)
+                    if frame is None:
+                        log.warning("Skipping unreadable image: %s", path)
+                        continue
+                    summaries.append(_run_offline_frame(
+                        streamer, frame, frame_index, path, output_dir,
+                        jsonl_fh, save_overlays=not args.no_overlays,
+                        debug_dir=debug_dir, debug_every=debug_every))
 
-    summary_path = os.path.join(output_dir, "summary.json")
-    success_count = sum(1 for s in summaries if s.get("centroid") is not None)
-    with open(summary_path, "w") as f:
-        json.dump({
-            "frames": len(summaries),
-            "frames_with_centroid": success_count,
-            "output_dir": output_dir,
-            "jsonl_path": jsonl_path,
-        }, f, indent=2)
+        summary_path = os.path.join(output_dir, "summary.json")
+        success_count = sum(1 for s in summaries if s.get("centroid") is not None)
+        with open(summary_path, "w") as f:
+            json.dump({
+                "frames": len(summaries),
+                "frames_with_centroid": success_count,
+                "output_dir": output_dir,
+                "jsonl_path": jsonl_path,
+                "debug_dir": debug_dir,
+            }, f, indent=2)
 
-    log.info("Offline run complete: %d frame(s), %d with centroid",
-             len(summaries), success_count)
-    log.info("Offline outputs: %s", os.path.abspath(output_dir))
+        log.info("Offline run complete: %d frame(s), %d with centroid",
+                 len(summaries), success_count)
+        log.info("Offline outputs: %s", os.path.abspath(output_dir))
+
+        if debug_dir:
+            _write_debug_index(debug_dir, summaries, args, source="offline")
+    finally:
+        _finalize_debug_dir(debug_dir)
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -1994,7 +2291,18 @@ if __name__ == "__main__":
                         help=f"Text prompt for the detector (default: '{PROMPT}')")
     parser.add_argument("--log-dir", default="logs",
                         help="Directory for log files (default: logs)")
+    parser.add_argument("--debug", action="store_true",
+                        help="Per-frame debug dump under artifacts/. "
+                             "Saves input frame, all detector candidates, "
+                             "chosen box, SAM2 mask, overlay, and the full "
+                             "log file. Offline: every frame. Live: every "
+                             "30th frame. Push artifacts/debug_<ts>/ to "
+                             "share results.")
     args = parser.parse_args()
+
+    args.debug_dir = "artifacts" if args.debug else None
+    args.debug_every = 1 if (args.input_image or args.input_dir
+                              or args.input_video) else 30
 
     log = _setup_logger(log_dir=args.log_dir)
 
@@ -2045,6 +2353,8 @@ if __name__ == "__main__":
     else:
         robot.connect()
 
+    debug_dir = _init_debug_dir(args.debug_dir, args, args.ref_image)
+
     stop_ev    = threading.Event()
     cam_thread = CameraStreamer(
         cam_index      = args.cam_index,
@@ -2052,6 +2362,8 @@ if __name__ == "__main__":
         robot          = robot,
         ref_image_path = args.ref_image,
         use_pyzed      = not args.no_pyzed,
+        debug_dir      = debug_dir,
+        debug_every    = max(1, int(getattr(args, "debug_every", 30) or 30)),
     )
     cam_thread.start()
 
@@ -2063,4 +2375,5 @@ if __name__ == "__main__":
         robot.stop()
         stop_ev.set()
         cam_thread.join(timeout=2)
+        _finalize_debug_dir(debug_dir)
         log.info("Done.")
