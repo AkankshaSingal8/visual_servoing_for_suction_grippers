@@ -102,8 +102,6 @@ PROMPT = "box"
 # ── Detector selection ────────────────────────────────────────────────
 DETECTOR = os.environ.get("DETECTOR", "gdino").lower()
 
-GDINO_CONFIG  = os.path.join(THIRD_PARTY_ROOT, "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
-GDINO_WEIGHTS = os.path.join(THIRD_PARTY_ROOT, "GroundingDINO/weights/groundingdino_swint_ogc.pth")
 SAM2_CONFIG   = "configs/sam2.1/sam2.1_hiera_l.yaml"
 SAM2_CKPT     = os.path.join(THIRD_PARTY_ROOT, "sam2/checkpoints/sam2.1_hiera_large.pt")
 DA_CKPT_DIR   = os.path.join(THIRD_PARTY_ROOT, "Depth-Anything-V2/checkpoints")
@@ -527,8 +525,11 @@ class MaskTracker:
 #  Model singletons
 # ═════════════════════════════════════════════════════════════════════
 
+_gdino_processor = None
 _gdino_model     = None
 _gdino_failed    = False
+GDINO_HF_MODEL_ID = os.environ.get("GDINO_HF_MODEL_ID",
+                                   "IDEA-Research/grounding-dino-tiny")
 _owlv2_processor = None
 _owlv2_model     = None
 _owlv2_failed    = False
@@ -536,56 +537,34 @@ _sam2_pred       = None
 _depth_model     = None
 
 
-def _patch_bert_compat():
-    try:
-        import torch as _t
-        from transformers import BertModel
-        from transformers.modeling_utils import PreTrainedModel
-
-        if not hasattr(PreTrainedModel, "get_head_mask"):
-            def _ghm(self, head_mask, n, chunked=False):
-                if head_mask is not None:
-                    hm = head_mask.unsqueeze(0).unsqueeze(0).unsqueeze(-1).unsqueeze(-1)
-                    hm = hm.expand(n, -1, -1, -1, -1)
-                    if chunked:
-                        hm = hm.unsqueeze(-1)
-                    return hm
-                return [None] * n
-            PreTrainedModel.get_head_mask = _ghm
-
-        _orig_geam = getattr(PreTrainedModel, "get_extended_attention_mask")
-        if not getattr(_orig_geam, "_gdino_patched", False):
-            def _geam(self, attention_mask, input_shape, dev_or_dtype=None, dtype=None):
-                if isinstance(dev_or_dtype, _t.device):
-                    dev_or_dtype = None
-                try:
-                    return _orig_geam(self, attention_mask, input_shape, dev_or_dtype)
-                except TypeError:
-                    return _orig_geam(self, attention_mask, input_shape)
-            _geam._gdino_patched = True
-            PreTrainedModel.get_extended_attention_mask = _geam
-            BertModel.get_extended_attention_mask = _geam
-
-        log.debug("BERT compat patch applied")
-    except Exception as e:
-        log.warning("BERT compat patch failed: %s", e)
-        import traceback; traceback.print_exc()
-
-
 def _get_gdino():
-    global _gdino_model, _gdino_failed
+    """
+    Load GroundingDINO via HuggingFace transformers (pure PyTorch, no
+    compiled CUDA extension required). Falls back to None on any error
+    so the caller can degrade gracefully.
+
+    Switch model with: GDINO_HF_MODEL_ID env var
+      "IDEA-Research/grounding-dino-tiny" (default, ~110M)
+      "IDEA-Research/grounding-dino-base" (~230M)
+    """
+    global _gdino_processor, _gdino_model, _gdino_failed
     if _gdino_failed:
-        return None
+        return None, None
     if _gdino_model is None:
         try:
-            _patch_bert_compat()
-            sys.path.insert(0, os.path.join(THIRD_PARTY_ROOT, "GroundingDINO"))
-            from groundingdino.util.inference import load_model
-            _gdino_model = load_model(GDINO_CONFIG, GDINO_WEIGHTS, device=_device())
+            from transformers import (AutoProcessor,
+                                      AutoModelForZeroShotObjectDetection)
+            _gdino_processor = AutoProcessor.from_pretrained(GDINO_HF_MODEL_ID)
+            _gdino_model = (AutoModelForZeroShotObjectDetection
+                            .from_pretrained(GDINO_HF_MODEL_ID)
+                            .to(_device()).eval())
+            log.info("GroundingDINO (HF) loaded: %s on %s",
+                     GDINO_HF_MODEL_ID, _device())
         except Exception as e:
-            log.error("GroundingDINO load failed (won't retry): %s", e)
+            log.error("GroundingDINO (HF) load failed (won't retry): %s", e)
             _gdino_failed = True
-    return _gdino_model
+            return None, None
+    return _gdino_processor, _gdino_model
 
 
 def _get_owlv2():
@@ -773,59 +752,72 @@ def process_ref_image(ref_bgr: np.ndarray, prompt: str):
 
 def _detect_gdino(image_bgr: np.ndarray, prompt: str):
     """
-    GroundingDINO open-vocabulary detection.
+    GroundingDINO open-vocabulary detection via HuggingFace transformers.
+    Pure PyTorch, no compiled CUDA extension (avoids the IDEA-Research
+    `name '_C' is not defined` failure).
 
-    Prompt is auto-expanded with synonym anchors when it is the bare default
-    "box": GDINO performs better on multi-class period-separated captions
-    than on a single ambiguous noun, per HF docs and the GDINO inference
-    notebook. If the first call returns zero detections at the default
-    thresholds (HF defaults: box=0.25, text=0.25), retry once with
-    permissive thresholds (0.18 / 0.18) before giving up.
+    Prompt is auto-expanded with synonym labels when it is the bare default
+    "box": HF docs explicitly recommend period-separated multi-class lists
+    for stronger detection on ambiguous nouns. If the first call returns
+    zero detections at the default thresholds (0.25 / 0.25), retry once
+    with permissive thresholds (0.18 / 0.18) before giving up.
     """
-    gdino = _get_gdino()
-    if gdino is None:
+    processor, model = _get_gdino()
+    if model is None:
         return []
 
-    caption = prompt.strip()
-    if caption.lower() in {"box", "box."}:
-        caption = "box . cardboard box . package . carton . parcel"
+    caption_raw = prompt.strip()
+    if caption_raw.lower() in {"box", "box."}:
+        text_labels = [["box", "cardboard box", "package", "carton", "parcel"]]
+    else:
+        # Allow caller to pass either "a . b . c ." style or a single noun.
+        parts = [p.strip() for p in caption_raw.replace(".", "\n").splitlines()
+                 if p.strip()]
+        text_labels = [parts] if parts else [[caption_raw]]
 
     try:
-        sys.path.insert(0, os.path.join(THIRD_PARTY_ROOT, "GroundingDINO"))
-        from groundingdino.util.inference import load_image, predict as gd_predict
-        from torchvision.ops import box_convert
         import torch as _t
+        from PIL import Image
 
-        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-        cv2.imwrite(tmp.name, image_bgr)
-        tmp.close()
-        try:
-            _, img_t = load_image(tmp.name)
+        rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+        pil = Image.fromarray(rgb)
+        h, w = image_bgr.shape[:2]
 
-            def _run(box_thr: float, text_thr: float):
-                return gd_predict(gdino, img_t, caption=caption,
-                                  box_threshold=box_thr,
-                                  text_threshold=text_thr,
-                                  device=_device())
+        inputs = processor(images=pil, text=text_labels,
+                           return_tensors="pt").to(_device())
+        with _t.no_grad():
+            outputs = model(**inputs)
 
-            boxes, logits, phrases = _run(0.25, 0.25)
-            if boxes is None or len(boxes) == 0:
-                log.info("GDINO: empty at 0.25/0.25, retrying at 0.18/0.18")
-                boxes, logits, phrases = _run(0.18, 0.18)
+        def _post(threshold: float, text_threshold: float):
+            return processor.post_process_grounded_object_detection(
+                outputs,
+                input_ids=inputs["input_ids"],
+                threshold=threshold,
+                text_threshold=text_threshold,
+                target_sizes=[(h, w)])[0]
 
-            if boxes is None or len(boxes) == 0:
-                log.warning("GDINO: no detections for caption %r", caption)
-                return []
+        result = _post(0.25, 0.25)
+        if len(result["boxes"]) == 0:
+            log.info("GDINO: empty at 0.25/0.25, retrying at 0.18/0.18")
+            result = _post(0.18, 0.18)
 
-            h, w  = image_bgr.shape[:2]
-            bxyxy = (box_convert(boxes, "cxcywh", "xyxy")
-                     * _t.tensor([w, h, w, h], dtype=_t.float32)).numpy()
-            dets  = [(bxyxy[i], float(logits[i]), phrases[i])
-                     for i in range(len(boxes))]
-            log.info("GDINO: %d detection(s) for %r", len(dets), caption)
-            return dets
-        finally:
-            os.unlink(tmp.name)
+        boxes  = result["boxes"].cpu().numpy()
+        scores = result["scores"].cpu().numpy()
+        labels = (result.get("text_labels")
+                  or result.get("labels")
+                  or [""] * len(boxes))
+        labels = [str(label) for label in labels]
+
+        if len(boxes) == 0:
+            log.warning("GDINO: no detections for labels %s", text_labels[0])
+            return []
+
+        dets = [(boxes[i].astype(np.float32),
+                 float(scores[i]),
+                 labels[i] if i < len(labels) else "")
+                for i in range(len(boxes))]
+        log.info("GDINO: %d detection(s) for %s", len(dets), text_labels[0])
+        return dets
     except Exception as e:
         import traceback
         log.error("GroundingDINO failed: %s", e)
