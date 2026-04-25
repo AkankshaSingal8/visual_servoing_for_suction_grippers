@@ -541,6 +541,15 @@ def _get_sam3():
     Override the model with: SAM3_HF_MODEL_ID env var
       "facebook/sam3"   (default)
       "facebook/sam3.1"
+
+    NOTE: facebook/sam3 and facebook/sam3.1 are GATED repos. You must:
+      1. Visit https://huggingface.co/facebook/sam3 and accept the
+         license ("Agree and access repository").
+      2. Authenticate locally:
+           pip install -U "huggingface_hub[cli]"
+           huggingface-cli login   # paste an HF token
+         or set HF_TOKEN in the environment.
+    Without this, the from_pretrained call returns 401 Client Error.
     """
     global _sam3_processor, _sam3_model, _sam3_failed
     if _sam3_failed:
@@ -555,7 +564,17 @@ def _get_sam3():
             log.info("SAM3 loaded: %s on %s",
                      SAM3_HF_MODEL_ID, _device())
         except Exception as e:
+            msg = str(e)
             log.error("SAM3 load failed (won't retry): %s", e)
+            if ("gated" in msg.lower() or "401" in msg
+                    or "restricted" in msg.lower()):
+                log.error(
+                    "SAM3 hint: '%s' is a gated HuggingFace repo. "
+                    "1) Accept the license at "
+                    "https://huggingface.co/%s  "
+                    "2) Run `huggingface-cli login` (or set HF_TOKEN). "
+                    "Then re-run the pipeline.",
+                    SAM3_HF_MODEL_ID, SAM3_HF_MODEL_ID)
             _sam3_failed = True
             return None, None
     return _sam3_processor, _sam3_model
@@ -785,6 +804,9 @@ def _sam3_run(image_bgr: np.ndarray,
         return None
 
 
+_sam3_unavailable_warned = False
+
+
 def _detect_sam3(image_bgr: np.ndarray, prompt: str,
                  prior_box_xyxy: np.ndarray | None = None):
     """
@@ -795,9 +817,21 @@ def _detect_sam3(image_bgr: np.ndarray, prompt: str,
 
     Includes a permissive-threshold retry if the first pass returns
     nothing, mirroring the GDINO 0.25 -> 0.18 fallback in the original.
+
+    Short-circuits silently after the first per-frame call once SAM3 has
+    permanently failed to load (e.g. gated-repo 401), so the log doesn't
+    spam "empty / retrying / no detections" on every frame.
     """
+    global _sam3_unavailable_warned
     caption = (prompt or "box").strip() or "box"
     h, w = image_bgr.shape[:2]
+
+    if _sam3_failed:
+        if not _sam3_unavailable_warned:
+            log.warning("SAM3 unavailable for this run (load failed). "
+                        "Returning no detections; per-frame retries silenced.")
+            _sam3_unavailable_warned = True
+        return [], []
 
     results = _sam3_run(image_bgr, caption, prior_box_xyxy=prior_box_xyxy)
 
@@ -807,6 +841,10 @@ def _detect_sam3(image_bgr: np.ndarray, prompt: str,
                 or len(r["masks"]) == 0)
 
     if _empty(results):
+        # If the first call failed because the model just got marked as
+        # permanently unavailable, don't run the retry pass.
+        if _sam3_failed:
+            return [], []
         log.info("SAM3: empty at %.2f/%.2f, retrying at %.2f/%.2f",
                  SAM3_SCORE_THRESH, SAM3_MASK_THRESH,
                  SAM3_SCORE_THRESH_LO, SAM3_MASK_THRESH_LO)
