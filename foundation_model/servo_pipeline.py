@@ -771,9 +771,24 @@ def process_ref_image(ref_bgr: np.ndarray, prompt: str):
 # ═════════════════════════════════════════════════════════════════════
 
 def _detect_gdino(image_bgr: np.ndarray, prompt: str):
+    """
+    GroundingDINO open-vocabulary detection.
+
+    Prompt is auto-expanded with synonym anchors when it is the bare default
+    "box": GDINO performs better on multi-class period-separated captions
+    than on a single ambiguous noun, per HF docs and the GDINO inference
+    notebook. If the first call returns zero detections at the default
+    thresholds (HF defaults: box=0.25, text=0.25), retry once with
+    permissive thresholds (0.18 / 0.18) before giving up.
+    """
     gdino = _get_gdino()
     if gdino is None:
         return []
+
+    caption = prompt.strip()
+    if caption.lower() in {"box", "box."}:
+        caption = "box . cardboard box . package . carton . parcel"
+
     try:
         sys.path.insert(0, os.path.join(THIRD_PARTY_ROOT, "GroundingDINO"))
         from groundingdino.util.inference import load_image, predict as gd_predict
@@ -785,18 +800,28 @@ def _detect_gdino(image_bgr: np.ndarray, prompt: str):
         tmp.close()
         try:
             _, img_t = load_image(tmp.name)
-            boxes, logits, phrases = gd_predict(
-                gdino, img_t, caption=prompt,
-                box_threshold=0.3, text_threshold=0.25, device=_device())
+
+            def _run(box_thr: float, text_thr: float):
+                return gd_predict(gdino, img_t, caption=caption,
+                                  box_threshold=box_thr,
+                                  text_threshold=text_thr,
+                                  device=_device())
+
+            boxes, logits, phrases = _run(0.25, 0.25)
             if boxes is None or len(boxes) == 0:
-                log.debug("GDINO: no boxes")
+                log.info("GDINO: empty at 0.25/0.25, retrying at 0.18/0.18")
+                boxes, logits, phrases = _run(0.18, 0.18)
+
+            if boxes is None or len(boxes) == 0:
+                log.warning("GDINO: no detections for caption %r", caption)
                 return []
+
             h, w  = image_bgr.shape[:2]
             bxyxy = (box_convert(boxes, "cxcywh", "xyxy")
                      * _t.tensor([w, h, w, h], dtype=_t.float32)).numpy()
             dets  = [(bxyxy[i], float(logits[i]), phrases[i])
                      for i in range(len(boxes))]
-            log.info("GDINO: %d detection(s)", len(dets))
+            log.info("GDINO: %d detection(s) for %r", len(dets), caption)
             return dets
         finally:
             os.unlink(tmp.name)
@@ -808,6 +833,10 @@ def _detect_gdino(image_bgr: np.ndarray, prompt: str):
 
 
 def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
+    """
+    OWLv2 text-prompted detection. Prompt is auto-expanded with synonym
+    anchors when it is the bare default "box".
+    """
     processor, model = _get_owlv2()
     if model is None:
         return []
@@ -818,7 +847,11 @@ def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
         rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         pil = Image.fromarray(rgb)
 
-        texts  = [[prompt]]
+        if prompt.strip().lower() in {"box", "box."}:
+            texts = [["a box", "a cardboard box", "a package", "a carton"]]
+        else:
+            texts = [[prompt]]
+
         inputs = processor(text=texts, images=pil,
                            return_tensors="pt").to(_device())
 
@@ -839,11 +872,11 @@ def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
         boxes  = results["boxes"].cpu().numpy()
         scores = results["scores"].cpu().numpy()
         if len(boxes) == 0:
-            log.debug("OWLv2: no boxes")
+            log.warning("OWLv2: no detections for %s", texts[0])
             return []
 
         dets = [(boxes[i], float(scores[i]), prompt) for i in range(len(boxes))]
-        log.info("OWLv2: %d detection(s)", len(dets))
+        log.info("OWLv2: %d detection(s) for %s", len(dets), texts[0])
         return dets
 
     except Exception as e:
@@ -1095,7 +1128,9 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
             log.error("SAM2 failed: %s", e)
             traceback.print_exc()
     else:
-        log.warning("Detector returned no box — skipping SAM2 this frame")
+        log.warning("Detector returned no box and no prior tracker box; "
+                    "skipping SAM2 this frame. Try a more descriptive "
+                    "--prompt, lower thresholds, or DETECTOR=owlv2.")
 
     # ── Step 3: Depth ─────────────────────────────────────────────────
     dm = _get_depth_model()
