@@ -3,32 +3,128 @@
 SemVS – Semantic Visual Servoing
 Updated: image-conditioned detection, stable-anchor mask propagation,
          PyZED camera + SVO recording, ≥512 px annotated video.
+
+Changes from baseline:
+  • Transparent / black-background reference image support
+  • All print() → structured logging (file + console)
+  • Reference-image logits are used only on the reference image, not as live
+    frame mask_input
+  • Phase 2: Bootstrap multi-point grid on first N frames
+  • Phase 5: Ref-aware multi-mask selection (IoU + similarity scoring)
+  • Phase 3: Ref-aspect-ratio box splitting for stacked-box scenarios
+  • Phase 4: Adaptive coverage threshold from ref mask fill ratio
+
+Correct usage:
+  1. Offline single-image smoke test, no robot:
+       python foundation_model/servo_pipeline.py \
+         --ref-image foundation_model/input_image_transparent.png \
+         --ref-mask-mode auto \
+         --input-image foundation_model/zed_input.png \
+         --output-dir runs/offline_smoke
+
+  2. Offline video or directory evaluation, no robot:
+       python foundation_model/servo_pipeline.py \
+         --ref-image path/to/target_box_reference.png \
+         --ref-mask-mode auto \
+         --input-video path/to/zed_video.mp4 \
+         --output-dir runs/offline_video
+
+       python foundation_model/servo_pipeline.py \
+         --ref-image path/to/target_box_reference.png \
+         --ref-mask-mode auto \
+         --input-dir path/to/image_frames \
+         --output-dir runs/offline_frames
+
+  3. Live camera, perception only:
+       python foundation_model/servo_pipeline.py \
+         --ref-image path/to/target_box_reference.png \
+         --ref-mask-mode auto \
+         --dry-run
+
+  4. Live camera and robot:
+       python foundation_model/servo_pipeline.py \
+         --ref-image path/to/target_box_reference.png \
+         --ref-mask-mode auto
+
+Reference-mask modes:
+  • auto: recommended for cropped product/box references. Generic cropped
+    references are treated as the full target box so SAM does not prefer
+    printed package art such as a protein-bar image on the box.
+  • full: force the entire reference image to be the target mask.
+  • foreground: force Otsu foreground extraction. Use only when the reference
+    image has a clean foreground/background separation.
+
+Important SAM note:
+  SAM mask_input is a spatial prior in the current image, not an identity prompt.
+  Do not reuse reference-image logits as live-frame mask_input; this can make SAM
+  select printed sub-objects on packaging instead of the full box.
 """
-import logging
 import time
 import sys
 import threading
 import os
 import tempfile
+import logging
+import json
 
 import cv2
 import numpy as np
 
-logger = logging.getLogger(__name__)
-if not logger.handlers:
-    _handler = logging.StreamHandler()
-    _handler.setFormatter(logging.Formatter(
-        "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        datefmt="%H:%M:%S"))
-    logger.addHandler(_handler)
-    logger.setLevel(logging.DEBUG)
+# ═════════════════════════════════════════════════════════════════════
+#  Logging setup
+# ═════════════════════════════════════════════════════════════════════
+
+def _setup_logger(name: str = "semvs",
+                  log_dir: str = "logs",
+                  level: int = logging.DEBUG) -> logging.Logger:
+    """
+    Create a logger that writes to both console (INFO+) and a
+    timestamped log file (DEBUG+).
+    """
+    os.makedirs(log_dir, exist_ok=True)
+    ts       = time.strftime("%Y%m%d_%H%M%S")
+    log_path = os.path.join(log_dir, f"semvs_{ts}.log")
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.handlers.clear()
+
+    fmt = logging.Formatter(
+        "%(asctime)s [%(levelname)-5s] %(message)s",
+        datefmt="%H:%M:%S",
+    )
+
+    # Console handler (INFO and above)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(fmt)
+    logger.addHandler(ch)
+
+    # File handler (DEBUG and above)
+    fh = logging.FileHandler(log_path, mode="w")
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(logging.Formatter(
+        "%(asctime)s.%(msecs)03d [%(levelname)-5s] %(message)s",
+        datefmt="%H:%M:%S",
+    ))
+    logger.addHandler(fh)
+
+    logger.info(f"Logging to {os.path.abspath(log_path)}")
+    return logger
+
+log = logging.getLogger("semvs")
+log.addHandler(logging.NullHandler())
+
+# ═════════════════════════════════════════════════════════════════════
+#  Configuration
+# ═════════════════════════════════════════════════════════════════════
 
 THIRD_PARTY_ROOT = os.path.join(os.path.dirname(__file__), "third-party")
 
 PROMPT = "box"
 
 # ── Detector selection ────────────────────────────────────────────────
-DETECTOR = os.environ.get("DETECTOR", "gdino").lower()   # override via env var
+DETECTOR = os.environ.get("DETECTOR", "gdino").lower()
 
 GDINO_CONFIG  = os.path.join(THIRD_PARTY_ROOT, "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
 GDINO_WEIGHTS = os.path.join(THIRD_PARTY_ROOT, "GroundingDINO/weights/groundingdino_swint_ogc.pth")
@@ -52,24 +148,33 @@ CAL_DELTA    = 8.0
 CAL_WAIT     = 1.5
 
 # ── Robot safety limits ──────────────────────────────────────────────
-MIN_Z_MM     = 0.0      # minimum Z height (mm) — base level; prevents
-                         # the arm from commanding poses below its base
+MIN_Z_MM     = 0.0
 
 # ── Mask propagation / tracking parameters ───────────────────────────
-TRACKER_WARMUP_FRAMES = 10       # frames before negative prompting kicks in
-TRACKER_MAX_HISTORY   = 15       # mask history buffer size
-NEG_POINT_COUNT       = 5        # number of negative sample points
-NEG_POINT_MARGIN_PX   = 30       # erosion margin for safe negative zone
-REDETECT_INTERVAL     = 30       # re-run detector every N frames
-IOU_DRIFT_THRESH      = 0.35     # reset tracker when mask IoU drops below this
+TRACKER_WARMUP_FRAMES = 10
+TRACKER_MAX_HISTORY   = 15
+NEG_POINT_COUNT       = 5
+NEG_POINT_MARGIN_PX   = 30
+REDETECT_INTERVAL     = 30
+IOU_DRIFT_THRESH      = 0.35
 
 # ── Anchor / stable-mask parameters ──────────────────────────────────
-ANCHOR_IOU_THRESH  = 0.82   # inter-frame IoU required to count as "stable"
-ANCHOR_LOCK_FRAMES = 5      # consecutive stable frames before locking anchor
+ANCHOR_IOU_THRESH  = 0.82
+ANCHOR_LOCK_FRAMES = 5
+
+# ── Bootstrap parameters (Phase 2) ───────────────────────────────────
+BOOTSTRAP_GRID_ROWS  = 3       # grid rows inside detected box during bootstrap
+BOOTSTRAP_GRID_COLS  = 3       # grid cols inside detected box during bootstrap
 
 # ── Video recording ───────────────────────────────────────────────────
-MIN_RECORDING_DIM = 512     # minimum pixel dimension of the recorded video
-ZED_RESOLUTION    = "HD720" # PyZED resolution (HD720 = 1280×720)
+MIN_RECORDING_DIM = 512
+ZED_RESOLUTION    = "HD720"
+
+# ── Reference image foreground detection ──────────────────────────────
+REF_BG_DARK_THRESH  = 15       # pixel intensity below this = background
+REF_BG_BORDER_CHECK = 20       # border strip width to auto-detect black bg
+REF_ALPHA_THRESH    = 128      # alpha channel threshold for foreground
+REF_MASK_MODE       = "auto"   # auto | full | foreground
 
 # ── ZED calibration for lens undistortion (OpenCV path) ───────────────
 ZED_SETTINGS_DIRS = [
@@ -80,18 +185,7 @@ ZED_SETTINGS_DIRS = [
 def _load_zed_calibration(resolution: str = "HD"):
     """
     Load ZED camera intrinsics + distortion coefficients from the factory
-    calibration file on disk.  Picks the most recently modified SN*.conf
-    file (likely the connected camera).
-
-    Parameters
-    ----------
-    resolution : "2K", "FHD", "HD", or "VGA"
-
-    Returns
-    -------
-    camera_matrix : np.ndarray (3,3) or None
-    dist_coeffs   : np.ndarray (4,) [k1, k2, p1, p2] or None
-    image_size    : (width, height) or None
+    calibration file on disk.
     """
     import glob, configparser
 
@@ -101,7 +195,6 @@ def _load_zed_calibration(resolution: str = "HD"):
     if not conf_files:
         return None, None, None
 
-    # Pick the most recently modified file (likely the active camera)
     conf_files.sort(key=os.path.getmtime, reverse=True)
     conf_path = conf_files[0]
 
@@ -110,7 +203,7 @@ def _load_zed_calibration(resolution: str = "HD"):
 
     section = f"LEFT_CAM_{resolution}"
     if section not in cp:
-        logger.info(f"ZED cal: section [{section}] not found in {conf_path}")
+        log.warning("ZED cal: section [%s] not found in %s", section, conf_path)
         return None, None, None
 
     fx = float(cp[section]["fx"])
@@ -119,7 +212,6 @@ def _load_zed_calibration(resolution: str = "HD"):
     cy = float(cp[section]["cy"])
     k1 = float(cp[section]["k1"])
     k2 = float(cp[section]["k2"])
-    # ZED conf stores: k1, k2, k3(=p1), k4(=p2)
     p1 = float(cp[section].get("k3", "0"))
     p2 = float(cp[section].get("k4", "0"))
 
@@ -133,16 +225,14 @@ def _load_zed_calibration(resolution: str = "HD"):
     img_size = res_map.get(resolution, (1280, 720))
 
     sn = os.path.splitext(os.path.basename(conf_path))[0]
-    logger.info(f"ZED cal: loaded {sn} [{section}]  fx={fx:.1f} fy={fy:.1f} "
-          f"cx={cx:.1f} cy={cy:.1f}  dist=[{k1:.4f},{k2:.4f},{p1:.4f},{p2:.4f}]")
+    log.info("ZED cal: loaded %s [%s]  fx=%.1f fy=%.1f cx=%.1f cy=%.1f  "
+             "dist=[%.4f,%.4f,%.4f,%.4f]",
+             sn, section, fx, fy, cx, cy, k1, k2, p1, p2)
     return K, D, img_size
 
 
 class ZedUndistorter:
-    """
-    Pre-computes undistortion maps from ZED factory calibration and
-    applies them to raw UVC frames.  No-op if calibration is unavailable.
-    """
+    """Pre-computes undistortion maps from ZED factory calibration."""
 
     def __init__(self, resolution: str = "HD"):
         self._map1 = None
@@ -150,18 +240,16 @@ class ZedUndistorter:
         self._new_K = None
         K, D, img_size = _load_zed_calibration(resolution)
         if K is None:
-            logger.info("ZED undistortion: calibration not found — frames will NOT "
-                  "be undistorted")
+            log.warning("ZED undistortion: calibration not found — frames will "
+                        "NOT be undistorted")
             return
 
         w, h = img_size
-        # Compute optimal new camera matrix (alpha=0 → crop black edges,
-        # alpha=1 → keep all pixels).  alpha=0 is cleaner for servo.
         new_K, roi = cv2.getOptimalNewCameraMatrix(K, D, (w, h), alpha=0)
         self._map1, self._map2 = cv2.initUndistortRectifyMap(
             K, D, None, new_K, (w, h), cv2.CV_16SC2)
         self._new_K = new_K
-        logger.info(f"ZED undistortion: maps ready ({w}×{h})")
+        log.info("ZED undistortion: maps ready (%d×%d)", w, h)
 
     @property
     def available(self) -> bool:
@@ -169,8 +257,6 @@ class ZedUndistorter:
 
     @classmethod
     def from_frame_size(cls, width: int, height: int) -> "ZedUndistorter":
-        """Create an undistorter by matching actual frame dimensions to the
-        calibration section, removing the need for a hardcoded resolution map."""
         _size_to_res = {
             (2208, 1242): "2K",
             (1920, 1080): "FHD",
@@ -179,8 +265,8 @@ class ZedUndistorter:
         }
         res = _size_to_res.get((width, height))
         if res is None:
-            logger.info(f"ZedUndistorter: no calibration section for {width}×{height} "
-                  f"— trying closest match")
+            log.debug("ZedUndistorter: no calibration section for %d×%d "
+                      "— trying closest match", width, height)
             best, best_diff = "HD", float("inf")
             for (w, h), r in _size_to_res.items():
                 diff = abs(w - width) + abs(h - height)
@@ -195,7 +281,6 @@ class ZedUndistorter:
         h, w = frame.shape[:2]
         mh, mw = self._map1.shape[:2]
         if (h, w) != (mh, mw):
-            # Resolution mismatch — skip rather than crash
             return frame
         return cv2.remap(frame, self._map1, self._map2,
                          interpolation=cv2.INTER_LINEAR)
@@ -205,17 +290,23 @@ class ZedUndistorter:
 try:
     import pyzed.sl as sl
     PYZED_AVAILABLE = True
-    logger.info("PyZED available — will use ZED SDK for capture and SVO recording")
+    log.info("PyZED available — will use ZED SDK for capture and SVO recording")
 except ImportError:
     sl               = None
     PYZED_AVAILABLE  = False
 
-try:
-    import torch
-    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-except Exception:
-    torch  = None
-    DEVICE = "cpu"
+DEVICE = os.environ.get("DEVICE")
+
+
+def _device() -> str:
+    global DEVICE
+    if DEVICE is None:
+        try:
+            import torch as _t
+            DEVICE = "cuda" if _t.cuda.is_available() else "cpu"
+        except Exception:
+            DEVICE = "cpu"
+    return DEVICE
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -316,13 +407,8 @@ class MaskTracker:
     """
     Maintains inter-frame state for stable SAM2 mask propagation.
 
-    Key additions over the basic tracker:
-    * ``anchor_logits`` / ``anchor_mask`` — a locked "best known" mask that
-      is reused as SAM2 mask_input whenever the live track is unavailable or
-      has drifted.  The anchor is set once ANCHOR_LOCK_FRAMES consecutive
-      frames each show inter-frame IoU ≥ ANCHOR_IOU_THRESH.
-    * ``reset(keep_anchor)`` — soft reset that retains the anchor so the
-      tracker re-locks faster after a disturbance.
+    Live anchors are created only from live-frame masks.  Reference-image masks
+    are used for expected shape/fill scoring, not as spatial tracker anchors.
     """
 
     def __init__(self):
@@ -335,12 +421,28 @@ class MaskTracker:
         # Stable-anchor fields
         self.anchor_logits:  np.ndarray | None = None
         self.anchor_mask:    np.ndarray | None = None
-        self._iou_streak:    int               = 0   # consecutive stable frames
+        self._iou_streak:    int               = 0
         self._last_iou:      float             = 1.0
+
+        # Track whether a live anchor has been established.
+        self._anchor_source: str | None        = None  # currently "live"
+
+    # ── Compatibility no-op for old reference-anchor flow ────────────
+    def seed_from_ref(self, ref_logits: np.ndarray | None,
+                      ref_mask: np.ndarray | None):
+        """
+        Reference logits are not a valid live-frame mask prior: SAM2 mask_input
+        is spatial, not object-identity conditioning.  Keep this method as a
+        compatibility no-op so older callers do not accidentally anchor the
+        tracker to reference-image coordinates.
+        """
+        if ref_logits is not None or ref_mask is not None:
+            log.info("MaskTracker: reference mask loaded; live anchor will be "
+                     "created only from live frames")
 
     # ── housekeeping ─────────────────────────────────────────────────
     def reset(self, keep_anchor: bool = True):
-        """Reset live tracking state.  Optionally keep the anchor for warm re-start."""
+        """Reset live tracking state.  Optionally keep the anchor."""
         self.prev_logits    = None
         self.prev_mask      = None
         self.prev_centroid  = None
@@ -349,13 +451,13 @@ class MaskTracker:
         self._iou_streak    = 0
         self._last_iou      = 1.0
         if not keep_anchor:
-            self.anchor_logits = None
-            self.anchor_mask   = None
+            self.anchor_logits  = None
+            self.anchor_mask    = None
+            self._anchor_source = None
 
     def update(self, mask_np: np.ndarray | None,
                logits: np.ndarray | None,
                centroid: tuple | None):
-        # Track inter-frame IoU for anchor locking
         if mask_np is not None and self.prev_mask is not None:
             iou = _mask_iou(mask_np, self.prev_mask)
             self._last_iou = iou
@@ -381,14 +483,22 @@ class MaskTracker:
 
     def _try_lock_anchor(self, logits: np.ndarray | None,
                          mask_np: np.ndarray):
-        """Promote current mask to anchor when the track has been stable long enough."""
+        """Promote current mask to anchor when track is stable."""
         if logits is None:
             return
         if self._iou_streak >= ANCHOR_LOCK_FRAMES:
-            self.anchor_logits = logits.copy()
-            self.anchor_mask   = mask_np.copy()
-            logger.info(f"MaskTracker: anchor locked (IoU streak={self._iou_streak}, "
-                  f"last IoU={self._last_iou:.3f})")
+            self.anchor_logits  = logits.copy()
+            self.anchor_mask    = mask_np.copy()
+            prev_src            = self._anchor_source
+            self._anchor_source = "live"
+            if prev_src == "ref":
+                log.info("MaskTracker: live anchor replaced ref-based anchor "
+                         "(IoU streak=%d, last IoU=%.3f)",
+                         self._iou_streak, self._last_iou)
+            else:
+                log.info("MaskTracker: anchor locked (IoU streak=%d, "
+                         "last IoU=%.3f)",
+                         self._iou_streak, self._last_iou)
 
     @property
     def warmed_up(self) -> bool:
@@ -399,19 +509,21 @@ class MaskTracker:
     def anchor_locked(self) -> bool:
         return self.anchor_logits is not None
 
+    @property
+    def anchor_is_live(self) -> bool:
+        """True when the anchor came from live frames (not ref image)."""
+        return self._anchor_source == "live"
+
     # ── negative-point mining ────────────────────────────────────────
     def sample_negative_points(self, h: int, w: int,
                                n: int = NEG_POINT_COUNT) -> np.ndarray | None:
-        """
-        Return n (x,y) points that were consistently outside every recent mask.
-        Returns Nx2 np.float32 array or None.
-        """
         if not self.warmed_up:
             return None
 
         always_bg = np.ones((h, w), dtype=np.uint8) * 255
         for m in self.mask_history[-TRACKER_WARMUP_FRAMES:]:
-            mr = m if m.shape[:2] == (h, w) else cv2.resize(m, (w, h), interpolation=cv2.INTER_NEAREST)
+            mr = m if m.shape[:2] == (h, w) else cv2.resize(
+                m, (w, h), interpolation=cv2.INTER_NEAREST)
             always_bg = cv2.bitwise_and(always_bg, cv2.bitwise_not(mr))
 
         kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,
@@ -424,17 +536,12 @@ class MaskTracker:
             return None
 
         idx = np.random.choice(len(coords), n, replace=False)
-        pts = coords[idx][:, ::-1].astype(np.float32)   # (x, y)
+        pts = coords[idx][:, ::-1].astype(np.float32)
         return pts
 
     # ── positive-point mining from previous mask ─────────────────────
     def sample_positive_points(self, h: int, w: int,
                                n: int = 1) -> np.ndarray | None:
-        """
-        Sample n positive points from the interior of the previous mask.
-        Prefer the centroid; add extra random interior points if n > 1.
-        Returns Nx2 np.float32 array or None.
-        """
         if self.prev_mask is None:
             return None
 
@@ -443,7 +550,8 @@ class MaskTracker:
             pts.append(list(self.prev_centroid))
 
         if n > len(pts) and self.prev_mask is not None:
-            mr = self.prev_mask if self.prev_mask.shape[:2] == (h, w) else cv2.resize(self.prev_mask, (w, h),
+            mr = self.prev_mask if self.prev_mask.shape[:2] == (h, w) else \
+                cv2.resize(self.prev_mask, (w, h),
                            interpolation=cv2.INTER_NEAREST)
             kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
             interior = cv2.erode(mr, kern)
@@ -502,10 +610,10 @@ def _patch_bert_compat():
             PreTrainedModel.get_extended_attention_mask = _geam
             BertModel.get_extended_attention_mask = _geam
 
-        logger.info("BERT compat patch applied")
+        log.debug("BERT compat patch applied")
     except Exception as e:
-        logger.error("BERT compat patch failed: %s", e)
-        logger.exception("Details:")
+        log.warning("BERT compat patch failed: %s", e)
+        import traceback; traceback.print_exc()
 
 
 def _get_gdino():
@@ -517,9 +625,9 @@ def _get_gdino():
             _patch_bert_compat()
             sys.path.insert(0, os.path.join(THIRD_PARTY_ROOT, "GroundingDINO"))
             from groundingdino.util.inference import load_model
-            _gdino_model = load_model(GDINO_CONFIG, GDINO_WEIGHTS, device=DEVICE)
+            _gdino_model = load_model(GDINO_CONFIG, GDINO_WEIGHTS, device=_device())
         except Exception as e:
-            logger.error("GroundingDINO load failed (won't retry): %s", e)
+            log.error("GroundingDINO load failed (won't retry): %s", e)
             _gdino_failed = True
     return _gdino_model
 
@@ -534,10 +642,10 @@ def _get_owlv2():
             _owlv2_processor = Owlv2Processor.from_pretrained(
                 "google/owlv2-base-patch16-ensemble")
             _owlv2_model = Owlv2ForObjectDetection.from_pretrained(
-                "google/owlv2-base-patch16-ensemble").to(DEVICE).eval()
-            logger.info("OWLv2 loaded")
+                "google/owlv2-base-patch16-ensemble").to(_device()).eval()
+            log.info("OWLv2 loaded")
         except Exception as e:
-            logger.error("OWLv2 load failed (won't retry): %s", e)
+            log.error("OWLv2 load failed (won't retry): %s", e)
             _owlv2_failed = True
             return None, None
     return _owlv2_processor, _owlv2_model
@@ -549,7 +657,7 @@ def _get_sam2():
         sys.path.insert(0, os.path.join(THIRD_PARTY_ROOT, "sam2"))
         from sam2.build_sam import build_sam2
         from sam2.sam2_image_predictor import SAM2ImagePredictor
-        model      = build_sam2(SAM2_CONFIG, SAM2_CKPT, device=DEVICE)
+        model      = build_sam2(SAM2_CONFIG, SAM2_CKPT, device=_device())
         _sam2_pred = SAM2ImagePredictor(model)
     return _sam2_pred
 
@@ -568,19 +676,19 @@ def _get_depth_model():
             }
             ckpt = os.path.join(DA_CKPT_DIR, f"depth_anything_v2_{DA_ENCODER}.pth")
             if not os.path.exists(ckpt):
-                logger.info(f"Depth-Anything-V2 checkpoint not found: {ckpt}")
+                log.error("Depth-Anything-V2 checkpoint not found: %s", ckpt)
                 return None
             import torch as _t
             m = DepthAnythingV2(**cfgs[DA_ENCODER])
             m.load_state_dict(_t.load(ckpt, map_location="cpu"))
-            _depth_model = m.to(DEVICE).eval()
+            _depth_model = m.to(_device()).eval()
         except Exception as e:
-            logger.error("Depth-Anything-V2 load failed: %s", e)
+            log.error("Depth-Anything-V2 load failed: %s", e)
     return _depth_model
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Feature extractor for visual similarity (colour-agnostic detection)
+#  Feature extractor for visual similarity
 # ═════════════════════════════════════════════════════════════════════
 
 _feat_model     = None
@@ -588,10 +696,6 @@ _feat_transform = None
 
 
 def _get_feature_extractor():
-    """
-    Singleton: load a headless ResNet-18 for feature extraction.
-    Returns (model, transform).  torchvision is already a dependency.
-    """
     global _feat_model, _feat_transform
     if _feat_model is not None:
         return _feat_model, _feat_transform
@@ -601,8 +705,8 @@ def _get_feature_extractor():
 
         backbone = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         _feat_model = _t.nn.Sequential(
-            *list(backbone.children())[:-1]      # strip final FC → (B, 512, 1, 1)
-        ).to(DEVICE).eval()
+            *list(backbone.children())[:-1]
+        ).to(_device()).eval()
 
         _feat_transform = transforms.Compose([
             transforms.ToPILImage(),
@@ -611,44 +715,122 @@ def _get_feature_extractor():
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225]),
         ])
-        logger.info("Feature extractor (ResNet-18) loaded")
+        log.info("Feature extractor (ResNet-18) loaded")
     except Exception as e:
-        logger.error("Feature extractor load failed: %s", e)
+        log.error("Feature extractor load failed: %s", e)
     return _feat_model, _feat_transform
 
 
 def _extract_features(crop_bgr: np.ndarray) -> np.ndarray | None:
-    """Return an L2-normalised 512-d feature vector for a BGR image crop."""
     model, transform = _get_feature_extractor()
     if model is None or crop_bgr.size == 0:
         return None
     try:
         import torch as _t
         rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
-        tensor = transform(rgb).unsqueeze(0).to(DEVICE)
+        tensor = transform(rgb).unsqueeze(0).to(_device())
         with _t.no_grad():
             feat = model(tensor).squeeze()
         feat = feat / (feat.norm() + 1e-8)
         return feat.cpu().numpy()
     except Exception as e:
-        logger.info(f"Feature extraction failed: {e}")
+        log.debug("Feature extraction failed: %s", e)
         return None
 
 
 def _cosine_similarity(f1: np.ndarray, f2: np.ndarray) -> float:
-    """Cosine similarity between two normalised feature vectors."""
     return float(np.dot(f1, f2) / (np.linalg.norm(f1) * np.linalg.norm(f2) + 1e-8))
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Reference-image conditioning
+#  Reference-image conditioning  (updated for transparent / black bg)
 # ═════════════════════════════════════════════════════════════════════
 
-def _detect_foreground_for_ref(ref_bgr: np.ndarray):
+def _full_reference_mask(ref_bgr: np.ndarray, inset_frac: float = 0.02) -> np.ndarray:
+    h, w = ref_bgr.shape[:2]
+    mask = np.zeros((h, w), dtype=np.uint8)
+    dx = int(w * inset_frac)
+    dy = int(h * inset_frac)
+    mask[dy:max(dy + 1, h - dy), dx:max(dx + 1, w - dx)] = 255
+    return mask
+
+
+def _load_ref_image(path: str, mask_mode: str = "auto"):
     """
-    Quick Otsu-based foreground detection for the reference image.
-    Returns a binary fg_mask (uint8 0/255) and bbox (x, y, w, h).
+    Load a reference image, handling both BGRA (transparent) and BGR
+    (black-background) formats.
+
+    Returns
+    -------
+    bgr      : np.ndarray   3-channel BGR image
+    fg_mask  : np.ndarray   uint8 0/255 foreground mask
     """
+    raw = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    if raw is None:
+        log.error("Could not load reference image: %s", path)
+        return None, None
+
+    if mask_mode not in {"auto", "full", "foreground"}:
+        raise ValueError(f"Unknown ref mask mode: {mask_mode}")
+
+    bgr = raw[:, :, :3].copy() if raw.ndim == 3 and raw.shape[2] == 4 else raw
+    bgr = bgr if bgr.ndim == 3 else cv2.cvtColor(bgr, cv2.COLOR_GRAY2BGR)
+
+    if mask_mode == "full":
+        log.info("Ref image: using full-image box mask (--ref-mask-mode full)")
+        return bgr, _full_reference_mask(bgr)
+
+    # ── Case 1: 4-channel image with alpha ──
+    if raw.ndim == 3 and raw.shape[2] == 4:
+        alpha = raw[:, :, 3]
+        fg_mask = (alpha >= REF_ALPHA_THRESH).astype(np.uint8) * 255
+        fg_pct  = np.count_nonzero(fg_mask) / fg_mask.size
+        log.info("Ref image: BGRA format, alpha→fg mask (%.1f%% foreground)",
+                 fg_pct * 100)
+        return bgr, fg_mask
+
+    # ── Case 2: 3-channel BGR — check for black / dark background ──
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+
+    # Detect if the border is consistently dark
+    h, w = gray.shape
+    b = REF_BG_BORDER_CHECK
+    border = np.concatenate([
+        gray[:b, :].ravel(), gray[-b:, :].ravel(),
+        gray[:, :b].ravel(), gray[:, -b:].ravel(),
+    ])
+    border_dark_frac = np.count_nonzero(border < REF_BG_DARK_THRESH) / len(border)
+
+    if border_dark_frac > 0.90:
+        # Black background — threshold to extract foreground
+        fg_mask = (gray >= REF_BG_DARK_THRESH).astype(np.uint8) * 255
+        # Clean up: close small gaps, remove small noise blobs
+        kern = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+        fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kern, iterations=2)
+        fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_OPEN,  kern, iterations=1)
+        # Keep only the largest connected component
+        n_cc, labels, stats, _ = cv2.connectedComponentsWithStats(fg_mask)
+        if n_cc > 1:
+            lbl = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
+            fg_mask = (labels == lbl).astype(np.uint8) * 255
+        fg_pct = np.count_nonzero(fg_mask) / fg_mask.size
+        log.info("Ref image: black-bg detected (border %.0f%% dark), "
+                 "threshold→fg mask (%.1f%% foreground)",
+                 border_dark_frac * 100, fg_pct * 100)
+        return bgr, fg_mask
+
+    if mask_mode == "auto":
+        log.info("Ref image: generic background; using full reference image "
+                 "as the target box mask. Use --ref-mask-mode foreground to "
+                 "force Otsu foreground extraction.")
+        return bgr, _full_reference_mask(bgr)
+
+    # ── Case 3: forced foreground extraction for non-trivial backgrounds ──
+    return bgr, _detect_foreground_otsu(bgr)
+
+
+def _detect_foreground_otsu(ref_bgr: np.ndarray):
+    """Legacy Otsu-based foreground detection for generic backgrounds."""
     gray = cv2.cvtColor(ref_bgr, cv2.COLOR_BGR2GRAY)
     _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     if np.count_nonzero(otsu) > otsu.size // 2:
@@ -661,25 +843,21 @@ def _detect_foreground_for_ref(ref_bgr: np.ndarray):
         h, w = ref_bgr.shape[:2]
         fm = np.zeros((h, w), dtype=np.uint8)
         fm[int(h * 0.2):int(h * 0.8), int(w * 0.2):int(w * 0.8)] = 255
-        return fm, (int(w * 0.2), int(h * 0.2), int(w * 0.6), int(h * 0.6))
+        return fm
     lbl = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
     fm  = (labels == lbl).astype(np.uint8) * 255
-    return fm, cv2.boundingRect(fm)
+    log.debug("Ref image: Otsu fg mask (%.1f%% foreground)",
+              np.count_nonzero(fm) / fm.size * 100)
+    return fm
 
 
 def extract_ref_logits(ref_bgr: np.ndarray,
+                       fg_mask: np.ndarray,
                        box_np: np.ndarray | None = None):
     """
     Run SAM2 on the reference image using multi-point prompts that span
-    the entire object.  This solves the "white line" problem where SAM2
-    only captures one colour region of a multi-colour object.
-
-    The approach:
-      1. If no detector box is given, detect the foreground via Otsu.
-      2. Place a 3×5 grid of positive points across the bounding box,
-         keeping only those inside the foreground mask.
-      3. Feed the bounding box + multi-point prompts to SAM2.
-      4. Morphologically close the result to bridge any remaining gap.
+    the entire object.  Uses the provided fg_mask (from alpha channel or
+    black-background extraction) instead of re-computing Otsu internally.
 
     Returns
     -------
@@ -692,13 +870,11 @@ def extract_ref_logits(ref_bgr: np.ndarray,
         rgb  = cv2.cvtColor(ref_bgr, cv2.COLOR_BGR2RGB)
         pred.set_image(rgb)
 
-        # --- Foreground mask for point sampling ---
-        fg_mask, fg_bbox = _detect_foreground_for_ref(ref_bgr)
-
-        # --- Bounding box ---
+        # --- Bounding box from fg_mask ---
         if box_np is not None:
             bx1, by1, bx2, by2 = box_np.astype(int)
         else:
+            fg_bbox = cv2.boundingRect(fg_mask)
             bx, by, bw, bh = fg_bbox
             bx1, by1 = bx, by
             bx2, by2 = bx + bw, by + bh
@@ -721,8 +897,8 @@ def extract_ref_logits(ref_bgr: np.ndarray,
         if not points:
             points.append([int((bx1 + bx2) / 2), int((by1 + by2) / 2)])
 
-        logger.info(f"Ref SAM2: box=[{bx1},{by1},{bx2},{by2}], "
-              f"{len(points)} positive points")
+        log.info("Ref SAM2: box=[%d,%d,%d,%d], %d positive points",
+                 bx1, by1, bx2, by2, len(points))
 
         sam_kwargs = dict(
             box=sam_box,
@@ -735,20 +911,41 @@ def extract_ref_logits(ref_bgr: np.ndarray,
         masks, scores, logits = pred.predict(**sam_kwargs)
 
         if masks is None or len(masks) == 0:
-            logger.info("Ref SAM2: no mask returned")
+            log.warning("Ref SAM2: no mask returned")
             return None, None
 
-        best_idx   = int(np.argmax(scores))
+        # SAM often assigns the highest confidence to a distinctive printed
+        # sub-object on packaging.  For a box reference, choose the candidate
+        # that best covers the reference foreground instead of blindly taking
+        # the highest SAM score.
+        total_fg = max(1, np.count_nonzero(fg_mask > 0))
+        ref_scores = []
+        for i, mask in enumerate(masks):
+            mask_i = (mask > 0).astype(np.uint8) * 255
+            inter = np.count_nonzero((fg_mask > 0) & (mask_i > 0))
+            mask_area = max(1, np.count_nonzero(mask_i > 0))
+            coverage = inter / total_fg
+            precision = inter / mask_area
+            ref_scores.append(
+                0.50 * coverage + 0.30 * precision + 0.20 * float(scores[i]))
+            log.debug("Ref SAM2 mask[%d]: sam=%.3f coverage=%.3f "
+                      "precision=%.3f combined=%.3f",
+                      i, float(scores[i]), coverage, precision, ref_scores[-1])
+
+        best_idx = int(np.argmax(ref_scores))
+        if best_idx != int(np.argmax(scores)):
+            log.info("Ref SAM2: foreground-aware selection picked mask[%d] "
+                     "(SAM picked %d)", best_idx, int(np.argmax(scores)))
         ref_mask   = (masks[best_idx] > 0).astype(np.uint8) * 255
         ref_logits = logits[best_idx: best_idx + 1]
 
         # --- Refinement: if coverage of foreground is low, re-run ---
         covered  = np.count_nonzero((fg_mask > 0) & (ref_mask > 0))
-        total_fg = max(1, np.count_nonzero(fg_mask > 0))
         coverage = covered / total_fg
 
         if coverage < 0.70:
-            logger.info(f"Ref SAM2: coverage={coverage:.0%}, adding uncovered points")
+            log.info("Ref SAM2: coverage=%.0f%%, adding uncovered points",
+                     coverage * 100)
             uncovered  = (fg_mask > 0) & (ref_mask == 0)
             unc_coords = np.argwhere(uncovered)
             if len(unc_coords) > 0:
@@ -766,7 +963,7 @@ def extract_ref_logits(ref_bgr: np.ndarray,
                     best2      = int(np.argmax(scores2))
                     ref_mask   = (masks2[best2] > 0).astype(np.uint8) * 255
                     ref_logits = logits2[best2: best2 + 1]
-                    logger.info(f"Ref SAM2 (refined): score={scores2[best2]:.3f}")
+                    log.info("Ref SAM2 (refined): score=%.3f", scores2[best2])
 
         # --- Morph close to bridge white-line gap ---
         k_close  = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 15))
@@ -776,34 +973,38 @@ def extract_ref_logits(ref_bgr: np.ndarray,
                                        cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(ref_mask, contours, -1, 255, cv2.FILLED)
 
-        logger.info(f"Ref image: SAM2 mask extracted (score={scores[best_idx]:.3f}, "
-              f"area={np.count_nonzero(ref_mask)} px)")
+        log.info("Ref image: SAM2 mask extracted (score=%.3f, area=%d px)",
+                 scores[best_idx], np.count_nonzero(ref_mask))
         return ref_logits, ref_mask
 
     except Exception as e:
-        logger.error("Reference logit extraction failed: %s", e)
-        logger.exception("Details:")
+        log.error("Reference logit extraction failed: %s", e)
+        import traceback; traceback.print_exc()
     return None, None
 
 
-def process_ref_image(ref_bgr: np.ndarray, prompt: str):
+def process_ref_image(ref_bgr: np.ndarray, fg_mask: np.ndarray,
+                      prompt: str):
     """
     Full reference-image processing pipeline.
 
     1. Run the active detector on the reference image to locate the object.
-    2. Crop the object region  → ``ref_crop``  (used for OWLv2 image-guided mode).
-    3. Run SAM2 on the reference image → ``ref_logits`` (used as SAM2 prior).
-    4. Extract deep features from the crop → ``ref_features`` (for similarity-based
-       disambiguation among multiple detections in the live scene).
+    2. Crop the object region  → ref_crop.
+    3. Run SAM2 on the reference image → ref_logits.
+    4. Extract deep features from the crop → ref_features.
+    5. Compute ref_fill_ratio for adaptive coverage (Phase 4).
+    6. Compute ref_aspect_ratio for box splitting (Phase 3).
 
     Returns
     -------
-    ref_crop     : np.ndarray | None   BGR crop of the object
-    ref_logits   : np.ndarray | None   SAM2 low-res logits (1, 256, 256)
-    ref_mask     : np.ndarray | None   uint8 binary mask from ref image
-    ref_features : np.ndarray | None   512-d normalised feature vector
+    ref_crop        : np.ndarray | None
+    ref_logits      : np.ndarray | None
+    ref_mask        : np.ndarray | None
+    ref_features    : np.ndarray | None
+    ref_fill_ratio  : float              (Phase 4)
+    ref_aspect_ratio: float              (Phase 3)
     """
-    logger.info("Processing reference image …")
+    log.info("Processing reference image …")
     ref_box = None
 
     # Step 1: detect object in reference image
@@ -816,10 +1017,10 @@ def process_ref_image(ref_bgr: np.ndarray, prompt: str):
         pick = _disambiguate_top_box(dets, ref_bgr.shape)
         if pick is not None:
             ref_box = pick[0]
-            logger.info(f"Ref image: detected '{pick[2]}' score={pick[1]:.2f} "
-                  f"@ {ref_box.astype(int)}")
+            log.info("Ref image: detected '%s' score=%.2f @ %s",
+                     pick[2], pick[1], ref_box.astype(int))
 
-    # Step 2: build object crop for OWLv2 image-guided mode
+    # Step 2: build object crop
     h, w = ref_bgr.shape[:2]
     if ref_box is not None:
         x1, y1, x2, y2 = ref_box.astype(int)
@@ -827,22 +1028,53 @@ def process_ref_image(ref_bgr: np.ndarray, prompt: str):
         x1, y1 = max(0, x1 - pad), max(0, y1 - pad)
         x2, y2 = min(w, x2 + pad), min(h, y2 + pad)
         ref_crop = ref_bgr[y1:y2, x1:x2].copy()
-        logger.info(f"Ref crop: {ref_crop.shape}")
     else:
-        ref_crop = ref_bgr[h // 3: 2 * h // 3, w // 3: 2 * w // 3].copy()
-        logger.info("Ref crop: centre region (no detection in ref image)")
+        # Use fg_mask bounding rect as crop region
+        fg_bbox = cv2.boundingRect(fg_mask)
+        bx, by, bw, bh = fg_bbox
+        pad = 10
+        x1, y1 = max(0, bx - pad), max(0, by - pad)
+        x2, y2 = min(w, bx + bw + pad), min(h, by + bh + pad)
+        ref_crop = ref_bgr[y1:y2, x1:x2].copy()
+        log.info("Ref crop: from fg_mask bbox (no detection in ref image)")
+    log.info("Ref crop shape: %s", ref_crop.shape)
 
     # Step 3: SAM2 logits from reference image
-    ref_logits, ref_mask = extract_ref_logits(ref_bgr, box_np=ref_box)
+    ref_logits, ref_mask = extract_ref_logits(ref_bgr, fg_mask,
+                                              box_np=ref_box)
 
-    # Step 4: deep features for similarity-based disambiguation
+    # Step 4: deep features
     ref_features = _extract_features(ref_crop)
     if ref_features is not None:
-        logger.info(f"Ref features: 512-d vector extracted (norm={np.linalg.norm(ref_features):.3f})")
+        log.info("Ref features: 512-d vector extracted (norm=%.3f)",
+                 np.linalg.norm(ref_features))
     else:
-        logger.info("Ref features: extraction failed — similarity scoring disabled")
+        log.warning("Ref features: extraction failed — similarity scoring "
+                    "disabled")
 
-    return ref_crop, ref_logits, ref_mask, ref_features
+    # Phase 4: compute expected fill ratio from ref mask
+    if ref_box is not None and ref_mask is not None:
+        bx1, by1, bx2, by2 = ref_box.astype(int)
+        box_area       = max(1, (bx2 - bx1) * (by2 - by1))
+        ref_fill_ratio = np.count_nonzero(ref_mask) / box_area
+    elif ref_mask is not None:
+        fg_bbox        = cv2.boundingRect(fg_mask)
+        fg_area        = max(1, fg_bbox[2] * fg_bbox[3])
+        ref_fill_ratio = np.count_nonzero(ref_mask) / fg_area
+    else:
+        ref_fill_ratio = 0.7  # conservative default
+    log.info("Ref fill ratio: %.2f (for adaptive coverage check)", ref_fill_ratio)
+
+    # Phase 3: compute ref aspect ratio for box splitting
+    fg_bbox = cv2.boundingRect(fg_mask)
+    if fg_bbox[2] > 0 and fg_bbox[3] > 0:
+        ref_aspect_ratio = fg_bbox[2] / fg_bbox[3]  # width / height
+    else:
+        ref_aspect_ratio = 1.0
+    log.info("Ref aspect ratio: %.2f (w/h)", ref_aspect_ratio)
+
+    return ref_crop, ref_logits, ref_mask, ref_features, \
+        ref_fill_ratio, ref_aspect_ratio
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -850,7 +1082,6 @@ def process_ref_image(ref_bgr: np.ndarray, prompt: str):
 # ═════════════════════════════════════════════════════════════════════
 
 def _detect_gdino(image_bgr: np.ndarray, prompt: str):
-    """Return list of (xyxy_np, score, phrase) or empty list."""
     gdino = _get_gdino()
     if gdino is None:
         return []
@@ -867,26 +1098,27 @@ def _detect_gdino(image_bgr: np.ndarray, prompt: str):
             _, img_t = load_image(tmp.name)
             boxes, logits, phrases = gd_predict(
                 gdino, img_t, caption=prompt,
-                box_threshold=0.3, text_threshold=0.25, device=DEVICE)
+                box_threshold=0.3, text_threshold=0.25, device=_device())
             if boxes is None or len(boxes) == 0:
-                logger.info("GDINO: no boxes")
+                log.debug("GDINO: no boxes")
                 return []
             h, w  = image_bgr.shape[:2]
             bxyxy = (box_convert(boxes, "cxcywh", "xyxy")
                      * _t.tensor([w, h, w, h], dtype=_t.float32)).numpy()
             dets  = [(bxyxy[i], float(logits[i]), phrases[i])
                      for i in range(len(boxes))]
-            logger.info(f"GDINO: {len(dets)} detection(s)")
+            log.info("GDINO: %d detection(s)", len(dets))
             return dets
         finally:
             os.unlink(tmp.name)
     except Exception as e:
-        logger.exception("GroundingDINO failed: %s", e)
+        import traceback
+        log.error("GroundingDINO failed: %s", e)
+        traceback.print_exc()
         return []
 
 
 def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
-    """Text-conditioned OWLv2 detection. Returns list of (xyxy, score, phrase)."""
     processor, model = _get_owlv2()
     if model is None:
         return []
@@ -899,13 +1131,13 @@ def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
 
         texts  = [[prompt]]
         inputs = processor(text=texts, images=pil,
-                           return_tensors="pt").to(DEVICE)
+                           return_tensors="pt").to(_device())
 
         with _t.no_grad():
             outputs = model(**inputs)
 
         h, w          = image_bgr.shape[:2]
-        target_sizes  = _t.tensor([[h, w]], device=DEVICE)
+        target_sizes  = _t.tensor([[h, w]], device=_device())
 
         if hasattr(processor, "post_process_grounded_object_detection"):
             results = processor.post_process_grounded_object_detection(
@@ -918,25 +1150,22 @@ def _detect_owlv2(image_bgr: np.ndarray, prompt: str):
         boxes  = results["boxes"].cpu().numpy()
         scores = results["scores"].cpu().numpy()
         if len(boxes) == 0:
-            logger.info("OWLv2: no boxes")
+            log.debug("OWLv2: no boxes")
             return []
 
         dets = [(boxes[i], float(scores[i]), prompt) for i in range(len(boxes))]
-        logger.info(f"OWLv2: {len(dets)} detection(s)")
+        log.info("OWLv2: %d detection(s)", len(dets))
         return dets
 
     except Exception as e:
-        logger.exception("OWLv2 failed: %s", e)
+        import traceback
+        log.error("OWLv2 failed: %s", e)
+        traceback.print_exc()
         return []
 
 
 def _detect_owlv2_image_guided(image_bgr: np.ndarray,
                                ref_crop_bgr: np.ndarray):
-    """
-    One-shot OWLv2 detection: uses ``ref_crop_bgr`` as the query image
-    instead of a text description.  Falls back gracefully on any error.
-    Returns list of (xyxy_np, score, "ref_image") or empty list.
-    """
     processor, model = _get_owlv2()
     if model is None:
         return []
@@ -950,13 +1179,13 @@ def _detect_owlv2_image_guided(image_bgr: np.ndarray,
         pil_ref   = Image.fromarray(ref_rgb)
 
         inputs = processor(query_images=[pil_ref], images=[pil_frame],
-                           return_tensors="pt").to(DEVICE)
+                           return_tensors="pt").to(_device())
 
         with _t.no_grad():
             outputs = model.image_guided_detection(**inputs)
 
         h, w         = image_bgr.shape[:2]
-        target_sizes = _t.tensor([[h, w]], device=DEVICE)
+        target_sizes = _t.tensor([[h, w]], device=_device())
         results = processor.post_process_image_guided_detection(
             outputs=outputs, threshold=0.6, nms_threshold=0.3,
             target_sizes=target_sizes)[0]
@@ -964,44 +1193,68 @@ def _detect_owlv2_image_guided(image_bgr: np.ndarray,
         boxes  = results["boxes"].cpu().numpy()
         scores = results["scores"].cpu().numpy()
         if len(boxes) == 0:
-            logger.info("OWLv2 image-guided: no boxes")
+            log.debug("OWLv2 image-guided: no boxes")
             return []
 
         dets = [(boxes[i], float(scores[i]), "ref_image")
                 for i in range(len(boxes))]
-        logger.info(f"OWLv2 image-guided: {len(dets)} detection(s)")
+        log.info("OWLv2 image-guided: %d detection(s)", len(dets))
         return dets
 
     except Exception as e:
-        logger.exception("OWLv2 image-guided failed: %s", e)
+        import traceback
+        log.error("OWLv2 image-guided failed: %s", e)
+        traceback.print_exc()
         return []
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Box disambiguation for stacked-box scenarios
+#  Phase 3: Box disambiguation + ref-aspect-ratio splitting
 # ═════════════════════════════════════════════════════════════════════
+
+def _split_box_by_ref_aspect(box_np: np.ndarray,
+                             ref_aspect: float,
+                             tolerance: float = 0.6) -> np.ndarray:
+    """
+    Phase 3: If the detected box's aspect ratio is much more portrait than
+    the reference (suggesting it spans multiple stacked objects), crop
+    it from the top to match the reference aspect ratio.
+
+    Parameters
+    ----------
+    box_np     : [x1, y1, x2, y2]
+    ref_aspect : width/height of the reference object
+    tolerance  : if det_aspect < ref_aspect * tolerance, split
+
+    Returns
+    -------
+    Adjusted box_np (may be the same if no split is needed).
+    """
+    x1, y1, x2, y2 = box_np
+    det_w = x2 - x1
+    det_h = y2 - y1
+    if det_h < 1 or det_w < 1:
+        return box_np
+
+    det_aspect = det_w / det_h
+
+    # Only split if the detection is significantly taller than expected
+    if det_aspect < ref_aspect * tolerance:
+        # Crop from the top: expected height = det_w / ref_aspect
+        expected_h = det_w / ref_aspect
+        new_y2 = y1 + min(expected_h, det_h)
+        log.info("Phase 3: box aspect %.2f << ref aspect %.2f — "
+                 "cropping y2 from %.0f to %.0f",
+                 det_aspect, ref_aspect, y2, new_y2)
+        return np.array([x1, y1, x2, new_y2], dtype=box_np.dtype)
+
+    return box_np
+
 
 def _disambiguate_top_box(dets: list, image_shape: tuple,
                           prev_centroid: tuple | None = None,
                           image_bgr: np.ndarray | None = None,
                           ref_features: np.ndarray | None = None):
-    """
-    From a list of (xyxy, score, phrase) detections, pick the best box.
-
-    When ``ref_features`` (from the reference image) are provided, the
-    dominant signal is **visual similarity** — the detection whose crop
-    most resembles the reference is preferred.  This lets the system
-    distinguish among identically-shaped boxes that differ only in colour
-    pattern, without relying on a colour-specific text prompt.
-
-    When no reference features are available, falls back to the original
-    heuristic (top-of-frame preference + confidence + proximity).
-
-    Pipeline:
-      1. NMS to collapse near-duplicate detections.
-      2. Filter out implausibly small / large boxes.
-      3. Score by [similarity + position + confidence + proximity].
-    """
     if not dets:
         return None
 
@@ -1061,8 +1314,8 @@ def _disambiguate_top_box(dets: list, image_shape: tuple,
                       + pos_score  * 0.15
                       + conf       * 0.10
                       + prox_score * 0.25)
-            logger.info(f"  det conf={conf:.2f} sim={sim_score:.3f} "
-                  f"pos={pos_score:.2f} prox={prox_score:.2f} → {combined:.3f}")
+            log.debug("  det conf=%.2f sim=%.3f pos=%.2f prox=%.2f → %.3f",
+                      conf, sim_score, pos_score, prox_score, combined)
         else:
             combined = pos_score * 0.50 + conf * 0.25 + prox_score * 0.25
 
@@ -1074,36 +1327,169 @@ def _disambiguate_top_box(dets: list, image_shape: tuple,
 
 
 # ═════════════════════════════════════════════════════════════════════
-#  Core pipeline  (image-conditioned, with mask propagation + anchoring)
+#  Phase 5: Ref-aware mask selection from SAM2 multimask output
+# ═════════════════════════════════════════════════════════════════════
+
+def _select_best_mask_with_ref(masks: np.ndarray,
+                               scores_sam: np.ndarray,
+                               logits: np.ndarray,
+                               image_bgr: np.ndarray,
+                               box_np: np.ndarray | None,
+                               ref_mask: np.ndarray | None,
+                               ref_features: np.ndarray | None,
+                               ref_fill_ratio: float = 0.7) -> int:
+    """
+    Phase 5: When multimask_output=True returns multiple candidates,
+    score them by a combination of SAM2 confidence, IoU with ref_mask,
+    and feature similarity.
+
+    During bootstrap (before anchor locks):
+      0.25 × SAM2_score + 0.35 × fill_match + 0.25 × box_coverage
+      + 0.15 × feat_sim
+
+    Returns the index of the best mask.
+    """
+    n_masks = len(masks)
+    if n_masks == 1:
+        return 0
+
+    h, w = image_bgr.shape[:2]
+    combined_scores = np.zeros(n_masks, dtype=np.float64)
+
+    for i in range(n_masks):
+        mask_i = (masks[i] > 0).astype(np.uint8) * 255
+        sam_s  = float(scores_sam[i])
+
+        # IoU with ref mask (resized to frame resolution)
+        ref_iou = 0.0
+        mask_fill = 0.0
+        if ref_mask is not None:
+            # Resize ref_mask to match the mask shape
+            ref_m_r = cv2.resize(ref_mask, (mask_i.shape[1], mask_i.shape[0]),
+                                 interpolation=cv2.INTER_NEAREST)
+            # We can't do pixel-level IoU directly since ref is from a
+            # different image.  Instead, compare the mask's fill pattern
+            # within the bounding box region.
+            if box_np is not None:
+                bx1, by1, bx2, by2 = box_np.astype(int)
+                bx1, by1 = max(0, bx1), max(0, by1)
+                bx2, by2 = min(w, bx2), min(h, by2)
+                # Compute fill ratio of this mask within the box
+                box_region = mask_i[by1:by2, bx1:bx2]
+                mask_fill  = np.count_nonzero(box_region) / max(1, box_region.size)
+                # Compute ref fill ratio (from ref mask within its bbox)
+                ref_bbox   = cv2.boundingRect(ref_m_r)
+                if ref_bbox[2] > 0 and ref_bbox[3] > 0:
+                    rx, ry, rw, rh = ref_bbox
+                    ref_region = ref_m_r[ry:ry+rh, rx:rx+rw]
+                    ref_fill   = np.count_nonzero(ref_region) / max(1, ref_region.size)
+                    # Score = 1 - |fill_diff|  (closer fill ratio = better)
+                    ref_iou = max(0.0, 1.0 - abs(mask_fill - ref_fill))
+                else:
+                    ref_iou = 0.5
+
+        if box_np is not None:
+            bx1, by1, bx2, by2 = box_np.astype(int)
+            bx1, by1 = max(0, bx1), max(0, by1)
+            bx2, by2 = min(w, bx2), min(h, by2)
+            if bx2 > bx1 and by2 > by1:
+                box_region = mask_i[by1:by2, bx1:bx2]
+                mask_fill = np.count_nonzero(box_region) / max(1, box_region.size)
+
+        expected_fill = max(0.05, min(float(ref_fill_ratio), 1.0))
+        fill_match = max(0.0, 1.0 - abs(mask_fill - expected_fill) / expected_fill)
+        coverage_score = min(mask_fill / expected_fill, 1.0)
+
+        # Feature similarity of masked crop
+        feat_sim = 0.0
+        if ref_features is not None and box_np is not None:
+            bx1, by1, bx2, by2 = box_np.astype(int)
+            bx1, by1 = max(0, bx1), max(0, by1)
+            bx2, by2 = min(w, bx2), min(h, by2)
+            # Use the full box crop (not masked) for feature extraction
+            crop = image_bgr[by1:by2, bx1:bx2]
+            if crop.size > 0:
+                # Apply mask to crop — zero out non-mask pixels
+                mask_crop = mask_i[by1:by2, bx1:bx2]
+                masked_crop = crop.copy()
+                masked_crop[mask_crop == 0] = 0
+                feat = _extract_features(masked_crop)
+                if feat is not None:
+                    feat_sim = max(0.0, _cosine_similarity(feat, ref_features))
+
+        combined = (0.25 * sam_s
+                    + 0.35 * max(ref_iou, fill_match)
+                    + 0.25 * coverage_score
+                    + 0.15 * feat_sim)
+        combined_scores[i] = combined
+        log.debug("  mask[%d] sam=%.3f fill=%.3f expected=%.3f "
+                  "match=%.3f coverage=%.3f feat=%.3f → %.3f",
+                  i, sam_s, mask_fill, expected_fill, max(ref_iou, fill_match),
+                  coverage_score, feat_sim, combined)
+
+    best_idx = int(np.argmax(combined_scores))
+    if best_idx != int(np.argmax(scores_sam)):
+        log.info("Phase 5: ref-aware selection picked mask[%d] (sam picked %d)",
+                 best_idx, int(np.argmax(scores_sam)))
+    return best_idx
+
+
+# ═════════════════════════════════════════════════════════════════════
+#  Phase 2: Bootstrap grid-point generation
+# ═════════════════════════════════════════════════════════════════════
+
+def _generate_bootstrap_points(box_np: np.ndarray,
+                               h: int, w: int,
+                               rows: int = BOOTSTRAP_GRID_ROWS,
+                               cols: int = BOOTSTRAP_GRID_COLS) -> np.ndarray:
+    """
+    Generate a grid of positive points inside the detected bounding box.
+    Used during bootstrap (before tracker warms up) to give SAM2 more
+    spatial guidance across the full object face.
+
+    Returns Nx2 np.float32 array of (x, y) points.
+    """
+    x1, y1, x2, y2 = box_np.astype(int)
+    x1, y1 = max(0, x1), max(0, y1)
+    x2, y2 = min(w, x2), min(h, y2)
+    bw, bh = x2 - x1, y2 - y1
+    if bw < 2 or bh < 2:
+        return np.array([[int((x1+x2)/2), int((y1+y2)/2)]], dtype=np.float32)
+
+    points = []
+    for ri in range(rows):
+        fy = (ri + 0.5) / rows
+        for ci in range(cols):
+            fx = (ci + 0.5) / cols
+            px = int(x1 + fx * bw)
+            py = int(y1 + fy * bh)
+            points.append([px, py])
+
+    return np.array(points, dtype=np.float32)
+
+
+# ═════════════════════════════════════════════════════════════════════
+#  Core pipeline  (with all 6 fix phases)
 # ═════════════════════════════════════════════════════════════════════
 
 def run_pipeline(image_bgr: np.ndarray, prompt: str,
                  tracker: MaskTracker | None = None,
                  ref_logits: np.ndarray | None = None,
                  ref_crop: np.ndarray | None = None,
-                 ref_features: np.ndarray | None = None) -> dict:
+                 ref_features: np.ndarray | None = None,
+                 ref_mask: np.ndarray | None = None,
+                 ref_fill_ratio: float = 0.7,
+                 ref_aspect_ratio: float = 1.0) -> dict:
     """
     Detection → SAM2 segmentation → depth → grasp-point pipeline.
 
-    Parameters
-    ----------
-    image_bgr    : current live frame (BGR)
-    prompt       : text prompt for the detector (fallback when no ref_crop)
-    tracker      : MaskTracker instance for temporal state
-    ref_logits   : SAM2 low-res logits from the reference image — used as
-                   the initial mask_input on the very first frame and as a
-                   fallback when the anchor has not yet been established.
-    ref_crop     : BGR reference image crop — used to drive OWLv2 in
-                   image-guided (one-shot) mode when DETECTOR == "owlv2".
-    ref_features : 512-d normalised feature vector from the reference crop —
-                   used to disambiguate among multiple detections by visual
-                   similarity instead of relying on a colour-specific prompt.
-
-    Mask-input priority
-    -------------------
-    1. tracker.prev_logits   – best recent temporal propagation
-    2. tracker.anchor_logits – last confirmed stable mask (soft re-init)
-    3. ref_logits            – reference image prior (very first frame)
+    Fix phases integrated:
+      Phase 1: reference logits are kept out of live-frame mask_input
+      Phase 2: Bootstrap grid points on first N frames
+      Phase 3: Ref-aspect box splitting for stacked boxes
+      Phase 4: Adaptive coverage threshold from ref_fill_ratio
+      Phase 5: Ref-aware multi-mask selection
+      Phase 6: tracker anchors only after stable live masks
     """
     res = dict(mask_np=None, depth_np=None,
                best_centroid=None, gdino_box=None,
@@ -1122,10 +1508,9 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
     if need_detection:
         prev_c = tracker.prev_centroid if tracker else None
 
-        # Image-guided OWLv2 takes priority when a reference crop is available
         if ref_crop is not None and DETECTOR == "owlv2":
             dets = _detect_owlv2_image_guided(image_bgr, ref_crop)
-            if not dets:  # fallback to text-based
+            if not dets:
                 dets = _detect_owlv2(image_bgr, prompt)
         elif DETECTOR == "owlv2":
             dets = _detect_owlv2(image_bgr, prompt)
@@ -1138,6 +1523,10 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
                                      ref_features=ref_features)
         if pick is not None:
             box_np = pick[0]
+
+            # Phase 3: split box if it spans multiple stacked objects
+            box_np = _split_box_by_ref_aspect(box_np, ref_aspect_ratio)
+
             res["gdino_box"] = box_np
             if ref_features is not None:
                 x1, y1, x2, y2 = box_np.astype(int)
@@ -1148,10 +1537,11 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
                 if feat is not None:
                     res["similarity"] = _cosine_similarity(feat, ref_features)
             sim_str = f"  sim={res['similarity']:.3f}" if res.get("similarity") else ""
-            logger.info(f"{DETECTOR.upper()}: '{pick[2]}' score={pick[1]:.2f} "
-                  f"@ {box_np.astype(int)}  (top of {len(dets)}){sim_str}")
+            log.info("%s: '%s' score=%.2f @ %s  (top of %d)%s",
+                     DETECTOR.upper(), pick[2], pick[1],
+                     box_np.astype(int), len(dets), sim_str)
 
-    # ── Step 2: SAM2 segmentation with mask propagation ───────────────
+    # ── Step 2: SAM2 segmentation with all fix phases ─────────────────
     tracker_logits = None
     try:
         pred = _get_sam2()
@@ -1175,8 +1565,20 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
                 for pt in neg_pts:
                     point_coords.append(pt)
                     point_labels.append(0)
-                logger.info(f"SAM2: +{len(pos_pts) if pos_pts is not None else 0} pos, "
-                      f"+{len(neg_pts)} neg point prompts")
+                log.debug("SAM2: +%d pos, +%d neg point prompts",
+                          len(pos_pts) if pos_pts is not None else 0,
+                          len(neg_pts))
+
+        # Phase 2: Bootstrap grid points during first N frames
+        is_bootstrap = (tracker is not None and
+                        not tracker.warmed_up and
+                        box_np is not None)
+        if is_bootstrap:
+            grid_pts = _generate_bootstrap_points(box_np, h, w)
+            for pt in grid_pts:
+                point_coords.append(pt)
+                point_labels.append(1)
+            log.info("Phase 2: added %d bootstrap grid points", len(grid_pts))
 
         sam_kwargs = dict(multimask_output=True, return_logits=True)
 
@@ -1187,96 +1589,113 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
             sam_kwargs["point_coords"] = np.array(point_coords, dtype=np.float32)
             sam_kwargs["point_labels"] = np.array(point_labels, dtype=np.int32)
 
-        # --- Mask-input priority chain ---
-        # When a fresh detector box is available, let it drive SAM2
-        # WITHOUT mask_input bias.  This prevents partial-mask propagation
-        # for multi-colour objects where the text prompt matches only one
-        # colour region (e.g. "yellow box" on a yellow-and-white box).
+        # SAM2 mask_input is a spatial prior in the current image, not a
+        # reference-image identity prompt.  Reference logits must not be used
+        # directly on live frames because they can bias SAM toward a printed
+        # package graphic at the wrong coordinates.
         if need_detection and box_np is not None:
             sam_kwargs["multimask_output"] = True
-            logger.info("SAM2: fresh detection — using box only (no mask prior)")
+            log.debug("SAM2: fresh detection — box/grid prompts only")
         elif tracker is not None and tracker.prev_logits is not None:
             sam_kwargs["mask_input"]      = tracker.prev_logits
             sam_kwargs["multimask_output"] = False
         elif tracker is not None and tracker.anchor_logits is not None:
             sam_kwargs["mask_input"] = tracker.anchor_logits
-            logger.info("SAM2: using anchor logits as prior")
-        elif ref_logits is not None and (tracker is None or tracker.frame_count == 0):
-            sam_kwargs["mask_input"] = ref_logits
-            logger.info("SAM2: using reference-image logits as initial prior")
+            log.debug("SAM2: using anchor logits as prior")
 
         # --- Run SAM2 ---
         masks, scores_sam, logits = pred.predict(**sam_kwargs)
 
         if masks is not None and len(masks) > 0:
-            best_idx = int(np.argmax(scores_sam))
+            # Phase 5: ref-aware mask selection when multimask
+            if sam_kwargs.get("multimask_output", True) and len(masks) > 1:
+                best_idx = _select_best_mask_with_ref(
+                    masks, scores_sam, logits, image_bgr, box_np,
+                    ref_mask, ref_features, ref_fill_ratio)
+            else:
+                best_idx = int(np.argmax(scores_sam))
+
             mask_out = (masks[best_idx] > 0).astype(np.uint8) * 255
 
-            # Coverage check: if the mask covers much less than the
-            # detector box, the prior may still be biasing SAM2.
-            # Re-run with box-only (no mask_input, no point prompts).
+            # Phase 4: Adaptive coverage check
             if box_np is not None:
                 bx1, by1, bx2, by2 = box_np.astype(int)
                 box_area  = max(1, (bx2 - bx1) * (by2 - by1))
                 mask_area = np.count_nonzero(mask_out)
                 coverage  = mask_area / box_area
-                if coverage < 0.35:
-                    logger.info(f"SAM2: mask covers only {coverage:.0%} of box — "
-                          f"re-running with box-only prompt")
+                # Adaptive threshold: 70% of the expected fill ratio
+                adaptive_thresh = ref_fill_ratio * 0.70
+                adaptive_thresh = max(0.20, min(adaptive_thresh, 0.60))
+                if coverage < adaptive_thresh:
+                    log.info("Phase 4: mask covers only %.0f%% of box "
+                             "(threshold=%.0f%%) — re-running box-only",
+                             coverage * 100, adaptive_thresh * 100)
                     pred.set_image(rgb)
                     masks2, scores2, logits2 = pred.predict(
                         box=box_np, multimask_output=True, return_logits=True)
                     if masks2 is not None and len(masks2) > 0:
-                        best2    = int(np.argmax(scores2))
+                        # Phase 5 again on the re-run
+                        best2 = _select_best_mask_with_ref(
+                            masks2, scores2, logits2, image_bgr, box_np,
+                            ref_mask, ref_features, ref_fill_ratio)
                         mask_out = (masks2[best2] > 0).astype(np.uint8) * 255
                         logits   = logits2
                         scores_sam = scores2
                         best_idx = best2
-                        logger.info(f"SAM2: box-only mask score={scores2[best2]:.3f}")
+                        log.info("SAM2: box-only re-run mask score=%.3f",
+                                 scores2[best2])
 
             # Drift check
             if tracker is not None and tracker.prev_mask is not None:
                 iou = _mask_iou(mask_out, tracker.prev_mask)
                 if iou < IOU_DRIFT_THRESH and not need_detection:
-                    logger.info(f"SAM2: mask IoU={iou:.2f} < {IOU_DRIFT_THRESH} — "
-                          f"drift detected, resetting tracker (keeping anchor)")
+                    log.info("SAM2: mask IoU=%.2f < %.2f — drift detected, "
+                             "resetting tracker (keeping anchor)",
+                             iou, IOU_DRIFT_THRESH)
                     tracker.reset(keep_anchor=True)
                     return run_pipeline(image_bgr, prompt, tracker,
                                         ref_logits=ref_logits,
                                         ref_crop=ref_crop,
-                                        ref_features=ref_features)
+                                        ref_features=ref_features,
+                                        ref_mask=ref_mask,
+                                        ref_fill_ratio=ref_fill_ratio,
+                                        ref_aspect_ratio=ref_aspect_ratio)
 
             res["mask_np"]   = mask_out
             tracker_logits   = logits[best_idx: best_idx + 1]
-            logger.info(f"SAM2: mask obtained (score={scores_sam[best_idx]:.3f})")
+            log.info("SAM2: mask obtained (score=%.3f)", scores_sam[best_idx])
         else:
-            logger.info("SAM2: no mask returned")
+            log.warning("SAM2: no mask returned")
 
     except Exception as e:
-        logger.exception("SAM2 failed: %s", e)
+        import traceback
+        log.error("SAM2 failed: %s", e)
+        traceback.print_exc()
 
-    # ── Step 3: Depth (inset visualisation) ──────────────────────────
+    # ── Step 3: Depth ─────────────────────────────────────────────────
     dm = _get_depth_model()
     if dm is not None:
         try:
             res["depth_np"] = dm.infer_image(image_bgr).astype(np.float32)
         except Exception as e:
-            logger.error("Depth inference failed: %s", e)
+            log.error("Depth inference failed: %s", e)
 
-    # ── Step 4: Grasp point — robust centroid → bbox fallback ─────────
+    # ── Step 4: Grasp point ───────────────────────────────────────────
     if res["mask_np"] is not None:
         mc = _robust_centroid(res["mask_np"])
         if mc is not None:
             res["best_centroid"] = mc
-            logger.info(f"Grasp point: robust centroid {mc}")
+            log.debug("Grasp point: robust centroid %s", mc)
         elif res["gdino_box"] is not None:
             x1, y1, x2, y2 = res["gdino_box"]
             res["best_centroid"] = (int((x1 + x2) / 2), int((y1 + y2) / 2))
-            logger.info(f"Grasp point: bbox centre {res['best_centroid']} (centroid failed)")
+            log.debug("Grasp point: bbox centre %s (centroid failed)",
+                      res["best_centroid"])
     elif res["gdino_box"] is not None:
         x1, y1, x2, y2 = res["gdino_box"]
         res["best_centroid"] = (int((x1 + x2) / 2), int((y1 + y2) / 2))
-        logger.info(f"Grasp point: bbox centre {res['best_centroid']} (no SAM2 mask)")
+        log.debug("Grasp point: bbox centre %s (no SAM2 mask)",
+                  res["best_centroid"])
 
     # ── Step 5: Update tracker ────────────────────────────────────────
     if tracker is not None:
@@ -1328,7 +1747,7 @@ class RobotController:
         ret = self._arm.get_position()
         if isinstance(ret, (list, tuple)) and len(ret) >= 2 and ret[0] == 0:
             return list(ret[1])
-        logger.error("get_position failed: %s", ret)
+        log.error("get_position failed: %s", ret)
         return None
 
     def _move_abs(self, pos, wait=True):
@@ -1343,7 +1762,7 @@ class RobotController:
             arm = XArmAPI(self.ip, baud_checkset=False)
             time.sleep(0.5)
             if not arm.connected:
-                logger.info(f"Robot not connected: {self.ip}")
+                log.error("Robot not connected: %s", self.ip)
                 return False
             arm.clean_error()
             arm.clean_warn()
@@ -1354,15 +1773,15 @@ class RobotController:
             self._arm = arm
             self.enabled     = False
             self.cal_status  = "waiting for calibration..."
-            logger.info(f"Robot connected: {self.ip}")
+            log.info("Robot connected: %s", self.ip)
             return True
         except Exception as e:
-            logger.info(f"Robot connect failed: {e}")
+            log.error("Robot connect failed: %s", e)
             return False
 
     def calibrate(self, get_frame_fn):
         self.cal_status = "waiting for frame..."
-        logger.info("\n=== Calibration: waiting for camera frame ===")
+        log.info("=== Calibration: waiting for camera frame ===")
 
         deadline = time.time() + 30.0
         while time.time() < deadline:
@@ -1370,19 +1789,19 @@ class RobotController:
                 break
             time.sleep(0.2)
         else:
-            logger.info("Calibration skipped: no camera frame available.")
+            log.warning("Calibration skipped: no camera frame available.")
             self.cal_status = "skipped (no frame)"
             self.enabled    = True
             return
 
         pos0 = self._get_pos()
         if pos0 is None:
-            logger.info("Calibration skipped: cannot read robot position.")
+            log.warning("Calibration skipped: cannot read robot position.")
             self.cal_status = "skipped (pos read fail)"
             self.enabled    = True
             return
 
-        logger.info(f"Home: [{pos0[0]:.1f}, {pos0[1]:.1f}, {pos0[2]:.1f}] mm")
+        log.info("Home: [%.1f, %.1f, %.1f] mm", pos0[0], pos0[1], pos0[2])
         J_yz = np.zeros((2, 2), dtype=np.float64)
 
         for col, (robot_idx, ax) in enumerate([(1, "Y"), (2, "Z")]):
@@ -1390,48 +1809,50 @@ class RobotController:
             time.sleep(0.3)
             frame_before = get_frame_fn()
             if frame_before is None:
-                logger.info(f"  [{ax}] no frame before move — skipping axis")
+                log.warning("  [%s] no frame before move — skipping axis", ax)
                 continue
 
-            logger.info(f"  [{ax}] moving +{CAL_DELTA:.0f} mm...")
+            log.info("  [%s] moving +%.0f mm...", ax, CAL_DELTA)
             fwd = list(pos0)
             fwd[robot_idx] += CAL_DELTA
             self._move_abs(fwd, wait=True)
             time.sleep(CAL_WAIT)
 
             frame_after = get_frame_fn()
-            logger.info(f"  [{ax}] returning home...")
+            log.info("  [%s] returning home...", ax)
             self._move_abs(pos0, wait=True)
 
             if frame_after is None:
-                logger.info(f"  [{ax}] no frame after move — skipping axis")
+                log.warning("  [%s] no frame after move — skipping axis", ax)
                 continue
 
             flow = _measure_flow(frame_before, frame_after)
             if flow is None:
-                logger.info(f"  [{ax}] optical flow failed — skipping axis")
+                log.warning("  [%s] optical flow failed — skipping axis", ax)
                 continue
 
             dpx, dpy = flow
             J_yz[0, col] = dpx / CAL_DELTA
             J_yz[1, col] = dpy / CAL_DELTA
-            logger.info(f"  [{ax}] flow: ({dpx:+.1f}, {dpy:+.1f}) px / {CAL_DELTA:.0f} mm"
-                  f"  → J[:,{col}]=[{J_yz[0,col]:+.4f}, {J_yz[1,col]:+.4f}]")
+            log.info("  [%s] flow: (%+.1f, %+.1f) px / %.0f mm  "
+                     "→ J[:,{col}]=[%+.4f, %+.4f]",
+                     ax, dpx, dpy, CAL_DELTA,
+                     J_yz[0, col], J_yz[1, col])
 
         self._jac_yz  = J_yz
-        logger.info(f"\n  J_yz (px/mm):\n{J_yz}")
+        log.info("J_yz (px/mm):\n%s", J_yz)
         rank = np.linalg.matrix_rank(J_yz)
 
         if rank == 0:
-            logger.info("  WARNING: J_yz rank=0 — approach-only mode.")
+            log.warning("J_yz rank=0 — approach-only mode.")
             self.cal_status = "skipped (no flow data)"
             self.enabled    = True
             return
 
         self._jac_yz_inv = np.linalg.pinv(J_yz)
-        logger.info(f"  J_yz_inv (mm/px):\n{self._jac_yz_inv}")
+        log.info("J_yz_inv (mm/px):\n%s", self._jac_yz_inv)
         status = "calibrated" if rank == 2 else f"partial cal (rank={rank})"
-        logger.info(f"=== Calibration complete [{status}] ===\n")
+        log.info("=== Calibration complete [%s] ===", status)
         self.cal_status = status
         self.enabled    = True
 
@@ -1440,20 +1861,20 @@ class RobotController:
         if self._arm is not None:
             try:
                 self._arm.emergency_stop()
-                logger.info("Robot stopped.")
+                log.info("Robot stopped.")
             except Exception as e:
-                logger.error("Robot stop failed: %s", e)
+                log.error("Robot stop failed: %s", e)
 
     def servo_step(self, centroid: tuple, image_shape: tuple):
         now = time.time()
         if self._arm is None:
             if now - self._last_t > 5.0:
-                logger.info("Servo: arm not connected")
+                log.debug("Servo: arm not connected")
                 self._last_t = now
             return
         if not self.enabled:
             if now - self._last_t > 5.0:
-                logger.info(f"Servo: waiting [{self.cal_status}]")
+                log.debug("Servo: waiting [%s]", self.cal_status)
                 self._last_t = now
             return
         if now - self._last_t < VS_RATE:
@@ -1465,7 +1886,7 @@ class RobotController:
             jump = np.hypot(centroid[0] - self._last_centroid[0],
                             centroid[1] - self._last_centroid[1])
             if jump > MAX_JUMP_PX:
-                logger.info(f"Servo: centroid jump {jump:.0f} px — ignored")
+                log.warning("Servo: centroid jump %.0f px — ignored", jump)
                 return
         self._last_centroid   = centroid
         self._last_centroid_t = now
@@ -1498,22 +1919,24 @@ class RobotController:
                 new_y = pos[1] + dy_mm
                 new_z = pos[2] + dz_mm
 
-                # Clamp Z so the arm never goes below its base height
                 if new_z < MIN_Z_MM:
-                    logger.info(f"Servo: clamping Z {new_z:.1f} → {MIN_Z_MM:.1f} mm "
-                          f"(base limit)")
+                    log.warning("Servo: clamping Z %.1f → %.1f mm (base limit)",
+                                new_z, MIN_Z_MM)
                     new_z = MIN_Z_MM
 
                 self._arm.set_position(
                     x=new_x, y=new_y, z=new_z,
                     roll=pos[3], pitch=pos[4], yaw=pos[5],
                     speed=VS_SPEED, mvacc=VS_MVACC, wait=True)
-                logger.info(f"Servo: err=({ex:+.0f},{ey:+.0f})px r={err_r:.0f}  "
-                      f"Δ=({dx_mm:+.1f},{dy_mm:+.1f},{dz_mm:+.1f})mm"
-                      f"  pos=({new_x:.0f},{new_y:.0f},{new_z:.0f})"
-                      f"  [{self.cal_status}]")
+                log.info("Servo: err=(%+.0f,%+.0f)px r=%.0f  "
+                         "Δ=(%+.1f,%+.1f,%+.1f)mm  "
+                         "pos=(%.0f,%.0f,%.0f)  [%s]",
+                         ex, ey, err_r,
+                         dx_mm, dy_mm, dz_mm,
+                         new_x, new_y, new_z,
+                         self.cal_status)
             except Exception as e:
-                logger.error("Servo step failed: %s", e)
+                log.error("Servo step failed: %s", e)
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -1526,26 +1949,18 @@ class CameraStreamer(threading.Thread):
     runs the segmentation pipeline in a background thread, overlays
     results, and records both a raw SVO feed (pyzed) and an annotated
     MP4 at ≥ MIN_RECORDING_DIM px.
-
-    Parameters
-    ----------
-    cam_index     : OpenCV camera index (used only in OpenCV fallback mode)
-    stop_event    : threading.Event to request shutdown
-    robot         : RobotController instance (may have _arm=None)
-    ref_image_bgr : optional BGR reference image used to condition detection
-    use_pyzed     : if False, force OpenCV even when PyZED is available
     """
 
     def __init__(self, cam_index: int, stop_event: threading.Event,
                  robot: RobotController,
-                 ref_image_bgr: np.ndarray | None = None,
+                 ref_image_path: str | None = None,
                  use_pyzed: bool = True):
         super().__init__(daemon=True)
-        self.cam_index     = cam_index
-        self.stop_event    = stop_event
-        self.robot         = robot
-        self.ref_image_bgr = ref_image_bgr
-        self._use_pyzed    = use_pyzed and PYZED_AVAILABLE
+        self.cam_index      = cam_index
+        self.stop_event     = stop_event
+        self.robot          = robot
+        self.ref_image_path = ref_image_path
+        self._use_pyzed     = use_pyzed and PYZED_AVAILABLE
 
         self._latest_left  = None
         self._frame_lock   = threading.Lock()
@@ -1554,12 +1969,15 @@ class CameraStreamer(threading.Thread):
         self._models_ready = threading.Event()
         self._tracker      = MaskTracker()
 
-        self._undistorter = None   # created lazily from actual frame size
+        self._undistorter = None
 
-        # Populated by _process_ref_image() before the main seg loop
-        self.ref_logits    = None
-        self.ref_crop      = None
-        self.ref_features  = None
+        # Populated by _process_ref_image()
+        self.ref_logits       = None
+        self.ref_crop         = None
+        self.ref_features     = None
+        self.ref_mask         = None
+        self.ref_fill_ratio   = 0.7
+        self.ref_aspect_ratio = 1.0
 
     # ── helpers ──────────────────────────────────────────────────────
     def _get_frame(self):
@@ -1569,24 +1987,34 @@ class CameraStreamer(threading.Thread):
             return None
 
     def _run_calibration(self):
-        logger.info("Calibration thread: waiting for models …")
+        log.info("Calibration thread: waiting for models …")
         self._models_ready.wait()
-        logger.info("Calibration thread: starting Y/Z Jacobian calibration.")
+        log.info("Calibration thread: starting Y/Z Jacobian calibration.")
         self.robot.calibrate(self._get_frame)
 
-    # ── reference image pre-processing (runs once at seg loop start) ─
+    # ── reference image pre-processing ────────────────────────────────
     def _process_ref_image(self):
-        if self.ref_image_bgr is None:
+        if self.ref_image_path is None:
             return
         try:
-            self.ref_crop, self.ref_logits, _, self.ref_features = process_ref_image(self.ref_image_bgr, PROMPT)
+            ref_bgr, fg_mask = _load_ref_image(self.ref_image_path,
+                                               REF_MASK_MODE)
+            if ref_bgr is None:
+                return
+
+            (self.ref_crop, self.ref_logits, self.ref_mask,
+             self.ref_features, self.ref_fill_ratio,
+             self.ref_aspect_ratio) = process_ref_image(ref_bgr, fg_mask,
+                                                         PROMPT)
+
+            self._tracker.seed_from_ref(self.ref_logits, self.ref_mask)
+
         except Exception as e:
-            logger.error("Reference image processing error: %s", e)
-            logger.exception("Details:")
+            log.error("Reference image processing error: %s", e)
+            import traceback; traceback.print_exc()
 
     # ── segmentation loop ─────────────────────────────────────────────
     def _seg_loop(self):
-        # Load models + process reference image before the main loop
         self._process_ref_image()
 
         while not self.stop_event.is_set():
@@ -1599,17 +2027,20 @@ class CameraStreamer(threading.Thread):
                 res = run_pipeline(frame, PROMPT, self._tracker,
                                    ref_logits=self.ref_logits,
                                    ref_crop=self.ref_crop,
-                                   ref_features=self.ref_features)
+                                   ref_features=self.ref_features,
+                                   ref_mask=self.ref_mask,
+                                   ref_fill_ratio=self.ref_fill_ratio,
+                                   ref_aspect_ratio=self.ref_aspect_ratio)
                 with self.data_lock:
                     self._result = res
                 if not self._models_ready.is_set():
-                    logger.info("Models ready — calibration may now proceed.")
+                    log.info("Models ready — calibration may now proceed.")
                     self._models_ready.set()
                 if self.robot is not None and res.get("best_centroid") is not None:
                     self.robot.servo_step(res["best_centroid"], frame.shape)
             except Exception as e:
-                logger.error("Pipeline error: %s", e)
-                logger.exception("Details:")
+                log.error("Pipeline error: %s", e)
+                import traceback; traceback.print_exc()
                 time.sleep(1)
 
     # ── top-level dispatch ────────────────────────────────────────────
@@ -1633,28 +2064,26 @@ class CameraStreamer(threading.Thread):
         init_params.camera_resolution = res_map.get(ZED_RESOLUTION,
                                                      sl.RESOLUTION.HD720)
         init_params.camera_fps        = 30
-        init_params.depth_mode        = sl.DEPTH_MODE.NONE  # depth via DA-v2
+        init_params.depth_mode        = sl.DEPTH_MODE.NONE
 
         err = cam.open(init_params)
         if err != sl.ERROR_CODE.SUCCESS:
-            logger.info(f"PyZED: camera open failed ({err}) — falling back to OpenCV")
+            log.warning("PyZED: camera open failed (%s) — falling back to OpenCV", err)
             self._run_opencv()
             return
 
         ts = time.strftime("%Y%m%d_%H%M%S")
 
-        # Raw stereo SVO recording
-        svo_path   = os.path.abspath(time.strftime(f"vs_recording_{ts}.svo2"))
+        svo_path   = os.path.abspath(f"vs_recording_{ts}.svo2")
         rec_params = sl.RecordingParameters()
         rec_params.video_filename    = svo_path
         rec_params.compression_mode  = sl.SVO_COMPRESSION_MODE.H264
         err = cam.enable_recording(rec_params)
         if err == sl.ERROR_CODE.SUCCESS:
-            logger.info(f"PyZED SVO recording → {svo_path}")
+            log.info("PyZED SVO recording → %s", svo_path)
         else:
-            logger.info(f"PyZED SVO recording failed ({err}) — continuing without raw SVO")
+            log.warning("PyZED SVO recording failed (%s)", err)
 
-        # Annotated overlay MP4
         anno_path    = os.path.abspath(f"vs_annotated_{ts}.mp4")
         video_writer = None
 
@@ -1676,17 +2105,14 @@ class CameraStreamer(threading.Thread):
 
                 cam.retrieve_image(mat, sl.VIEW.LEFT)
                 frame_bgra = mat.get_data()
-                frame      = frame_bgra[:, :, :3].copy()  # BGRA → BGR
-                # sl.VIEW.LEFT is already rectified by the ZED SDK
+                frame      = frame_bgra[:, :, :3].copy()
 
                 with self._frame_lock:
                     self._latest_left = frame.copy()
                 with self.data_lock:
                     res = dict(self._result)
 
-                rendered = self._render(frame, res)
-
-                # Ensure ≥ MIN_RECORDING_DIM on the shorter side
+                rendered       = self._render(frame, res)
                 rendered_write = self._ensure_min_dim(rendered)
 
                 if video_writer is None:
@@ -1695,14 +2121,13 @@ class CameraStreamer(threading.Thread):
                         anno_path, cv2.VideoWriter_fourcc(*"mp4v"),
                         30.0, (rw, rh))
                     if not video_writer.isOpened():
-                        logger.info(f"ERROR: OpenCV VideoWriter failed for {anno_path} "
-                              f"({rw}×{rh} mp4v). Install ffmpeg / try "
-                              f"`sudo apt install ffmpeg` or run with "
-                              f"--no-pyzed and a working codec backend.")
+                        log.error("VideoWriter failed for %s (%d×%d)",
+                                  anno_path, rw, rh)
                         video_writer.release()
                         video_writer = None
                     else:
-                        logger.info(f"Annotated recording → {anno_path}  ({rw}×{rh})")
+                        log.info("Annotated recording → %s  (%d×%d)",
+                                 anno_path, rw, rh)
 
                 if video_writer is not None:
                     video_writer.write(rendered_write)
@@ -1714,19 +2139,19 @@ class CameraStreamer(threading.Thread):
                     break
                 elif key == ord("v") and self.robot is not None:
                     self.robot.enabled = not self.robot.enabled
-                    logger.info("Servo:", "ON" if self.robot.enabled else "OFF")
+                    log.info("Servo: %s", "ON" if self.robot.enabled else "OFF")
                 elif key == ord("r"):
                     self._tracker.reset(keep_anchor=True)
-                    logger.info("Tracker soft-reset (anchor kept)")
-                elif key == ord("R"):  # shift-R → full reset
+                    log.info("Tracker soft-reset (anchor kept)")
+                elif key == ord("R"):
                     self._tracker.reset(keep_anchor=False)
-                    logger.info("Tracker FULL reset (anchor cleared)")
+                    log.info("Tracker FULL reset (anchor cleared)")
         finally:
             cam.disable_recording()
             cam.close()
             if video_writer is not None:
                 video_writer.release()
-                logger.info(f"Annotated recording saved: {anno_path}")
+                log.info("Annotated recording saved: %s", anno_path)
             try:
                 cv2.destroyAllWindows()
             except Exception:
@@ -1736,11 +2161,10 @@ class CameraStreamer(threading.Thread):
     def _run_opencv(self):
         cap = cv2.VideoCapture(self.cam_index, cv2.CAP_ANY)
         if not cap.isOpened():
-            logger.info(f"Failed to open camera {self.cam_index}")
+            log.error("Failed to open camera %d", self.cam_index)
             return
 
-        # Request a reasonable resolution from UVC
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH,  2560)  # ZED side-by-side at HD720
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH,  2560)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
         threading.Thread(target=self._seg_loop, daemon=True).start()
@@ -1762,7 +2186,7 @@ class CameraStreamer(threading.Thread):
                     continue
 
                 h, w = frame.shape[:2]
-                left = frame[:, : w // 2].copy()   # left eye from side-by-side
+                left = frame[:, : w // 2].copy()
 
                 if self._undistorter is None:
                     lh, lw = left.shape[:2]
@@ -1785,13 +2209,12 @@ class CameraStreamer(threading.Thread):
                         cv2.VideoWriter_fourcc(*"mp4v"),
                         30.0, (rw, rh))
                     if not video_writer.isOpened():
-                        logger.info(f"ERROR: OpenCV VideoWriter failed for {video_path} "
-                              f"({rw}×{rh} mp4v). Try: `sudo apt install ffmpeg` "
-                              f"or use a backend that supports MP4 encoding.")
+                        log.error("VideoWriter failed for %s (%d×%d)",
+                                  video_path, rw, rh)
                         video_writer.release()
                         video_writer = None
                     else:
-                        logger.info(f"Recording → {video_path}  ({rw}×{rh})")
+                        log.info("Recording → %s  (%d×%d)", video_path, rw, rh)
 
                 if video_writer is not None:
                     video_writer.write(rendered_write)
@@ -1803,19 +2226,19 @@ class CameraStreamer(threading.Thread):
                     break
                 elif key == ord("v") and self.robot is not None:
                     self.robot.enabled = not self.robot.enabled
-                    logger.info("Servo:", "ON" if self.robot.enabled else "OFF")
+                    log.info("Servo: %s", "ON" if self.robot.enabled else "OFF")
                 elif key == ord("r"):
                     self._tracker.reset(keep_anchor=True)
-                    logger.info("Tracker soft-reset (anchor kept)")
+                    log.info("Tracker soft-reset (anchor kept)")
                 elif key == ord("R"):
                     self._tracker.reset(keep_anchor=False)
-                    logger.info("Tracker FULL reset (anchor cleared)")
+                    log.info("Tracker FULL reset (anchor cleared)")
         finally:
             cap.release()
             if video_writer is not None:
                 video_writer.release()
                 if video_path:
-                    logger.info(f"Recording saved: {video_path}")
+                    log.info("Recording saved: %s", video_path)
             try:
                 cv2.destroyAllWindows()
             except Exception:
@@ -1824,7 +2247,6 @@ class CameraStreamer(threading.Thread):
     # ── video helpers ─────────────────────────────────────────────────
     @staticmethod
     def _ensure_min_dim(img: np.ndarray) -> np.ndarray:
-        """Upscale image so its shorter side is ≥ MIN_RECORDING_DIM."""
         h, w = img.shape[:2]
         short = min(h, w)
         if short < MIN_RECORDING_DIM:
@@ -1838,15 +2260,16 @@ class CameraStreamer(threading.Thread):
         display = left.copy()
         h, w    = display.shape[:2]
 
-        mask_np = res.get("mask_np")
+        mask_np       = res.get("mask_np")
+        depth_np      = res.get("depth_np")
+        best_centroid = res.get("best_centroid")
+        gdino_box     = res.get("gdino_box")
 
-        # Resize mask to display resolution
         mask_np_r = mask_np
         if mask_np_r is not None and mask_np_r.shape[:2] != (h, w):
             mask_np_r = cv2.resize(mask_np_r, (w, h),
                                    interpolation=cv2.INTER_NEAREST)
 
-        # SAM2 mask overlay (green tint + contour)
         if mask_np_r is not None:
             overlay           = np.zeros_like(display)
             overlay[:, :, 1]  = mask_np_r
@@ -1855,7 +2278,239 @@ class CameraStreamer(threading.Thread):
                                        cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(display, cnts, -1, (0, 255, 0), 2)
 
+        if self._tracker.anchor_locked and self._tracker.anchor_mask is not None:
+            am_r = self._tracker.anchor_mask
+            if am_r.shape[:2] != (h, w):
+                am_r = cv2.resize(am_r, (w, h), interpolation=cv2.INTER_NEAREST)
+            a_cnts, _ = cv2.findContours(am_r, cv2.RETR_EXTERNAL,
+                                          cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(display, a_cnts, -1, (255, 200, 0), 1)
+
+        if gdino_box is not None:
+            x1, y1, x2, y2 = gdino_box.astype(int)
+            cv2.rectangle(display, (x1, y1), (x2, y2), (0, 165, 255), 2)
+
+        ic = (w // 2, h // 2)
+        cv2.drawMarker(display, ic, (255, 80, 0), cv2.MARKER_CROSS, 22, 2)
+
+        if best_centroid is not None:
+            gp = best_centroid
+            cv2.circle(display, gp, 18, (0, 0, 255), 2)
+            cv2.drawMarker(display, gp, (0, 0, 255), cv2.MARKER_CROSS, 26, 2)
+            cv2.putText(display, "GRASP", (gp[0] + 22, gp[1] - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
+            cv2.arrowedLine(display, ic, gp, (0, 220, 255), 2, tipLength=0.12)
+            ex = gp[0] - ic[0]
+            ey = gp[1] - ic[1]
+            cv2.putText(display, f"err ({ex:+d},{ey:+d}) px",
+                        (8, h - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.52, (0, 220, 255), 1)
+
+        trk     = self._tracker
+        iou_txt = f"  IoU={trk._last_iou:.2f}" if trk.frame_count > 1 else ""
+        anc_src = ""
+        if trk.anchor_locked:
+            anc_src = f"  [ANCHOR:{trk._anchor_source or '?'}]"
+        trk_txt = (f"trk: {trk.frame_count} frm"
+                   f"{'  warmed' if trk.warmed_up else ''}"
+                   f"{iou_txt}{anc_src}")
+        cv2.putText(display, trk_txt, (8, h - 56),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200, 180, 0), 1)
+
+        if self.ref_logits is not None:
+            sim_val = res.get("similarity")
+            ref_txt = "REF" if sim_val is None else f"REF sim={sim_val:.2f}"
+            cv2.putText(display, ref_txt, (8, 40),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 200, 255), 1)
+
+        if self.robot is not None:
+            cal = self.robot.cal_status
+            if not self.robot.enabled:
+                txt, col = f"SERVO OFF  [{cal}]", (80, 80, 80)
+            else:
+                txt, col = f"SERVO ON  [{cal}]", (0, 255, 80)
+            cv2.putText(display, txt, (8, h - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.52, col, 1)
+
+        cv2.putText(display, DETECTOR.upper(), (8, 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.50, (180, 180, 0), 1)
+
+        if depth_np is not None:
+            try:
+                d = depth_np.astype(np.float32)
+                d_mn, d_mx = float(np.nanmin(d)), float(np.nanmax(d))
+                d_u8  = ((d - d_mn) / (d_mx - d_mn + 1e-6) * 255).astype(np.uint8)
+                cmap  = cv2.applyColorMap(d_u8, cv2.COLORMAP_JET)
+                iw    = max(120, w // 4)
+                ih    = int(iw * h / w)
+                inset = cv2.resize(cmap, (iw, ih))
+                display[10: 10 + ih, w - iw - 10: w - 10] = inset
+                cv2.putText(display, "depth", (w - iw - 8, 24),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200, 200, 200), 1)
+            except Exception:
+                pass
+
         return display
+
+
+# ═════════════════════════════════════════════════════════════════════
+#  Offline image/video runner
+# ═════════════════════════════════════════════════════════════════════
+
+def _result_summary(res: dict, frame_shape: tuple, tracker: MaskTracker,
+                    frame_index: int, source: str, elapsed_s: float) -> dict:
+    h, w = frame_shape[:2]
+    mask = res.get("mask_np")
+    depth = res.get("depth_np")
+    centroid = res.get("best_centroid")
+    box = res.get("gdino_box")
+
+    if hasattr(box, "astype"):
+        bbox = box.astype(float).tolist()
+    elif box is not None:
+        bbox = [float(v) for v in box]
+    else:
+        bbox = None
+
+    summary = {
+        "frame_index": frame_index,
+        "source": source,
+        "elapsed_s": elapsed_s,
+        "image_width": w,
+        "image_height": h,
+        "centroid": list(map(int, centroid)) if centroid is not None else None,
+        "bbox": bbox,
+        "similarity": (float(res["similarity"])
+                       if res.get("similarity") is not None else None),
+        "mask_area_px": int(np.count_nonzero(mask)) if mask is not None else 0,
+        "tracker_frame_count": tracker.frame_count,
+        "tracker_warmed_up": tracker.warmed_up,
+        "anchor_locked": tracker.anchor_locked,
+        "anchor_source": tracker._anchor_source,
+        "last_iou": float(tracker._last_iou),
+    }
+
+    if depth is not None:
+        d = depth.astype(np.float32)
+        summary["depth_min"] = float(np.nanmin(d))
+        summary["depth_max"] = float(np.nanmax(d))
+        summary["depth_mean"] = float(np.nanmean(d))
+
+    if centroid is not None:
+        cx, cy = centroid
+        summary["pixel_error"] = [int(cx - w // 2), int(cy - h // 2)]
+
+    return summary
+
+
+def _make_offline_streamer(ref_image_path: str | None) -> CameraStreamer:
+    stop_event = threading.Event()
+    streamer = CameraStreamer(
+        cam_index=0,
+        stop_event=stop_event,
+        robot=None,
+        ref_image_path=ref_image_path,
+        use_pyzed=False,
+    )
+    streamer._process_ref_image()
+    return streamer
+
+
+def _run_offline_frame(streamer: CameraStreamer, frame: np.ndarray,
+                       frame_index: int, source: str, output_dir: str,
+                       jsonl_fh, save_overlays: bool = True) -> dict:
+    start = time.time()
+    res = run_pipeline(
+        frame,
+        PROMPT,
+        streamer._tracker,
+        ref_logits=streamer.ref_logits,
+        ref_crop=streamer.ref_crop,
+        ref_features=streamer.ref_features,
+        ref_mask=streamer.ref_mask,
+        ref_fill_ratio=streamer.ref_fill_ratio,
+        ref_aspect_ratio=streamer.ref_aspect_ratio,
+    )
+    elapsed_s = time.time() - start
+    summary = _result_summary(
+        res, frame.shape, streamer._tracker, frame_index, source, elapsed_s)
+
+    if save_overlays:
+        overlay = streamer._render(frame, res)
+        overlay_path = os.path.join(output_dir, f"overlay_{frame_index:06d}.png")
+        cv2.imwrite(overlay_path, overlay)
+        summary["overlay_path"] = overlay_path
+
+    jsonl_fh.write(json.dumps(summary) + "\n")
+    jsonl_fh.flush()
+
+    return summary
+
+
+def _iter_image_paths(input_image: str | None, input_dir: str | None):
+    if input_image:
+        yield input_image
+        return
+
+    valid_exts = {".jpg", ".jpeg", ".png", ".bmp"}
+    for name in sorted(os.listdir(input_dir)):
+        path = os.path.join(input_dir, name)
+        if os.path.splitext(name.lower())[1] in valid_exts:
+            yield path
+
+
+def run_offline(args) -> None:
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    output_dir = args.output_dir or os.path.join("runs", f"offline_{ts}")
+    os.makedirs(output_dir, exist_ok=True)
+    jsonl_path = os.path.join(output_dir, "frames.jsonl")
+
+    streamer = _make_offline_streamer(args.ref_image)
+    summaries = []
+
+    with open(jsonl_path, "w") as jsonl_fh:
+        if args.input_video:
+            cap = cv2.VideoCapture(args.input_video)
+            if not cap.isOpened():
+                raise RuntimeError(f"Could not open video: {args.input_video}")
+            frame_index = 0
+            while True:
+                if args.max_frames is not None and frame_index >= args.max_frames:
+                    break
+                ok, frame = cap.read()
+                if not ok:
+                    break
+                summaries.append(_run_offline_frame(
+                    streamer, frame, frame_index, args.input_video, output_dir,
+                    jsonl_fh, save_overlays=not args.no_overlays))
+                frame_index += 1
+            cap.release()
+        else:
+            for frame_index, path in enumerate(
+                    _iter_image_paths(args.input_image, args.input_dir)):
+                if args.max_frames is not None and frame_index >= args.max_frames:
+                    break
+                frame = cv2.imread(path)
+                if frame is None:
+                    log.warning("Skipping unreadable image: %s", path)
+                    continue
+                summaries.append(_run_offline_frame(
+                    streamer, frame, frame_index, path, output_dir,
+                    jsonl_fh, save_overlays=not args.no_overlays))
+
+    summary_path = os.path.join(output_dir, "summary.json")
+    success_count = sum(1 for s in summaries if s.get("centroid") is not None)
+    with open(summary_path, "w") as f:
+        json.dump({
+            "frames": len(summaries),
+            "frames_with_centroid": success_count,
+            "output_dir": output_dir,
+            "jsonl_path": jsonl_path,
+        }, f, indent=2)
+
+    log.info("Offline run complete: %d frame(s), %d with centroid",
+             len(summaries), success_count)
+    log.info("Offline outputs: %s", os.path.abspath(output_dir))
 
 
 # ═════════════════════════════════════════════════════════════════════
@@ -1866,61 +2521,113 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="SemVS: Semantic Visual Servoing with image-conditioned detection")
+        description="SemVS: Semantic Visual Servoing with image-conditioned "
+                    "detection (suction-cup gripper)")
     parser.add_argument("cam_index", nargs="?", type=int, default=0,
-                        help="OpenCV camera index (default: 0, ignored when using PyZED)")
+                        help="OpenCV camera index (default: 0)")
     parser.add_argument("--detector", choices=["gdino", "owlv2"], default=None,
                         help="Override detector (default: env DETECTOR or gdino)")
     parser.add_argument("--ref-image", "--ref_image", metavar="PATH",
-                        help="Path to a reference image of the target object. "
-                             "Used to condition SAM2 and (for OWLv2) image-guided detection.")
+                        help="Path to a reference image of the target object "
+                             "(supports transparent PNG or black background)")
+    parser.add_argument("--ref-mask-mode",
+                        choices=["auto", "full", "foreground"],
+                        default=REF_MASK_MODE,
+                        help="How to construct the reference target mask. "
+                             "auto/full treat cropped package references as "
+                             "the full box; foreground forces Otsu extraction.")
     parser.add_argument("--no-pyzed", action="store_true",
-                        help="Force OpenCV camera capture even if PyZED is available")
+                        help="Force OpenCV camera capture even if PyZED is "
+                             "available")
+    parser.add_argument("--no-robot", action="store_true",
+                        help="Run vision/camera only; do not connect to xArm")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Run perception and logging without robot commands")
+    parser.add_argument("--input-image", metavar="PATH",
+                        help="Run offline on a single image instead of a camera")
+    parser.add_argument("--input-dir", metavar="PATH",
+                        help="Run offline on all images in a directory")
+    parser.add_argument("--input-video", metavar="PATH",
+                        help="Run offline on a video file")
+    parser.add_argument("--output-dir", metavar="PATH",
+                        help="Directory for offline overlays and JSON metrics")
+    parser.add_argument("--max-frames", type=int, default=None,
+                        help="Maximum offline frames to process")
+    parser.add_argument("--no-overlays", action="store_true",
+                        help="Skip overlay PNGs during offline runs")
     parser.add_argument("--prompt", default=None,
                         help=f"Text prompt for the detector (default: '{PROMPT}')")
+    parser.add_argument("--log-dir", default="logs",
+                        help="Directory for log files (default: logs)")
     args = parser.parse_args()
+
+    log = _setup_logger(log_dir=args.log_dir)
 
     if args.detector:
         DETECTOR = args.detector
     if args.prompt:
         PROMPT = args.prompt
+    REF_MASK_MODE = args.ref_mask_mode
 
-    logger.info(f"Detector : {DETECTOR.upper()}")
-    logger.info(f"Prompt   : {PROMPT}")
-    logger.info(f"PyZED    : {'available' if PYZED_AVAILABLE else 'not available'}"
-          f"{' (disabled by --no-pyzed)' if args.no_pyzed else ''}")
+    log.info("Detector : %s", DETECTOR.upper())
+    log.info("Prompt   : %s", PROMPT)
+    log.info("Ref mask : %s", REF_MASK_MODE)
+    log.info("PyZED    : %s%s",
+             "available" if PYZED_AVAILABLE else "not available",
+             " (disabled by --no-pyzed)" if args.no_pyzed else "")
 
-    # Load reference image if provided
-    ref_image_bgr = None
     if args.ref_image:
-        ref_image_bgr = cv2.imread(args.ref_image)
-        if ref_image_bgr is None:
-            logger.info(f"ERROR: could not load reference image: {args.ref_image}")
+        if not os.path.exists(args.ref_image):
+            log.error("Reference image not found: %s", args.ref_image)
             sys.exit(1)
-        logger.info(f"Reference image loaded: {args.ref_image}  "
-              f"({ref_image_bgr.shape[1]}×{ref_image_bgr.shape[0]})")
+        log.info("Reference image: %s", args.ref_image)
     else:
-        logger.info("No reference image provided — using text-prompt detection only")
+        log.info("No reference image provided — using text-prompt detection only")
+
+    offline_inputs = [
+        bool(args.input_image),
+        bool(args.input_dir),
+        bool(args.input_video),
+    ]
+    if sum(offline_inputs) > 1:
+        log.error("Use only one of --input-image, --input-dir, or --input-video")
+        sys.exit(1)
+    if any(offline_inputs):
+        if args.input_image and not os.path.exists(args.input_image):
+            log.error("Input image not found: %s", args.input_image)
+            sys.exit(1)
+        if args.input_dir and not os.path.isdir(args.input_dir):
+            log.error("Input directory not found: %s", args.input_dir)
+            sys.exit(1)
+        if args.input_video and not os.path.exists(args.input_video):
+            log.error("Input video not found: %s", args.input_video)
+            sys.exit(1)
+        run_offline(args)
+        sys.exit(0)
 
     robot = RobotController(ROBOT_IP)
-    robot.connect()
+    if args.no_robot or args.dry_run:
+        reason = "--dry-run" if args.dry_run else "--no-robot"
+        log.info("Robot disabled (%s)", reason)
+    else:
+        robot.connect()
 
     stop_ev    = threading.Event()
     cam_thread = CameraStreamer(
-        cam_index     = args.cam_index,
-        stop_event    = stop_ev,
-        robot         = robot,
-        ref_image_bgr = ref_image_bgr,
-        use_pyzed     = not args.no_pyzed,
+        cam_index      = args.cam_index,
+        stop_event     = stop_ev,
+        robot          = robot,
+        ref_image_path = args.ref_image,
+        use_pyzed      = not args.no_pyzed,
     )
     cam_thread.start()
 
     try:
         cam_thread.join()
     except KeyboardInterrupt:
-        logger.info("Interrupted by user")
+        log.info("Interrupted by user")
     finally:
         robot.stop()
         stop_ev.set()
         cam_thread.join(timeout=2)
-        logger.info("Done.")
+        log.info("Done.")

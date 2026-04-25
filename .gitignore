@@ -13,6 +13,7 @@ stacked_boxes/
 *.bin
 *.ckpt
 *.safetensors
+*.whl
 
 # Python
 __pycache__/

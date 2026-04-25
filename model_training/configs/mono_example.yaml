@@ -1,0 +1,67 @@
+experiment:
+  seed: 42
+
+diagnostics: diagnostics
+
+data:
+  dataset_path: /path/to/isaac_sim_dataset
+  val_split: 0.2
+  batch_size: 4
+  num_workers: 0
+  offset_ranges: [0.30, 0.30, 0.13]
+
+model:
+  architecture: MonocularCNN
+  args:
+    input_channels: 3
+    output_dim: 3
+
+training:
+  num_epochs: 100
+  checkpoint_dir: checkpoints
+  optimizer:
+    name: Adam
+    args:
+      lr: 0.0001
+  scheduler:
+    name: ReduceLROnPlateau
+    args:
+      mode: min
+      factor: 0.5
+      patience: 5
+
+logging:
+  diagnostics: {}
+  checkpoint:
+    dir: checkpoints
+    save_every: 10
+
+transforms:
+  train_pipeline:
+    - name: Resize
+      args:
+        size: [224, 224]
+        antialias: true
+    - name: StripAlpha
+    - name: ToDtype
+      args:
+        dtype: float32
+        scale: true
+    - name: Normalize
+      args:
+        mean: [0.485, 0.456, 0.406]
+        std: [0.229, 0.224, 0.225]
+  eval_pipeline:
+    - name: Resize
+      args:
+        size: [224, 224]
+        antialias: true
+    - name: StripAlpha
+    - name: ToDtype
+      args:
+        dtype: float32
+        scale: true
+    - name: Normalize
+      args:
+        mean: [0.485, 0.456, 0.406]
+        std: [0.229, 0.224, 0.225]

@@ -6,7 +6,7 @@ import torch
 from tqdm import tqdm
 
 from model import create_model, WeightedMSELoss
-from dataset import StereoImageDataset
+from dataset import MonocularImageDataset
 from datastructs import Checkpoint, Infrastructure
 import utils
 import transforms as transforms_module
@@ -24,7 +24,7 @@ def prepare_infrastructure(config) -> Infrastructure:
     transforms_dict = transforms_module.create_transforms(config)
     offset_ranges = config["data"].get("offset_ranges", [0.30, 0.30, 0.13])
     criterion = WeightedMSELoss(offset_ranges).to(config["device"])
-    dataset = StereoImageDataset(config['data']['dataset_path'])
+    dataset = MonocularImageDataset(config['data']['dataset_path'])
 
     train_loader, val_loader, train_dataset, val_dataset = utils.train_val_split(
         dataset, config, config["experiment"]["seed"]
@@ -50,9 +50,6 @@ def prepare_checkpoint(config) -> Checkpoint:
     optimizer = getattr(torch.optim, training_config['optimizer']['name'])(model.parameters(), **training_config['optimizer']['args'])
     scheduler = getattr(torch.optim.lr_scheduler, training_config['scheduler']['name'])(optimizer, **training_config['scheduler']['args'])
 
-    # if training_config['distributed']:
-    #     model = wrap_distributed(model)
-
     return Checkpoint(
         model=model,
         scheduler=scheduler,
@@ -63,14 +60,8 @@ def prepare_training(config_path: str) -> TrainingArtifacts:
     config = utils.load_config(config_path)
     dirs = utils.create_directories(config)
 
-    # Auto-detect device if not specified in config
-    # if "device" not in config:
-    #     config["device"] = "cuda" if torch.cuda.is_available() else "cpu"
     if "device" not in config:
-        if torch.cuda.is_available():
-            config["device"] = "cuda:1"
-        else:
-            config["device"] = "cpu"
+        config["device"] = "cuda" if torch.cuda.is_available() else "cpu"
     np.random.seed(config["experiment"]["seed"])
 
     checkpoint = prepare_checkpoint(config)

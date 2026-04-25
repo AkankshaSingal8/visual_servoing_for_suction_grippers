@@ -6,9 +6,16 @@
 """
 
 
+import os
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
+os.environ.setdefault("XDG_CACHE_HOME", "/tmp")
+
 import torch
 import torch.nn as nn
 from torchvision.transforms import v2
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import tyro

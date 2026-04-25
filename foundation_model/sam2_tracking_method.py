@@ -34,7 +34,13 @@ import argparse
 
 import cv2
 import numpy as np
-import pyzed.sl as sl
+
+try:
+    import pyzed.sl as sl
+    PYZED_AVAILABLE = True
+except ImportError:
+    sl = None
+    PYZED_AVAILABLE = False
 
 THIRD_PARTY_ROOT = os.path.join(os.path.dirname(__file__), "third-party")
 
@@ -1030,6 +1036,11 @@ class CameraStreamer(threading.Thread):
                 time.sleep(1)
 
     def run(self):
+        if not PYZED_AVAILABLE:
+            print("PyZED is not available. Install the ZED SDK/PyZED wheel "
+                  "or use foundation_model/variants/sam2_tracking_opencv.py.")
+            return
+
         zed = sl.Camera()
 
         init_params = sl.InitParameters()

@@ -10,7 +10,7 @@ Usage:
     python dinov2_match_segment.py \
         --scene zed_input.png \
         --reference input_image_transparent.png \
-        --output output_dinov2 --resnet-weight 0.0
+        --output artifacts/dinov2_example --resnet-weight 0.0
 """
 import sys
 import os

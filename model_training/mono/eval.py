@@ -10,10 +10,12 @@ from dataclasses import dataclass
 import pdb
 import os
 import io
-from typing import List
+from typing import List, Optional
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
+os.environ.setdefault("XDG_CACHE_HOME", "/tmp")
 
 import torch
-import wandb
 import numpy as np
 from tqdm import tqdm
 import matplotlib
@@ -24,7 +26,7 @@ from PIL import Image
 import tyro
 from torchvision.io import read_image, ImageReadMode
 
-from datastructs import EvalInfo, LossInfoGpu, StereoSample, BatchedStereoSample
+from datastructs import EvalInfo, LossInfoGpu, MonocularSample, BatchedMonocularSample
 import utils
 import trainutils
 
@@ -86,7 +88,7 @@ def plot_results(ground_truths: np.ndarray, predictions: np.ndarray, output_file
     plt.tight_layout(rect=[0, 0, 1, 0.96]) 
     if not img_only:
         plt.savefig(output_filename)
-        # plt.show()
+        plt.show()
         print(f"\nSaved evaluation plots to '{output_filename}'")
 
     buf = io.BytesIO()
@@ -99,10 +101,10 @@ def plot_results(ground_truths: np.ndarray, predictions: np.ndarray, output_file
     ).reshape(y_dim, x_dim, 4)[..., :-1]
 
 
-def calculate_loss_infos(batched_pred, batched_stereo_sample: BatchedStereoSample, criterion, batch_idx) -> List[LossInfoGpu]:
-    loss = criterion(batched_pred, batched_stereo_sample.batched_offset)
-    batched_deviation = torch.abs(batched_stereo_sample.batched_offset - batched_pred)
-    batched_distance = torch.linalg.norm(batched_stereo_sample.batched_offset - batched_pred, dim=-1)
+def calculate_loss_infos(batched_pred, batched_sample: BatchedMonocularSample, criterion, batch_idx) -> List[LossInfoGpu]:
+    loss = criterion(batched_pred, batched_sample.batched_offset)
+    batched_deviation = torch.abs(batched_sample.batched_offset - batched_pred)
+    batched_distance = torch.linalg.norm(batched_sample.batched_offset - batched_pred, dim=-1)
 
     return [
         LossInfoGpu(
@@ -112,14 +114,14 @@ def calculate_loss_infos(batched_pred, batched_stereo_sample: BatchedStereoSampl
             loss,
             pred,
             offset,
-            image_paths,
+            image_path,
         )
-        for distance, deviation, pred, offset, image_paths in zip(
+        for distance, deviation, pred, offset, image_path in zip(
             batched_distance, 
             batched_deviation, 
             batched_pred, 
-            batched_stereo_sample.batched_offset, 
-            batched_stereo_sample.batched_original_image_path
+            batched_sample.batched_offset, 
+            batched_sample.batched_original_image_path
         )
     ]
 
@@ -136,12 +138,12 @@ def eval_model(model, criterion, val_set, val_transforms, epoch):
     model.eval()
 
     with torch.no_grad():
-        for idx, batched_stereo_sample in enumerate(val_set):
-            batched_stereo_sample.move_to(utils.get_model_device(model))
-            batched_stereo_sample.transform(val_transforms)
-            model_output = model(batched_stereo_sample)
+        for idx, batched_sample in enumerate(val_set):
+            batched_sample.move_to(utils.get_model_device(model))
+            batched_sample.transform(val_transforms)
+            model_output = model(batched_sample)
 
-            batch_loss_info = calculate_loss_infos(model_output, batched_stereo_sample, criterion, idx)
+            batch_loss_info = calculate_loss_infos(model_output, batched_sample, criterion, idx)
 
             loss_infos += batch_loss_info
 
@@ -179,13 +181,21 @@ def eval_model(model, criterion, val_set, val_transforms, epoch):
 class EvalConfig:
     config_path: str
     save_path: str
+    checkpoint_path: Optional[str] = None
 
 if __name__ == "__main__":
 
-    config = tyro.cli(EvalConfig)
-    assert os.path.exists(config.config_path) and os.path.exists(os.path.dirname(config.save_path))
-    config = utils.load_config(config.config_path)
+    eval_config = tyro.cli(EvalConfig)
+    assert os.path.exists(eval_config.config_path)
+    save_dir = os.path.dirname(eval_config.save_path)
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
+    config = utils.load_config(eval_config.config_path)
     infra = trainutils.prepare_infrastructure(config)
     model = trainutils.create_model(config)
+    if eval_config.checkpoint_path:
+        checkpoint = torch.load(eval_config.checkpoint_path, map_location=config["device"])
+        state_dict = checkpoint.get("model", checkpoint)
+        model.load_state_dict(state_dict)
     eval_info = eval_model(model, infra.criterion, infra.valloader, infra.val_transforms, 0)
-    Image.fromarray(eval_info.performance_graph).save(config.save_path)
+    Image.fromarray(eval_info.performance_graph).save(eval_config.save_path)

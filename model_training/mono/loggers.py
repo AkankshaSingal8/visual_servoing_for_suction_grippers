@@ -2,8 +2,6 @@
 import os
 from typing import Mapping, Any
 
-import wandb
-
 import diagnostics
 import utils
 
@@ -32,6 +30,15 @@ class WandbLogger(Logger):
         project: str,
         entity: str,
     ):
+        try:
+            import wandb
+        except ImportError as exc:
+            raise RuntimeError(
+                "W&B logging was requested, but wandb is not installed. "
+                "Remove logging.wandb from the config or install wandb."
+            ) from exc
+
+        self._wandb = wandb
         self._run = wandb.init(
             project=project,
             entity=entity,
@@ -53,7 +60,7 @@ class WandbLogger(Logger):
                 "mae_y": eval_info.mae_y,
                 "mae_z": eval_info.mae_z,
                 "euclidean_distances": eval_info.euclidean_distances,
-                "eval/performance_graph" : wandb.Image(eval_info.performance_graph)
+                "eval/performance_graph" : self._wandb.Image(eval_info.performance_graph)
             },
             step=step,
         )
