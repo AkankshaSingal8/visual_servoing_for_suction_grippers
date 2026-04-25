@@ -41,6 +41,87 @@ Visual Servoing
 \end{IEEEkeywords}
 
 \section{Introduction}
+
+\section{Methodology}
+
+\subsection{Problem Formulation}
+
+The task is to align a suction cup gripper with the center of a target box using visual feedback from a ZED Mini stereo camera mounted on an xArm robotic manipulator. Given one or two camera images of the gripper in the vicinity of the target, the system must predict a 3D correction offset $\boldsymbol{\Delta} = [\Delta x,\, \Delta y,\, \Delta z]^\top$ (in meters) that, when applied to the end-effector, positions the suction cup at the box center. Two camera modalities are explored: stereo (simultaneous left and right images) and monocular (left image only).
+
+\subsection{Datasets}
+
+All training data are rendered synthetically in Isaac Sim using Universal Scene Description (USD) scene files. Each scenario consists of a box placed on a surface rendered with a transparent background, with the virtual ZED Mini camera positioned near the gripper. Renders include left and right RGBA images at $1920 \times 1080$ pixels and corresponding depth maps at $1280 \times 800$ pixels. Brightness is randomized per render to improve domain robustness. Ground truth offsets are stored in per-scenario JSON index files alongside grasp point USD paths.
+
+\subsubsection{OneBox 100K}
+The primary training set comprises 50 USD scene scenarios (\texttt{usd\_001}--\texttt{usd\_050}) each with a single box, yielding approximately 100{,}000 key frames in total. Offset ranges are $x \in [0.35,\, 0.65]$\,m along the approach axis, and $y, z \in [\pm(\text{box\_size}/2 - 0.02)]$\,m laterally.
+
+\subsubsection{Stacked Boxes}
+A more challenging set of 50 USD scenarios contains multiple stacked boxes per scene. Image resolution and metadata format are identical to OneBox 100K. Offset annotations target the center of the top box, making this dataset suitable for evaluating generalization to cluttered scenes.
+
+\subsection{Supervised Regression Approach}
+
+\subsubsection{Stereo Architectures}
+
+Four neural network architectures are implemented and trained on stereo image pairs to directly regress the 3D correction offset.
+
+\textbf{DualStreamCNN.} A custom Siamese-style network with a shared convolutional feature extractor consisting of three convolutional blocks (Conv2d $\to$ BatchNorm $\to$ ReLU $\to$ MaxPool) with output channel widths of 64, 128, and 256, followed by \texttt{AdaptiveAvgPool2d}($1{\times}1$). The 256-dimensional feature vectors from the left and right streams are concatenated (512-d) and passed through three fully connected layers with ReLU activations and Dropout($p{=}0.5$) to produce a 3-dimensional output.
+
+\textbf{EfficientNet-B0.} A pre-trained EfficientNet-B0 backbone with the first four blocks frozen during training. The 1280-dimensional feature vectors from the left stream, right stream, and their elementwise difference are concatenated (3840-d total) and fed to a regression head: Linear(3840$\to$512) $\to$ BatchNorm $\to$ ReLU $\to$ Dropout(0.5) $\to$ Linear(512$\to$128) $\to$ Linear(128$\to$3).
+
+\textbf{ResNet-18/34/50.} Pre-trained ResNet variants with the first four convolutional blocks frozen. Feature dimensions are 512 for ResNet-18 and ResNet-34, and 2048 for ResNet-50. The same left+right+difference fusion strategy is applied, with a multi-layer regression head using BatchNorm and Dropout($p \in \{0.5, 0.3\}$).
+
+\textbf{CFCNetwork.} A CNN backbone coupled with a Neural Circuit Policy (NCP) head. The backbone consists of five convolutional layers with channel widths 24, 36, 48, 64, and 16, producing feature maps that are flattened and projected to 128 dimensions via a fully connected layer. The two 128-dimensional stream features are concatenated (256-d) and processed by Closed-form Continuous-time (CfC) cells arranged with AutoNCP wiring, enabling interpretable temporal dynamics in the visual servoing control loop.
+
+\subsubsection{Monocular Architectures}
+
+Single-stream variants of all four architectures above are implemented for deployment with a single camera. The convolutional feature extractors are identical to their stereo counterparts; cross-stream fusion layers are removed, and the regression head operates directly on the single-stream feature vector (256-d for DualStreamCNN, 1280-d for EfficientNet-B0, 512/2048-d for ResNet variants). The CFCNetwork monocular variant reduces the CfC input dimension to 128.
+
+\subsubsection{Loss Function}
+
+All regression models are trained with a \textbf{weighted MSE} loss that accounts for the differing output ranges across the three offset dimensions:
+\begin{equation}
+  \mathcal{L} = \sum_{d \in \{x,y,z\}} w_d \bigl(\hat{\Delta}_d - \Delta_d\bigr)^2,
+  \qquad w_d = \frac{1/r_d^2}{\sum_{d'} 1/r_{d'}^2},
+\end{equation}
+where $r_d$ is the expected range for dimension $d$ (defaults: $r_x = r_y = 0.30$\,m, $r_z = 0.13$\,m). The inverse-quadratic weighting normalizes each axis by its squared range, preventing larger-range dimensions from dominating the gradient signal.
+
+\subsubsection{Training Details}
+
+All models are optimized with Adam at learning rates in $[10^{-4},\, 3{\times}10^{-4}]$. A ReduceLROnPlateau scheduler (patience 10--15 epochs, factor 0.5) is applied. Batch sizes range from 4 to 64 and training runs for 150--500 epochs depending on the architecture. The validation split is 20\% of the data. Per-epoch evaluation reports per-axis mean absolute error (MAE) and Euclidean distance error.
+
+RGBA synthetic images are composited with random real-world backgrounds at training time via alpha blending:
+\begin{equation}
+  I_{\text{out}} = I_{\text{fg}} \cdot \alpha \;+\; I_{\text{bg}} \cdot (1 - \alpha),
+\end{equation}
+where $\alpha$ is the foreground alpha channel. This sim-to-real augmentation is complemented by ColorJitter (brightness $\pm$0.1, contrast $\pm$0.1, saturation $\pm$0.05, hue $\pm$0.1). All images are resized to $224{\times}224$ and normalized with ImageNet statistics prior to network input.
+
+\subsection{Foundation Model-Based Visual Servoing}
+
+As an alternative to supervised regression, two training-free pipelines are developed that leverage pre-trained vision foundation models for object detection and mask tracking, driving a proportional control loop directly in pixel space.
+
+\subsubsection{DINOv2 and SAM2 Pipeline}
+
+The first pipeline uses DINOv2 (ViT-B/14)~\cite{oquab2023dinov2} for reference-based detection and SAM2 (Hiera Large)~\cite{ravi2024sam2} for segmentation and tracking.
+
+At initialization, patch-level features (14-pixel patch size) are extracted from a reference image of the target box. On each detection frame, DINOv2 features are extracted from the live camera frame and cosine similarity to the reference patches is computed spatially. Pixels above the 95th-percentile similarity threshold define a detection region; its bounding box is passed to SAM2 to produce a precise segmentation mask and logit map.
+
+Subsequent frames use SAM2 logit propagation rather than re-detection, achieving approximately 5--10$\times$ lower latency. Re-detection is triggered when the tracking confidence score drops, the mask area changes by more than $3\times$ or less than $0.3\times$ relative to the previous frame, or every 10--30 frames as a periodic refresh.
+
+The centroid of the tracked mask is computed robustly and fed to a proportional controller with gain $K_p = 0.08$, approach speed 3\,mm/frame, lateral dead zone 15\,px, and maximum lateral step 12\,mm.
+
+\subsubsection{Grounding DINO and SAM2 Pipeline}
+
+The second pipeline replaces DINOv2 similarity matching with Grounding DINO (SwinT-OGC backbone)~\cite{liu2023groundingdino} for language-guided detection using the text prompt \textit{``box''}. This is particularly suited to the stacked-box scenarios where multiple objects are present. The detected bounding box seeds a multi-phase SAM2 segmentation procedure:
+\begin{enumerate}
+  \item Reference logits from a stored template mask are injected on fresh detection frames.
+  \item A $3{\times}3$ grid of SAM2 point prompts is bootstrapped inside the detected box.
+  \item The box is split according to the reference aspect ratio to disambiguate stacked boxes.
+  \item An adaptive coverage threshold is derived from the reference mask fill ratio.
+  \item Multiple candidate masks are scored by a combination of IoU and DINOv2 feature similarity.
+  \item The MaskTracker is warm-started from the selected reference logits and mask.
+\end{enumerate}
+Tracking proceeds via SAM2 propagation with stable-anchor masks; Grounding DINO re-detection is run every 30 frames. Camera frames are captured in ZED HD720 format and optionally recorded to SVO files for offline analysis.
+
 \section*{Acknowledgments}
 I would like to thank Prof. Jeffrey Ichnowski for his invaluable guidance, technical insight, and consistent support throughout this project. His mentorship at the Momentum Robotics Lab has been central in shaping both the research direction and the system design presented in this work.
 The author also thanks the members of the Momentum Robotics Lab for their helpful discussions and feedback during development. Access to the xArm manipulator, ZED Mini stereo camera, and associated lab infrastructure was essential to the real-world experiments reported here.
