@@ -1,0 +1,18 @@
+{
+  "mask_area_px": 243749,
+  "mask_area_pct": 16.271954712043634,
+  "bbox": [
+    567,
+    223,
+    1127,
+    919
+  ],
+  "bbox_area_px": 389760,
+  "sim_in_mask_mean": 0.7889462113380432,
+  "sim_in_mask_std": 0.08402236551046371,
+  "sim_outside_mean": 0.36490288376808167,
+  "sim_contrast": 0.42404332756996155,
+  "sam_score": 0.9786732792854309,
+  "threshold_pct": 80,
+  "resnet_weight": 0.5
+}

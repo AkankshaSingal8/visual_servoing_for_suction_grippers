@@ -1,0 +1,29 @@
+# Large datasets
+stacked_boxes/
+
+# Video and recording files
+*.mp4
+*.svo2
+*.avi
+*.mov
+
+# Model weights
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.safetensors
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
