@@ -1,0 +1,235 @@
+18:56:29.084 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/semvs_20260425_185629.log
+18:56:29.084 [INFO ] Detector : GDINO
+18:56:29.084 [INFO ] Prompt   : box
+18:56:29.084 [INFO ] PyZED    : available
+18:56:29.084 [INFO ] Reference image: foundation_model/input_image_transparent.png
+18:56:30.155 [INFO ] Robot connected: 192.168.1.241
+18:56:30.156 [INFO ] Debug dump: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_20260425_185630
+18:56:30.156 [INFO ] Debug dump: share this absolute path to send results back.
+18:56:31.875 [INFO ] PyZED SVO recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_recording_20260425_185631.svo2
+18:56:31.876 [INFO ] Calibration thread: waiting for models …
+18:56:31.887 [INFO ] Processing reference image …
+18:56:31.907 [INFO ] Annotated recording → /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_annotated_20260425_185631.mp4  (1280×720)
+18:56:34.705 [INFO ] GroundingDINO (HF) loaded: IDEA-Research/grounding-dino-tiny on cuda
+18:56:35.106 [INFO ] GDINO: 7 detection(s) for ['box', 'cardboard box', 'package', 'carton', 'parcel']
+18:56:35.107 [INFO ] Ref image: detected 'cardboard box' score=0.51 @ [195 227 836 571]
+18:56:35.192 [INFO ] Feature extractor (ResNet-18) loaded
+18:56:35.218 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:56:35.331 [INFO ] GDINO: 3 detection(s) for ['box', 'cardboard box', 'package', 'carton', 'parcel']
+18:56:35.333 [DEBUG]   det conf=0.33 sim=0.952 pos=0.52 prox=0.00 → 0.586
+18:56:35.335 [DEBUG]   det conf=0.32 sim=0.866 pos=0.30 prox=0.00 → 0.509
+18:56:35.336 [INFO ] GDINO: 'cardboard box package carton' score=0.33 @ [423 267 728 430]  (top of 3)  sim=0.952
+18:56:36.851 [INFO ] SAM2: mask obtained (score=0.993, area=45596 px)
+18:56:37.059 [DEBUG] Grasp point: robust centroid (575, 350)
+18:56:37.117 [INFO ] Models ready — calibration may now proceed.
+18:56:37.117 [DEBUG] Servo: waiting [waiting for calibration...]
+18:56:37.117 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:56:37.117 [INFO ] === Calibration: waiting for camera frame ===
+18:56:37.119 [INFO ] Home: [205.3, 5.6, -52.9] mm
+18:56:37.221 [INFO ] SAM2: mask obtained (score=0.993, area=45623 px)
+18:56:37.252 [DEBUG] Grasp point: robust centroid (575, 350)
+18:56:37.342 [INFO ] SAM2: mask obtained (score=0.993, area=45604 px)
+18:56:37.376 [DEBUG] Grasp point: robust centroid (575, 350)
+18:56:37.420 [INFO ]   [Y] moving +8 mm...
+18:56:37.470 [INFO ] SAM2: mask obtained (score=0.993, area=45632 px)
+18:56:37.504 [DEBUG] Grasp point: robust centroid (575, 351)
+18:56:37.597 [INFO ] SAM2: mask obtained (score=0.993, area=45614 px)
+18:56:37.629 [DEBUG] Grasp point: robust centroid (575, 351)
+18:56:37.723 [INFO ] SAM2: mask obtained (score=0.992, area=45589 px)
+18:56:37.756 [DEBUG] Grasp point: robust centroid (575, 350)
+18:56:37.756 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.998)
+18:56:37.848 [INFO ] SAM2: mask obtained (score=0.993, area=45490 px)
+18:56:37.880 [DEBUG] Grasp point: robust centroid (576, 350)
+18:56:37.880 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.991)
+18:56:37.974 [INFO ] SAM2: mask obtained (score=0.993, area=45647 px)
+18:56:38.006 [DEBUG] Grasp point: robust centroid (578, 349)
+18:56:38.007 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.968)
+18:56:38.101 [INFO ] SAM2: mask obtained (score=0.992, area=45532 px)
+18:56:38.135 [DEBUG] Grasp point: robust centroid (583, 348)
+18:56:38.136 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.970)
+18:56:38.228 [INFO ] SAM2: mask obtained (score=0.992, area=45599 px)
+18:56:38.262 [DEBUG] Grasp point: robust centroid (585, 349)
+18:56:38.262 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.977)
+18:56:38.356 [INFO ] SAM2: mask obtained (score=0.993, area=45535 px)
+18:56:38.390 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:38.390 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.984)
+18:56:38.482 [INFO ] SAM2: mask obtained (score=0.993, area=45521 px)
+18:56:38.515 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:38.515 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.999)
+18:56:38.610 [INFO ] SAM2: mask obtained (score=0.993, area=45573 px)
+18:56:38.643 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:38.643 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.998)
+18:56:38.738 [INFO ] SAM2: mask obtained (score=0.993, area=45576 px)
+18:56:38.772 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:38.772 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.999)
+18:56:38.865 [INFO ] SAM2: mask obtained (score=0.993, area=45560 px)
+18:56:38.897 [DEBUG] Grasp point: robust centroid (586, 350)
+18:56:38.898 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.997)
+18:56:38.992 [INFO ] SAM2: mask obtained (score=0.993, area=45556 px)
+18:56:39.024 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.025 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.999)
+18:56:39.124 [INFO ] SAM2: mask obtained (score=0.993, area=45557 px)
+18:56:39.156 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.157 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.997)
+18:56:39.251 [INFO ] SAM2: mask obtained (score=0.993, area=45566 px)
+18:56:39.286 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.286 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.998)
+18:56:39.376 [INFO ] SAM2: mask obtained (score=0.993, area=45586 px)
+18:56:39.408 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.409 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.999)
+18:56:39.502 [INFO ] SAM2: mask obtained (score=0.993, area=45579 px)
+18:56:39.527 [INFO ]   [Y] returning home...
+18:56:39.534 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.534 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.999)
+18:56:39.631 [INFO ] SAM2: mask obtained (score=0.993, area=45557 px)
+18:56:39.664 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.665 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.999)
+18:56:39.758 [INFO ] SAM2: mask obtained (score=0.993, area=45540 px)
+18:56:39.789 [DEBUG] Grasp point: robust centroid (585, 350)
+18:56:39.790 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.999)
+18:56:39.883 [INFO ] SAM2: mask obtained (score=0.992, area=45641 px)
+18:56:39.918 [DEBUG] Grasp point: robust centroid (585, 351)
+18:56:39.918 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.985)
+18:56:40.010 [INFO ] SAM2: mask obtained (score=0.989, area=45696 px)
+18:56:40.042 [DEBUG] Grasp point: robust centroid (583, 359)
+18:56:40.043 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.889)
+18:56:40.138 [INFO ] SAM2: mask obtained (score=0.990, area=45596 px)
+18:56:40.142 [INFO ]   [Y] flow: (+11.2, -0.0) px / 8 mm  → J[:,{col}]=[+1.4044, -0.0018]
+18:56:40.176 [DEBUG] Grasp point: robust centroid (579, 360)
+18:56:40.176 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.971)
+18:56:40.267 [INFO ] SAM2: mask obtained (score=0.988, area=45526 px)
+18:56:40.302 [DEBUG] Grasp point: robust centroid (576, 361)
+18:56:40.302 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.970)
+18:56:40.395 [INFO ] SAM2: mask obtained (score=0.988, area=45583 px)
+18:56:40.430 [DEBUG] Grasp point: robust centroid (574, 361)
+18:56:40.430 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.983)
+18:56:40.442 [INFO ]   [Z] moving +8 mm...
+18:56:40.524 [INFO ] SAM2: mask obtained (score=0.988, area=45532 px)
+18:56:40.556 [DEBUG] Grasp point: robust centroid (574, 361)
+18:56:40.557 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.991)
+18:56:40.651 [INFO ] SAM2: mask obtained (score=0.989, area=45589 px)
+18:56:40.687 [DEBUG] Grasp point: robust centroid (574, 361)
+18:56:40.688 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.998)
+18:56:40.779 [INFO ] SAM2: mask obtained (score=0.988, area=45700 px)
+18:56:40.812 [DEBUG] Grasp point: robust centroid (574, 361)
+18:56:40.812 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.994)
+18:56:40.918 [INFO ] GDINO: 3 detection(s) for ['box', 'cardboard box', 'package', 'carton', 'parcel']
+18:56:40.922 [DEBUG]   det conf=0.35 sim=0.941 pos=0.50 prox=1.00 → 0.829
+18:56:40.924 [DEBUG]   det conf=0.33 sim=0.871 pos=0.28 prox=0.50 → 0.635
+18:56:40.926 [INFO ] GDINO: 'cardboard box package carton' score=0.35 @ [422 280 727 443]  (top of 3)  sim=0.941
+18:56:41.019 [INFO ] SAM2: mask obtained (score=0.992, area=45700 px)
+18:56:41.051 [DEBUG] Grasp point: robust centroid (574, 364)
+18:56:41.052 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.965)
+18:56:41.203 [INFO ] SAM2: mask obtained (score=0.990, area=45546 px)
+18:56:41.237 [DEBUG] Grasp point: robust centroid (574, 372)
+18:56:41.237 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.908)
+18:56:41.328 [INFO ] SAM2: mask obtained (score=0.990, area=45823 px)
+18:56:41.361 [DEBUG] Grasp point: robust centroid (573, 371)
+18:56:41.361 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.993)
+18:56:41.454 [INFO ] SAM2: mask obtained (score=0.991, area=45646 px)
+18:56:41.486 [DEBUG] Grasp point: robust centroid (573, 371)
+18:56:41.487 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.993)
+18:56:41.580 [INFO ] SAM2: mask obtained (score=0.990, area=45544 px)
+18:56:41.612 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:41.612 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.991)
+18:56:41.707 [INFO ] SAM2: mask obtained (score=0.990, area=45602 px)
+18:56:41.742 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:41.743 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.998)
+18:56:41.838 [INFO ] SAM2: mask obtained (score=0.990, area=45728 px)
+18:56:41.870 [DEBUG] Grasp point: robust centroid (573, 371)
+18:56:41.871 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.995)
+18:56:41.966 [INFO ] SAM2: mask obtained (score=0.990, area=45650 px)
+18:56:42.000 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.000 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.998)
+18:56:42.093 [INFO ] SAM2: mask obtained (score=0.990, area=45608 px)
+18:56:42.128 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.129 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.998)
+18:56:42.129 [DEBUG] Servo: waiting [calibrating Z...]
+18:56:42.220 [INFO ] SAM2: mask obtained (score=0.990, area=45598 px)
+18:56:42.253 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.254 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.994)
+18:56:42.347 [INFO ] SAM2: mask obtained (score=0.990, area=45603 px)
+18:56:42.381 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.381 [INFO ] MaskTracker: anchor locked (IoU streak=40, last IoU=0.997)
+18:56:42.475 [INFO ] SAM2: mask obtained (score=0.991, area=45644 px)
+18:56:42.507 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.508 [INFO ] MaskTracker: anchor locked (IoU streak=41, last IoU=0.996)
+18:56:42.549 [INFO ]   [Z] returning home...
+18:56:42.602 [INFO ] SAM2: mask obtained (score=0.990, area=45610 px)
+18:56:42.636 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.636 [INFO ] MaskTracker: anchor locked (IoU streak=42, last IoU=0.998)
+18:56:42.728 [INFO ] SAM2: mask obtained (score=0.990, area=45585 px)
+18:56:42.760 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.761 [INFO ] MaskTracker: anchor locked (IoU streak=43, last IoU=0.999)
+18:56:42.855 [INFO ] SAM2: mask obtained (score=0.990, area=45606 px)
+18:56:42.887 [DEBUG] Grasp point: robust centroid (573, 370)
+18:56:42.888 [INFO ] MaskTracker: anchor locked (IoU streak=44, last IoU=0.999)
+18:56:42.982 [INFO ] SAM2: mask obtained (score=0.991, area=45655 px)
+18:56:43.014 [DEBUG] Grasp point: robust centroid (574, 369)
+18:56:43.015 [INFO ] MaskTracker: anchor locked (IoU streak=45, last IoU=0.974)
+18:56:43.107 [INFO ] SAM2: mask obtained (score=0.992, area=45500 px)
+18:56:43.144 [DEBUG] Grasp point: robust centroid (577, 364)
+18:56:43.145 [INFO ] MaskTracker: anchor locked (IoU streak=46, last IoU=0.908)
+18:56:43.161 [INFO ]   [Z] flow: (-1.4, +8.7) px / 8 mm  → J[:,{col}]=[-0.1717, +1.0899]
+18:56:43.162 [INFO ] J_yz (px/mm):
+[[ 1.40435791 -0.17165565]
+ [-0.00183105  1.0898819 ]]
+18:56:43.162 [INFO ] J_yz_inv (mm/px):
+[[0.71221545 0.11217345]
+ [0.00119656 0.91771907]]
+18:56:43.162 [INFO ] === Calibration complete [calibrated] ===
+18:56:43.238 [INFO ] SAM2: mask obtained (score=0.992, area=45766 px)
+18:56:43.272 [DEBUG] Grasp point: robust centroid (577, 363)
+18:56:43.273 [INFO ] MaskTracker: anchor locked (IoU streak=47, last IoU=0.986)
+18:56:43.273 [WARNING] Servo: clamping Z -54.2 → 0.0 mm (base limit)
+18:56:44.786 [INFO ] Servo: err=(-63,+3)px r=63  Δ=(+3.0,+12.0,-1.3)mm  pos=(208,18,0)  [calibrated]
+18:56:44.883 [INFO ] SAM2: mask obtained (score=0.912, area=32418 px)
+18:56:44.915 [DEBUG] Grasp point: robust centroid (586, 403)
+18:56:44.916 [WARNING] Servo: clamping Z -12.0 → 0.0 mm (base limit)
+18:56:45.673 [INFO ] Servo: err=(-54,+43)px r=69  Δ=(+3.0,+12.0,-12.0)mm  pos=(211,30,0)  [calibrated]
+18:56:45.766 [INFO ] SAM2: mask obtained (score=0.952, area=33603 px)
+18:56:45.800 [DEBUG] Grasp point: robust centroid (603, 406)
+18:56:45.801 [WARNING] Servo: clamping Z -12.0 → 0.0 mm (base limit)
+18:56:46.507 [INFO ] Servo: err=(-37,+46)px r=59  Δ=(+3.0,+10.6,-12.0)mm  pos=(214,40,0)  [calibrated]
+18:56:46.608 [INFO ] SAM2: mask obtained (score=0.842, area=60510 px)
+18:56:46.639 [DEBUG] Grasp point: robust centroid (582, 376)
+18:56:46.640 [WARNING] Servo: clamping Z -7.3 → 0.0 mm (base limit)
+18:56:47.397 [INFO ] Servo: err=(-58,+16)px r=60  Δ=(+3.0,+12.0,-7.3)mm  pos=(217,52,0)  [calibrated]
+18:56:47.492 [INFO ] SAM2: mask obtained (score=0.775, area=109381 px)
+18:56:47.523 [DEBUG] Grasp point: robust centroid (537, 303)
+18:56:47.524 [WARNING] Servo: centroid jump 86 px — ignored
+18:56:47.624 [INFO ] SAM2: mask obtained (score=0.763, area=114647 px)
+18:56:47.658 [DEBUG] Grasp point: robust centroid (515, 299)
+18:56:48.516 [INFO ] Servo: err=(-125,-61)px r=139  Δ=(+3.0,+12.0,+12.0)mm  pos=(220,64,12)  [calibrated]
+18:56:48.610 [INFO ] SAM2: mask obtained (score=0.523, area=145850 px)
+18:56:48.642 [DEBUG] Grasp point: robust centroid (533, 254)
+18:56:49.499 [INFO ] Servo: err=(-107,-106)px r=151  Δ=(+3.0,+12.0,+12.0)mm  pos=(223,76,24)  [calibrated]
+18:56:49.595 [INFO ] SAM2: mask obtained (score=0.786, area=66063 px)
+18:56:49.630 [DEBUG] Grasp point: robust centroid (558, 285)
+18:56:50.487 [INFO ] Servo: err=(-82,-75)px r=111  Δ=(+3.0,+12.0,+12.0)mm  pos=(226,88,36)  [calibrated]
+18:56:50.590 [INFO ] SAM2: mask obtained (score=0.738, area=69745 px)
+18:56:50.621 [DEBUG] Grasp point: robust centroid (537, 268)
+18:56:51.478 [INFO ] Servo: err=(-103,-92)px r=138  Δ=(+3.0,+12.0,+12.0)mm  pos=(229,100,48)  [calibrated]
+18:56:51.577 [INFO ] SAM2: mask obtained (score=0.741, area=65996 px)
+18:56:51.608 [DEBUG] Grasp point: robust centroid (620, 294)
+18:56:51.608 [WARNING] Servo: centroid jump 87 px — ignored
+18:56:51.700 [INFO ] SAM2: mask obtained (score=0.769, area=72739 px)
+18:56:51.732 [DEBUG] Grasp point: robust centroid (617, 287)
+18:56:52.590 [INFO ] Servo: err=(-23,-73)px r=77  Δ=(+3.0,+12.0,+12.0)mm  pos=(232,112,60)  [calibrated]
+18:56:52.685 [INFO ] SAM2: mask obtained (score=0.871, area=56502 px)
+18:56:52.720 [DEBUG] Grasp point: robust centroid (539, 287)
+18:56:53.578 [INFO ] Servo: err=(-101,-73)px r=125  Δ=(+3.0,+12.0,+12.0)mm  pos=(235,124,72)  [calibrated]
+18:56:53.672 [INFO ] SAM2: mask obtained (score=0.862, area=54112 px)
+18:56:53.704 [DEBUG] Grasp point: robust centroid (547, 284)
+18:56:54.563 [INFO ] Servo: err=(-93,-76)px r=120  Δ=(+3.0,+12.0,+12.0)mm  pos=(238,136,84)  [calibrated]
+18:56:54.674 [INFO ] GDINO: 5 detection(s) for ['box', 'cardboard box', 'package', 'carton', 'parcel']
+18:56:54.677 [DEBUG]   det conf=0.38 sim=0.930 pos=0.27 prox=0.01 → 0.546
+18:56:54.679 [DEBUG]   det conf=0.26 sim=0.778 pos=0.08 prox=0.00 → 0.427
+18:56:54.680 [INFO ] GDINO: 'cardboard box package carton' score=0.38 @ [595 431 916 615]  (top of 5)  sim=0.930
+18:56:54.771 [INFO ] SAM2: mask obtained (score=0.989, area=55099 px)
+18:56:54.803 [DEBUG] Grasp point: robust centroid (755, 525)
+18:56:55.426 [INFO ] Annotated recording saved: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/vs_annotated_20260425_185631.mp4
+18:56:55.431 [INFO ] Robot stopped.
+18:56:55.431 [INFO ] Debug dump finalized: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_20260425_185630
+18:56:55.431 [INFO ] Push to share with Claude:  git add /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_20260425_185630 && git commit -m 'debug dump' && git push
+18:56:55.431 [INFO ] Done.

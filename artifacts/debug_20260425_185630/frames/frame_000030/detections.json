@@ -1,0 +1,54 @@
+{
+  "frame_index": 30,
+  "source": "live",
+  "detector_used": "gdino",
+  "detection_was_skipped": false,
+  "candidates": [
+    {
+      "box_xyxy": [
+        422.3924560546875,
+        280.62664794921875,
+        727.1259765625,
+        443.8385925292969
+      ],
+      "score": 0.3501149117946625,
+      "label": "cardboard box package carton"
+    },
+    {
+      "box_xyxy": [
+        433.8835144042969,
+        436.1137390136719,
+        744.896484375,
+        604.3892822265625
+      ],
+      "score": 0.3298523724079132,
+      "label": "cardboard box package carton"
+    },
+    {
+      "box_xyxy": [
+        418.73968505859375,
+        278.0151672363281,
+        749.01123046875,
+        606.1909790039062
+      ],
+      "score": 0.29842105507850647,
+      "label": "cardboard box package carton parcel"
+    }
+  ],
+  "chosen_box_xyxy": [
+    422.3924560546875,
+    280.62664794921875,
+    727.1259765625,
+    443.8385925292969
+  ],
+  "sam_center_pt": [
+    574.7592163085938,
+    362.23260498046875
+  ],
+  "sam_score": 0.9919304251670837,
+  "similarity": 0.9407333731651306,
+  "best_centroid": [
+    574,
+    364
+  ]
+}

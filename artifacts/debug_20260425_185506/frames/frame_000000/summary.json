@@ -1,0 +1,50 @@
+{
+  "frame_index": 0,
+  "source": "live",
+  "detector_used": "gdino",
+  "detection_was_skipped": false,
+  "candidates": [
+    {
+      "box_xyxy": [
+        423.04315185546875,
+        532.3165893554688,
+        744.9481201171875,
+        714.763916015625
+      ],
+      "score": 0.3873589336872101,
+      "label": "cardboard box package carton"
+    },
+    {
+      "box_xyxy": [
+        379.0513610839844,
+        498.5193176269531,
+        797.83349609375,
+        716.7330932617188
+      ],
+      "score": 0.3293948173522949,
+      "label": "cardboard box package carton"
+    }
+  ],
+  "chosen_box_xyxy": [
+    423.04315185546875,
+    532.3165893554688,
+    744.9481201171875,
+    714.763916015625
+  ],
+  "sam_center_pt": [
+    583.99560546875,
+    623.540283203125
+  ],
+  "sam_score": 0.9930691719055176,
+  "similarity": 0.8512915968894958,
+  "best_centroid": [
+    584,
+    627
+  ],
+  "mask_area_px": 57567,
+  "frame_shape": [
+    720,
+    1280,
+    3
+  ]
+}
