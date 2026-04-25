@@ -1,6 +1,10 @@
 # Large datasets
 stacked_boxes/
 
+# Third-party dependencies
+third-party/
+foundation_model/third-party
+
 # Video and recording files
 *.mp4
 *.svo2
