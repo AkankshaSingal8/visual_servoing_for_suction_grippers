@@ -1,0 +1,32 @@
+{
+  "timestamp": "20260426_181521",
+  "argv": [
+    "foundation_model/servo_lastmile.py",
+    "--ref-image",
+    "masked_objects/protein_bar.png",
+    "--debug"
+  ],
+  "args": {
+    "cam_index": 0,
+    "ref_image": "masked_objects/protein_bar.png",
+    "no_pyzed": false,
+    "no_robot": false,
+    "dry_run": false,
+    "input_image": null,
+    "input_dir": null,
+    "input_video": null,
+    "output_dir": null,
+    "max_frames": null,
+    "no_overlays": false,
+    "prompt": "box",
+    "hand_eye": null,
+    "log_dir": "logs",
+    "debug": true,
+    "no_window": false,
+    "debug_dir": "artifacts",
+    "debug_every": 30
+  },
+  "ref_image": "masked_objects/protein_bar.png",
+  "prompt": "box",
+  "hand_eye": null
+}
