@@ -135,14 +135,25 @@ VS_MVACC     = 500
 VS_RATE      = 0.3
 CTRL_GAIN    = 0.5
 
-CAL_DELTA    = 8.0
+CAL_DELTA    = 4.0
 CAL_WAIT     = 1.5
 # Calibration moves at a much slower speed than servoing so the operator
 # can clearly see the small Y/Z probe sweeps and the optical flow remains
-# unblurred. VS_SPEED=150 mm/s for an 8 mm probe finishes in ~50 ms which
-# looks like a sudden jolt; CAL_SPEED=30 mm/s spreads it over ~270 ms.
+# unblurred. CAL_DELTA dropped from 8 -> 4 mm so the visible arm motion
+# during the Z probe (which physically moves UP from the home pose) is
+# halved. CAL_SPEED=30 mm/s spreads each 4 mm probe over ~135 ms.
 CAL_SPEED    = 30
 CAL_MVACC    = 100
+
+# J_yz prediction reliability range. The Jacobian is calibrated at the
+# current camera-to-object distance; pixel motion per mm scales as
+# (cal_distance / current_distance). For small EE motions around the
+# calibration pose the linearization is fine, but for large excursions
+# (e.g., the ~50 mm Z fly-up that happens when MIN_Z_MM clamps a
+# negative-Z servo command) it extrapolates badly. Beyond this Δyz
+# threshold the stabilizer falls back to a hard freeze at the lock
+# centroid instead of trusting the linear extrapolation.
+PREDICT_MAX_DELTA_MM = 15.0
 
 MIN_Z_MM     = 0.0
 
@@ -1540,6 +1551,24 @@ class CameraStreamer(threading.Thread):
                 and jac is not None and cur_pos is not None):
             dy = float(cur_pos[1]) - lock_yz[0]
             dz = float(cur_pos[2]) - lock_yz[1]
+            # Reject the linear extrapolation when |Δyz| is too large.
+            # J_yz is calibrated at one camera-to-object distance; pixel
+            # motion per mm scales as the inverse of distance. A 50+ mm
+            # Z fly-up (which happens here every run because MIN_Z_MM=0
+            # clamps the controller's negative Z command) puts us deep
+            # outside the linearization regime — the predicted centroid
+            # ends up 80+ px from where the object actually projects.
+            # In that regime, freeze hard at the lock centroid instead.
+            mag = (dy * dy + dz * dz) ** 0.5
+            if mag > PREDICT_MAX_DELTA_MM:
+                log.info("Grasp stab: |Δyz|=%.1f mm > %.0f mm cap; "
+                         "hard-freeze at lock %s (raw %s, would-predict "
+                         "would extrapolate beyond the J_yz regime)",
+                         mag, PREDICT_MAX_DELTA_MM, lock_c,
+                         tuple(int(v) for v in centroid))
+                res["best_centroid"] = lock_c
+                return
+
             d_world = np.array([dy, dz], dtype=np.float64)
             d_px = jac @ d_world  # (2,) pixel displacement
             predicted = (int(lock_c[0] + d_px[0]),
