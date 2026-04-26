@@ -135,24 +135,18 @@ VS_MVACC     = 500
 VS_RATE      = 0.3
 CTRL_GAIN    = 0.5
 
-CAL_DELTA    = 4.0
+CAL_DELTA    = 8.0
 CAL_WAIT     = 1.5
-# Calibration moves at a much slower speed than servoing so the operator
-# can clearly see the small Y/Z probe sweeps and the optical flow remains
-# unblurred. CAL_DELTA dropped from 8 -> 4 mm so the visible arm motion
-# during the Z probe (which physically moves UP from the home pose) is
-# halved. CAL_SPEED=30 mm/s spreads each 4 mm probe over ~135 ms.
+# Calibration moves slower than servoing for visibility and unblurred
+# optical flow. CAL_DELTA stays at 8 mm so calibration produces enough
+# pixel motion for both Y and Z to come back rank=2; the earlier 4 mm
+# value caused rank=1 partial cal at far distances.
 CAL_SPEED    = 30
 CAL_MVACC    = 100
 
-# J_yz prediction reliability range. The Jacobian is calibrated at the
-# current camera-to-object distance; pixel motion per mm scales as
-# (cal_distance / current_distance). For small EE motions around the
-# calibration pose the linearization is fine, but for large excursions
-# (e.g., the ~50 mm Z fly-up that happens when MIN_Z_MM clamps a
-# negative-Z servo command) it extrapolates badly. Beyond this Δyz
-# threshold the stabilizer falls back to a hard freeze at the lock
-# centroid instead of trusting the linear extrapolation.
+# J_yz prediction reliability cap. Kept for forward compatibility but
+# the stabilizer is currently disabled; see CameraStreamer._seg_loop
+# below where the call to _stabilize_grasp is gated off.
 PREDICT_MAX_DELTA_MM = 15.0
 
 MIN_Z_MM     = 0.0
@@ -1468,19 +1462,18 @@ class CameraStreamer(threading.Thread):
                                    ref_crop=self.ref_crop,
                                    ref_features=self.ref_features)
 
-                # Grasp point stabilization across the cropping transition.
-                # When the bbox is fully framed, _robust_centroid is reliable
-                # and we record (centroid, EE_yz) as the lock state. Once the
-                # bbox starts touching a frame border, the visible-portion
-                # centroid drifts toward whichever side stays in view, which
-                # makes the grasp point chase a different physical point on
-                # the box face every frame. Instead, predict the centroid
-                # from the lock + the calibrated J_yz Jacobian * EE motion
-                # since lock. This keeps the grasp anchored to the same
-                # physical point as long as J_yz is roughly correct, which
-                # it is by construction (it was calibrated at a similar
-                # camera-to-object distance).
-                self._stabilize_grasp(res)
+                # Grasp stabilization (J_yz prediction during cropping) is
+                # disabled. The previous implementation hard-froze at the
+                # lock centroid once |Δyz| exceeded the cap, which on this
+                # rig fires immediately because MIN_Z_MM clamps negative-Z
+                # commands and forces a 50+ mm Z fly-up on the first servo
+                # step. The "stabilization" then locked the grasp at a
+                # stale image position and the controller commanded Y/Z
+                # corrections to a point that no longer corresponded to
+                # the object, making things worse than the simple
+                # _robust_centroid baseline. Re-enable behind a flag once
+                # the underlying Z saturation issue is addressed.
+                # self._stabilize_grasp(res)
 
                 with self.data_lock:
                     self._result = res

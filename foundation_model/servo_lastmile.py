@@ -1208,13 +1208,28 @@ class LastMilePipeline:
             z_mm = self._depth_at_px(depth_map, cx_cy) if cx_cy else None
             res["z_mm"] = z_mm
 
+            # LOCK capture: continuously refresh the lock while the bbox
+            # is fully framed. Decoupled from the NEAR transition so we
+            # don't engage the multi-source fusion until cropping actually
+            # starts -- in pure FAR conditions the simple mask centroid is
+            # already correct and adding fusion only introduces noise.
             if self.fsm.evaluate_far(sam3_res, z_mm, frame_bgr.shape):
                 lock = self._enter_lock(frame_bgr, sam3_res, depth_map)
                 if lock is not None:
                     self.fsm.lock_state = lock
-                    self.fsm.state = State.NEAR
-                    res["state"] = State.NEAR
                     res["best_centroid"] = lock.centroid_px
+
+            # NEAR transition only when cropping is real: bbox at border
+            # OR area > 30% OR depth < threshold. While the user is far
+            # from the object the SAM3 mask centroid is reliable, so we
+            # stay in FAR and don't engage fusion.
+            if (self.fsm.lock_state is not None
+                    and self.fsm.near_trigger_fired(
+                        sam3_res, z_mm, frame_bgr.shape)):
+                self.fsm.state = State.NEAR
+                res["state"] = State.NEAR
+                log.info("State -> NEAR @ frame %d (cropping detected)",
+                         self.fsm.frame_idx)
             return res
 
         # ============ NEAR ============
