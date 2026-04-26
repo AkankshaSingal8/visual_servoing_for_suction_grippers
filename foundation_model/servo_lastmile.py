@@ -101,7 +101,19 @@ def _setup_logger(name: str = "lastmile",
         datefmt="%H:%M:%S"))
     logger.addHandler(fh)
 
+    # Bridge: attach the same handlers to 'semvs' (servo_pipeline_sam3's
+    # logger) so the camera / SAM3 / robot log lines appear in our log file
+    # and console when live mode imports that module. Without this, the
+    # live driver looks dead because all interesting messages get dropped.
+    semvs_logger = logging.getLogger("semvs")
+    semvs_logger.setLevel(level)
+    semvs_logger.handlers.clear()
+    for h in logger.handlers:
+        semvs_logger.addHandler(h)
+    semvs_logger.propagate = False
+
     logger.info("Logging to %s", os.path.abspath(log_path))
+    logger._semvs_log_path = os.path.abspath(log_path)
     return logger
 
 
@@ -1311,6 +1323,14 @@ def make_default_sam3_runner(ref_image_path: str | None,
     weights, etc.), returns a stub that yields empty detections so the
     state machine path is still exercisable.
     """
+    if HEAVY_MODELS_DISABLED:
+        log.info("SAM3 import skipped (LASTMILE_DISABLE_HEAVY_MODELS=1); "
+                 "using empty-detection stub.")
+
+        def stub(_frame: np.ndarray) -> dict:
+            return _empty_result()
+        return stub
+
     try:
         from foundation_model.servo_pipeline_sam3 import (  # type: ignore
             run_pipeline, MaskTracker, process_ref_image)
@@ -1574,63 +1594,73 @@ def _process_offline_frame(pipeline, frame, n, source, out_dir, fh,
     return n + 1
 
 
+def _xarm_pose_to_T(pos: list[float] | tuple[float, ...]) -> np.ndarray:
+    """xArm xyzrpy (mm, deg, ZYX intrinsic) -> 4x4 SE(3) in mm."""
+    T = np.eye(4)
+    T[0, 3], T[1, 3], T[2, 3] = pos[0], pos[1], pos[2]
+    rx, ry, rz = (math.radians(pos[3]), math.radians(pos[4]),
+                  math.radians(pos[5]))
+    Rz = np.array([[math.cos(rz), -math.sin(rz), 0.0],
+                   [math.sin(rz),  math.cos(rz), 0.0],
+                   [         0.0,           0.0, 1.0]])
+    Ry = np.array([[ math.cos(ry), 0.0, math.sin(ry)],
+                   [          0.0, 1.0,          0.0],
+                   [-math.sin(ry), 0.0, math.cos(ry)]])
+    Rx = np.array([[1.0,           0.0,            0.0],
+                   [0.0,  math.cos(rx), -math.sin(rx)],
+                   [0.0,  math.sin(rx),  math.cos(rx)]])
+    T[:3, :3] = Rz @ Ry @ Rx
+    return T
+
+
 def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
     """
-    Live mode: ZED capture + xArm control. Reuses the existing
-    CameraStreamer/RobotController from servo_pipeline_sam3 but routes the
-    per-frame perception through LastMilePipeline.step instead of the
-    monolithic run_pipeline.
+    Minimal live driver. Opens ZED with stereo depth ENABLED (lastmile
+    requires real depth to LOCK), runs perception via LastMilePipeline,
+    drives the xArm via the existing RobotController, and dumps lastmile-
+    shaped per-frame artifacts.
 
-    The streamer's per-frame callback consumes a result dict shaped
-    identically to run_pipeline's output (we add the lastmile keys on
-    top), so the existing overlay renderer and JSONL summary tooling all
-    keep working.
+    Replaces an earlier monkey-patch-on-CameraStreamer approach which had
+    three hard-to-diagnose failure modes: silent logger isolation, ZED
+    depth disabled in the upstream streamer (so LOCK never fired), and
+    SAM3-shaped artifact dumps that didn't surface lastmile state.
     """
     try:
         try:
             from foundation_model.servo_pipeline_sam3 import (  # type: ignore
-                CameraStreamer, RobotController, MaskTracker, process_ref_image,
-                _load_ref_image, run_pipeline)
+                RobotController, ZedUndistorter, ROBOT_IP, ZED_RESOLUTION)
         except Exception:
             from servo_pipeline_sam3 import (
-                CameraStreamer, RobotController, MaskTracker, process_ref_image,
-                _load_ref_image, run_pipeline)
+                RobotController, ZedUndistorter, ROBOT_IP, ZED_RESOLUTION)
     except Exception as e:
-        log.error("Live mode requires the existing servo_pipeline_sam3 "
-                  "module (and its dependencies) to be importable: %s", e)
+        log.error("Live mode needs servo_pipeline_sam3 importable: %s", e)
         sys.exit(2)
 
-    # Reference handling
-    ref_crop = ref_features = None
-    if args.ref_image and os.path.exists(args.ref_image):
-        ref_bgr = _load_ref_image(args.ref_image)
-        if ref_bgr is not None:
-            ref_crop, ref_features = process_ref_image(ref_bgr, args.prompt)
-    elif args.ref_image:
+    if args.ref_image and not os.path.exists(args.ref_image):
         log.error("Reference image not found: %s", args.ref_image)
         sys.exit(1)
 
-    tracker = MaskTracker()
-
     # Robot
-    robot = RobotController("192.168.1.241")
+    robot = RobotController(ROBOT_IP)
     if args.no_robot or args.dry_run:
-        reason = "--dry-run" if args.dry_run else "--no-robot"
-        log.info("Robot disabled (%s)", reason)
+        log.info("Robot disabled (%s)",
+                 "--dry-run" if args.dry_run else "--no-robot")
     else:
         robot.connect()
 
-    # Build the LastMilePipeline. We give it hooks that read from the live
-    # stack as it runs: EE pose comes from the robot controller; depth is
-    # filled in by the camera streamer's PyZED depth path (when available).
-    shared = dict(latest_pose=np.eye(4),
-                  latest_depth=None)
+    # Pipeline plumbing: the orchestrator pulls EE pose and depth via
+    # callbacks; we keep the latest values in shared mutable state.
+    shared = dict(latest_pose=np.eye(4), latest_depth=None,
+                  intrinsics=DEFAULT_INTRINSICS)
 
     def ee_pose_provider() -> np.ndarray:
-        return shared["latest_pose"].copy()
+        with shared_lock:
+            return shared["latest_pose"].copy()
 
     def depth_provider(_frame: np.ndarray) -> np.ndarray | None:
-        return shared["latest_depth"]
+        with shared_lock:
+            d = shared["latest_depth"]
+            return None if d is None else d.copy()
 
     sam3_runner = make_default_sam3_runner(args.ref_image, args.prompt)
     pipeline = LastMilePipeline(
@@ -1638,87 +1668,172 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         ee_pose_provider=ee_pose_provider,
         depth_provider=depth_provider,
         hand_eye_path=args.hand_eye,
+        intrinsics=shared["intrinsics"],
     )
 
-    # The streamer expects to call run_pipeline(frame, prompt, tracker, ...)
-    # and feed the result to the robot. We intercept by monkey-patching the
-    # streamer's per-frame call to invoke LastMilePipeline.step instead.
+    shared_lock = threading.Lock()
     stop_ev = threading.Event()
-    cam_thread = CameraStreamer(
-        cam_index=args.cam_index,
-        stop_event=stop_ev,
-        robot=robot,
-        ref_image_path=args.ref_image,
-        use_pyzed=not args.no_pyzed,
-        debug_dir=debug_dir,
-        debug_every=max(1, int(getattr(args, "debug_every", 30) or 30)),
-    )
 
-    # Patch the streamer: instead of calling run_pipeline, route through
-    # LastMilePipeline.step. The thread's body in CameraStreamer reads
-    # frames and computes res; we wrap that call site by monkey-patching
-    # the run_pipeline reference in the streamer module's namespace.
-    import importlib
-    sm = importlib.import_module(
-        "foundation_model.servo_pipeline_sam3"
-        if "foundation_model" in sys.modules else "servo_pipeline_sam3")
+    # ZED capture path (fall back to OpenCV stereo if PyZED missing)
+    use_pyzed = not args.no_pyzed
+    try:
+        import pyzed.sl as sl  # type: ignore
+        pyzed_ok = True
+    except Exception:
+        pyzed_ok = False
+        if use_pyzed:
+            log.warning("PyZED not importable; falling back to OpenCV camera "
+                        "(no metric depth -> LOCK will never fire).")
+        use_pyzed = False
 
-    orig_run_pipeline = sm.run_pipeline
+    frame_idx = [0]
+    debug_every = max(1, int(getattr(args, "debug_every", 30) or 30))
 
-    def patched_run_pipeline(frame, prompt, _tracker,
-                              ref_crop=None, ref_features=None):
-        # Update shared depth/pose state FIRST so signals see the latest.
-        if hasattr(robot, "_get_pos"):
+    def perception_loop_for_frame(frame_bgr: np.ndarray) -> dict:
+        # Update EE pose every frame from xArm
+        if not (args.dry_run or args.no_robot) and hasattr(robot, "_get_pos"):
             try:
                 pos = robot._get_pos()
                 if pos is not None:
-                    # Build a 4x4 from xArm xyzrpy in mm/deg.
-                    T = np.eye(4)
-                    T[0, 3], T[1, 3], T[2, 3] = pos[0], pos[1], pos[2]
-                    # Rotation from RPY (xArm uses ZYX intrinsic, deg)
-                    rx, ry, rz = (math.radians(pos[3]),
-                                  math.radians(pos[4]),
-                                  math.radians(pos[5]))
-                    Rz = np.array([[math.cos(rz), -math.sin(rz), 0],
-                                    [math.sin(rz),  math.cos(rz), 0],
-                                    [           0,             0, 1]])
-                    Ry = np.array([[ math.cos(ry), 0, math.sin(ry)],
-                                    [            0, 1,            0],
-                                    [-math.sin(ry), 0, math.cos(ry)]])
-                    Rx = np.array([[1,            0,             0],
-                                    [0, math.cos(rx), -math.sin(rx)],
-                                    [0, math.sin(rx),  math.cos(rx)]])
-                    T[:3, :3] = Rz @ Ry @ Rx
-                    shared["latest_pose"] = T
-            except Exception:
-                pass
-        # ZED stereo depth (when streamer has it) — passed via attribute
-        depth = getattr(cam_thread, "_last_depth_np", None)
-        shared["latest_depth"] = depth
+                    with shared_lock:
+                        shared["latest_pose"] = _xarm_pose_to_T(pos)
+            except Exception as e:
+                log.debug("Pose read failed: %s", e)
 
-        # Drive the lastmile pipeline; result dict is compatible with
-        # the existing renderer because we kept the SAM3 keys in it.
-        res = pipeline.step(frame)
-        # If FAR, also overwrite the streamer's tracker with the SAM3 box
-        # so its existing renderer keeps showing detections.
-        if res.get("gdino_box") is not None:
-            tracker.last_box = np.asarray(res["gdino_box"], dtype=np.float32)
+        res = pipeline.step(frame_bgr)
+
+        # Drive robot when controller has a centroid and is enabled
+        if (not args.dry_run and not args.no_robot
+                and robot is not None
+                and res.get("best_centroid") is not None):
+            try:
+                robot.servo_step(res["best_centroid"], frame_bgr.shape)
+            except Exception as e:
+                log.error("servo_step failed: %s", e)
+
+        # Periodic per-frame artifact dump
+        i = frame_idx[0]
+        frame_idx[0] += 1
+        if debug_dir is not None and i % debug_every == 0:
+            overlay_path = os.path.join(debug_dir, "overlay_preview.png")
+            try:
+                _save_overlay(frame_bgr, res, overlay_path)
+                overlay = cv2.imread(overlay_path)
+            except Exception:
+                overlay = None
+            _dump_debug_frame(debug_dir, i, frame_bgr, res, overlay, "live")
+
+        # Always log a one-line summary so the user sees motion
+        st = res.get("state", "?")
+        c = res.get("best_centroid")
+        z = res.get("z_mm")
+        log.info("frame=%d state=%-9s c=%s z=%s",
+                 i, st,
+                 f"({c[0]:.0f},{c[1]:.0f})" if c else "-",
+                 f"{z:.1f}mm" if z is not None else "-")
         return res
 
-    sm.run_pipeline = patched_run_pipeline
-    cam_thread.start()
-    try:
-        cam_thread.join()
-    except KeyboardInterrupt:
-        log.info("Interrupted by user")
-    finally:
-        sm.run_pipeline = orig_run_pipeline
+    if use_pyzed and pyzed_ok:
+        _run_zed_loop(sl, args, stop_ev, shared, shared_lock,
+                       perception_loop_for_frame)
+    else:
+        _run_opencv_loop(args, stop_ev, shared, shared_lock,
+                          perception_loop_for_frame)
+
+    if not (args.dry_run or args.no_robot):
         try:
             robot.stop()
         except Exception:
             pass
-        stop_ev.set()
-        cam_thread.join(timeout=2)
+
+
+def _run_zed_loop(sl, args, stop_ev: threading.Event,
+                   shared: dict, shared_lock: threading.Lock,
+                   per_frame: Callable[[np.ndarray], dict]) -> None:
+    cam = sl.Camera()
+    init = sl.InitParameters()
+    res_map = {"HD2K": sl.RESOLUTION.HD2K, "HD1080": sl.RESOLUTION.HD1080,
+               "HD720": sl.RESOLUTION.HD720, "VGA": sl.RESOLUTION.VGA}
+    init.camera_resolution = res_map.get(
+        os.environ.get("ZED_RESOLUTION", "HD720"), sl.RESOLUTION.HD720)
+    init.camera_fps = 30
+    # ENABLE stereo depth — lastmile cannot LOCK without it.
+    init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
+    init.coordinate_units = sl.UNIT.MILLIMETER
+
+    err = cam.open(init)
+    if err != sl.ERROR_CODE.SUCCESS:
+        log.error("ZED open failed (%s); falling back to OpenCV.", err)
+        return _run_opencv_loop(args, stop_ev, shared, shared_lock, per_frame)
+
+    # Pull intrinsics from the actual camera so projection math is right.
+    cam_info = cam.get_camera_information().camera_configuration.calibration_parameters.left_cam
+    with shared_lock:
+        shared["intrinsics"] = dict(
+            fx=float(cam_info.fx), fy=float(cam_info.fy),
+            cx=float(cam_info.cx), cy=float(cam_info.cy),
+            width=int(cam_info.image_size.width),
+            height=int(cam_info.image_size.height))
+    log.info("ZED intrinsics: fx=%.1f fy=%.1f cx=%.1f cy=%.1f  size=%dx%d",
+             cam_info.fx, cam_info.fy, cam_info.cx, cam_info.cy,
+             cam_info.image_size.width, cam_info.image_size.height)
+
+    image_mat = sl.Mat()
+    depth_mat = sl.Mat()
+    runtime = sl.RuntimeParameters()
+
+    log.info("ZED capture loop running (depth=PERFORMANCE, mm). "
+             "Ctrl-C to stop.")
+    try:
+        while not stop_ev.is_set():
+            if cam.grab(runtime) != sl.ERROR_CODE.SUCCESS:
+                time.sleep(0.005)
+                continue
+            cam.retrieve_image(image_mat, sl.VIEW.LEFT)
+            cam.retrieve_measure(depth_mat, sl.MEASURE.DEPTH)
+            frame_bgra = image_mat.get_data()
+            frame = frame_bgra[:, :, :3].copy()
+            depth = depth_mat.get_data().astype(np.float32, copy=False)
+            with shared_lock:
+                shared["latest_depth"] = depth.copy()
+            try:
+                per_frame(frame)
+            except Exception as e:
+                log.error("Pipeline step error: %s", e, exc_info=True)
+                time.sleep(0.5)
+    except KeyboardInterrupt:
+        log.info("Interrupted by user.")
+    finally:
+        cam.close()
+
+
+def _run_opencv_loop(args, stop_ev: threading.Event,
+                      shared: dict, shared_lock: threading.Lock,
+                      per_frame: Callable[[np.ndarray], dict]) -> None:
+    cap = cv2.VideoCapture(args.cam_index, cv2.CAP_ANY)
+    if not cap.isOpened():
+        log.error("OpenCV: failed to open camera %d", args.cam_index)
+        return
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    log.info("OpenCV capture loop running (no metric depth). Ctrl-C to stop.")
+    try:
+        while not stop_ev.is_set():
+            ok, frame = cap.read()
+            if not ok:
+                time.sleep(0.05)
+                continue
+            h, w = frame.shape[:2]
+            left = frame[:, : w // 2].copy()
+            try:
+                per_frame(left)
+            except Exception as e:
+                log.error("Pipeline step error: %s", e, exc_info=True)
+                time.sleep(0.5)
+    except KeyboardInterrupt:
+        log.info("Interrupted by user.")
+    finally:
+        cap.release()
 
 
 def main(argv: list[str] | None = None) -> int:
