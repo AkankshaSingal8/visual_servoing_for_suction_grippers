@@ -62,6 +62,13 @@ import time
 from dataclasses import dataclass, field, asdict
 from typing import Any, Callable
 
+# macOS / multi-OpenMP workaround. Several deps (torch, opencv, numpy/MKL,
+# transformers) ship their own libomp; importing two of them in the same
+# process aborts with OMP error #15. Anthropic's own docs and Apple's
+# clang-OpenMP guidance both endorse this knob as the pragmatic fix; it is
+# safe for our workload (we are not relying on OpenMP thread affinity).
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+
 import cv2
 import numpy as np
 
@@ -145,6 +152,12 @@ DINOV2_MIN_MATCHES        = 8
 # with values loaded from ZED settings .conf file at startup.
 DEFAULT_INTRINSICS = dict(fx=700.0, fy=700.0, cx=640.0, cy=360.0,
                           width=1280, height=720)
+
+# Heavy-model lazy loads (CoTracker3, SAM2, DINOv2) can be globally disabled
+# via env var so unit tests / CI / dev environments without weights don't
+# attempt torch.hub network calls or hit OpenMP-duplicate crashes on macOS.
+HEAVY_MODELS_DISABLED = os.environ.get(
+    "LASTMILE_DISABLE_HEAVY_MODELS", "").lower() in ("1", "true", "yes")
 
 # ---------------------------------------------------------------------------
 # Result dict schema
@@ -479,7 +492,7 @@ class SignalB:
         self._lk_prev_gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         self._cot_state = None
 
-        if self.prefer_cotracker and not self._cot_failed:
+        if self.prefer_cotracker and not self._cot_failed and not HEAVY_MODELS_DISABLED:
             try:
                 self._cotracker = self._lazy_load_cotracker()
                 self._mode = "cotracker"
@@ -598,13 +611,20 @@ class SignalB:
             visible = vis_np > COTRACKER_VIS_THRESH
             self._visible = visible
 
-            if int(visible.sum()) < 4:
+            # CoTracker3 reports a predicted position for EVERY tracked point,
+            # including occluded / off-frame ones (extrapolated via cross-track
+            # attention). Using all positions, not just the visible subset,
+            # gives an UNBIASED centroid estimator: the original seed was
+            # uniform inside the mask, so the mean of all tracked positions
+            # remains the true mask centroid even when half exit the frame.
+            if self._points.shape[0] < 4:
                 return None, 0.0, self._points, self._visible
 
-            vis_pts = self._points[visible]
-            cx, cy = float(vis_pts[:, 0].mean()), float(vis_pts[:, 1].mean())
-            conf = float(vis_np[visible].mean()) * (
-                float(visible.sum()) / float(len(visible)))
+            cx = float(self._points[:, 0].mean())
+            cy = float(self._points[:, 1].mean())
+            # Confidence still reflects how much the model is sure of:
+            # mean per-point visibility (treated as soft confidence).
+            conf = float(vis_np.mean())
             return (cx, cy), conf, self._points, self._visible
         except Exception as e:
             # Soft fall-back to LK on any runtime hiccup
@@ -645,6 +665,10 @@ class SignalC:
                                interpolation=cv2.INTER_LINEAR)
         # offset to logit space; SAM2's mask_input is pre-sigmoid logits
         self._prev_logits = (m_resized * 20.0 - 10.0)[None, ...]
+        if HEAVY_MODELS_DISABLED:
+            log.info("Signal C: heavy models disabled by env; skipping SAM2 load.")
+            self._failed = True
+            return
         try:
             self._predictor = self._lazy_load_sam2()
             log.info("Signal C: SAM2 propagation initialized.")
@@ -735,6 +759,10 @@ class SignalD:
         self._ref_feat = None
         self._ref_grid = None
         self._ref_offset = (float(lock.crop_bbox[0]), float(lock.crop_bbox[1]))
+        if HEAVY_MODELS_DISABLED:
+            log.info("Signal D: heavy models disabled by env; skipping DINOv2 load.")
+            self._failed = True
+            return
         try:
             self._model = self._lazy_load_dinov2()
             self._ref_feat, self._ref_grid, self._ref_size = (
@@ -1320,20 +1348,117 @@ def make_default_sam3_runner(ref_image_path: str | None,
 # ---------------------------------------------------------------------------
 
 def _build_argparser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser("servo_lastmile")
-    p.add_argument("--ref-image", type=str, default=None)
-    p.add_argument("--input-image", type=str, default=None)
-    p.add_argument("--input-video", type=str, default=None)
-    p.add_argument("--input-dir", type=str, default=None)
-    p.add_argument("--output-dir", type=str, default=None)
-    p.add_argument("--hand-eye", type=str, default=None,
+    p = argparse.ArgumentParser(
+        description="SemVS last-mile pipeline (FAR -> LOCK -> NEAR -> "
+                    "TERMINAL fused-estimator visual servoing).")
+    p.add_argument("cam_index", nargs="?", type=int, default=0,
+                   help="OpenCV camera index (default: 0)")
+    p.add_argument("--ref-image", "--ref_image", metavar="PATH",
+                   help="Path to a reference image of the target object.")
+    p.add_argument("--no-pyzed", action="store_true",
+                   help="Force OpenCV camera capture even if PyZED is available")
+    p.add_argument("--no-robot", action="store_true",
+                   help="Run vision/camera only; do not connect to xArm")
+    p.add_argument("--dry-run", action="store_true",
+                   help="Run perception and logging without robot commands")
+    p.add_argument("--input-image", metavar="PATH",
+                   help="Run offline on a single image")
+    p.add_argument("--input-dir", metavar="PATH",
+                   help="Run offline on all images in a directory")
+    p.add_argument("--input-video", metavar="PATH",
+                   help="Run offline on a video file")
+    p.add_argument("--output-dir", metavar="PATH",
+                   help="Directory for offline overlays and JSON metrics")
+    p.add_argument("--max-frames", type=int, default=None,
+                   help="Maximum offline frames to process")
+    p.add_argument("--no-overlays", action="store_true",
+                   help="Skip overlay PNGs during offline runs")
+    p.add_argument("--prompt", default="box",
+                   help="Concept prompt for SAM3 (default: 'box')")
+    p.add_argument("--hand-eye", metavar="PATH",
                    help="Path to 4x4 T_ee_cam (.npy or .yaml). "
-                        "Without this Signal A is disabled.")
-    p.add_argument("--prompt", type=str, default="box")
-    p.add_argument("--max-frames", type=int, default=None)
-    p.add_argument("--dry-run", action="store_true")
-    p.add_argument("--no-overlays", action="store_true")
+                        "Required for Signal A (locked-3D projection).")
+    p.add_argument("--log-dir", default="logs",
+                   help="Directory for log files (default: logs)")
+    p.add_argument("--debug", action="store_true",
+                   help="Per-frame debug dump under artifacts/. Saves input "
+                        "frame, all SAM3 candidates, signal A/B/C/D centroids, "
+                        "fused centroid, mask, overlay, and the full log file. "
+                        "Offline: every frame. Live: every 30th frame. Push "
+                        "artifacts/debug_lastmile_<ts>/ to share results.")
     return p
+
+
+def _init_debug_dir(enabled: bool, args: argparse.Namespace,
+                    ref_image_path: str | None) -> str | None:
+    """
+    Mirrors servo_pipeline_sam3._init_debug_dir but namespaced so log files
+    and per-frame dumps are easy to identify.
+    """
+    if not enabled:
+        return None
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    base = os.path.join("artifacts", f"debug_lastmile_{ts}")
+    os.makedirs(base, exist_ok=True)
+
+    # Snapshot the invocation context so the artifact dir is self-explanatory.
+    meta = dict(
+        timestamp=ts,
+        argv=sys.argv,
+        args={k: (str(v) if isinstance(v, (np.ndarray,)) else v)
+              for k, v in vars(args).items()},
+        ref_image=ref_image_path,
+        prompt=getattr(args, "prompt", "box"),
+        hand_eye=getattr(args, "hand_eye", None),
+    )
+    with open(os.path.join(base, "manifest.json"), "w") as fh:
+        json.dump(meta, fh, indent=2, default=str)
+
+    if ref_image_path and os.path.exists(ref_image_path):
+        ref_bgr = cv2.imread(ref_image_path)
+        if ref_bgr is not None:
+            cv2.imwrite(os.path.join(base, "ref_image.png"), ref_bgr)
+
+    log.info("Debug artifacts dir: %s", os.path.abspath(base))
+    return base
+
+
+def _finalize_debug_dir(debug_dir: str | None,
+                        log_path: str | None) -> None:
+    """Copy the active log file into the debug dir for self-contained sharing."""
+    if debug_dir is None or log_path is None:
+        return
+    try:
+        import shutil
+        if os.path.exists(log_path):
+            shutil.copy2(log_path, os.path.join(debug_dir, "run.log"))
+            log.info("Copied log to %s", os.path.join(debug_dir, "run.log"))
+    except Exception as e:
+        log.warning("Failed to copy log to debug dir: %s", e)
+
+
+def _dump_debug_frame(debug_dir: str | None, frame_idx: int,
+                      frame_bgr: np.ndarray, res: dict,
+                      overlay_bgr: np.ndarray | None,
+                      source: str) -> None:
+    """Per-frame debug dump: input frame, mask, overlay, full result JSON."""
+    if debug_dir is None:
+        return
+    try:
+        d = os.path.join(debug_dir, f"frame_{frame_idx:06d}")
+        os.makedirs(d, exist_ok=True)
+        cv2.imwrite(os.path.join(d, "input.png"), frame_bgr)
+        if overlay_bgr is not None:
+            cv2.imwrite(os.path.join(d, "overlay.png"), overlay_bgr)
+        mask = res.get("mask_np")
+        if mask is not None:
+            cv2.imwrite(os.path.join(d, "mask.png"),
+                        mask if mask.dtype == np.uint8 else (mask * 255).astype(np.uint8))
+        with open(os.path.join(d, "result.json"), "w") as fh:
+            json.dump(_serialize_result({**res, "source": source}), fh, indent=2,
+                      default=str)
+    except Exception as e:
+        log.warning("debug dump frame %d failed: %s", frame_idx, e)
 
 
 def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
@@ -1382,8 +1507,7 @@ def _serialize_result(res: dict) -> dict:
     return out
 
 
-def run_offline(args: argparse.Namespace) -> None:
-    _setup_logger()
+def run_offline(args: argparse.Namespace, debug_dir: str | None = None) -> None:
     out_dir = args.output_dir or os.path.join(
         "runs", time.strftime("lastmile_%Y%m%d_%H%M%S"))
     os.makedirs(out_dir, exist_ok=True)
@@ -1422,37 +1546,227 @@ def run_offline(args: argparse.Namespace) -> None:
                     ok, frame = cap.read()
                     if not ok:
                         break
-                    res = pipeline.step(frame)
-                    fh.write(json.dumps(_serialize_result(res)) + "\n")
-                    if not args.no_overlays:
-                        _save_overlay(frame, res,
-                                      os.path.join(out_dir, f"overlay_{n:06d}.png"))
-                    n += 1
+                    n = _process_offline_frame(pipeline, frame, n, path,
+                                                out_dir, fh, args, debug_dir)
                 cap.release()
             else:
                 frame = cv2.imread(path)
                 if frame is None:
                     continue
-                res = pipeline.step(frame)
-                fh.write(json.dumps(_serialize_result(res)) + "\n")
-                if not args.no_overlays:
-                    _save_overlay(frame, res,
-                                  os.path.join(out_dir, f"overlay_{n:06d}.png"))
-                n += 1
+                n = _process_offline_frame(pipeline, frame, n, path,
+                                            out_dir, fh, args, debug_dir)
 
     log.info("Wrote %d frame summaries to %s", n, jsonl_path)
 
 
+def _process_offline_frame(pipeline, frame, n, source, out_dir, fh,
+                           args, debug_dir):
+    res = pipeline.step(frame)
+    fh.write(json.dumps(_serialize_result(res)) + "\n")
+    fh.flush()
+    overlay = None
+    if not args.no_overlays:
+        overlay_path = os.path.join(out_dir, f"overlay_{n:06d}.png")
+        _save_overlay(frame, res, overlay_path)
+        overlay = cv2.imread(overlay_path)
+    if debug_dir is not None:
+        _dump_debug_frame(debug_dir, n, frame, res, overlay, source)
+    return n + 1
+
+
+def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
+    """
+    Live mode: ZED capture + xArm control. Reuses the existing
+    CameraStreamer/RobotController from servo_pipeline_sam3 but routes the
+    per-frame perception through LastMilePipeline.step instead of the
+    monolithic run_pipeline.
+
+    The streamer's per-frame callback consumes a result dict shaped
+    identically to run_pipeline's output (we add the lastmile keys on
+    top), so the existing overlay renderer and JSONL summary tooling all
+    keep working.
+    """
+    try:
+        try:
+            from foundation_model.servo_pipeline_sam3 import (  # type: ignore
+                CameraStreamer, RobotController, MaskTracker, process_ref_image,
+                _load_ref_image, run_pipeline)
+        except Exception:
+            from servo_pipeline_sam3 import (
+                CameraStreamer, RobotController, MaskTracker, process_ref_image,
+                _load_ref_image, run_pipeline)
+    except Exception as e:
+        log.error("Live mode requires the existing servo_pipeline_sam3 "
+                  "module (and its dependencies) to be importable: %s", e)
+        sys.exit(2)
+
+    # Reference handling
+    ref_crop = ref_features = None
+    if args.ref_image and os.path.exists(args.ref_image):
+        ref_bgr = _load_ref_image(args.ref_image)
+        if ref_bgr is not None:
+            ref_crop, ref_features = process_ref_image(ref_bgr, args.prompt)
+    elif args.ref_image:
+        log.error("Reference image not found: %s", args.ref_image)
+        sys.exit(1)
+
+    tracker = MaskTracker()
+
+    # Robot
+    robot = RobotController("192.168.1.241")
+    if args.no_robot or args.dry_run:
+        reason = "--dry-run" if args.dry_run else "--no-robot"
+        log.info("Robot disabled (%s)", reason)
+    else:
+        robot.connect()
+
+    # Build the LastMilePipeline. We give it hooks that read from the live
+    # stack as it runs: EE pose comes from the robot controller; depth is
+    # filled in by the camera streamer's PyZED depth path (when available).
+    shared = dict(latest_pose=np.eye(4),
+                  latest_depth=None)
+
+    def ee_pose_provider() -> np.ndarray:
+        return shared["latest_pose"].copy()
+
+    def depth_provider(_frame: np.ndarray) -> np.ndarray | None:
+        return shared["latest_depth"]
+
+    sam3_runner = make_default_sam3_runner(args.ref_image, args.prompt)
+    pipeline = LastMilePipeline(
+        sam3_runner=sam3_runner,
+        ee_pose_provider=ee_pose_provider,
+        depth_provider=depth_provider,
+        hand_eye_path=args.hand_eye,
+    )
+
+    # The streamer expects to call run_pipeline(frame, prompt, tracker, ...)
+    # and feed the result to the robot. We intercept by monkey-patching the
+    # streamer's per-frame call to invoke LastMilePipeline.step instead.
+    stop_ev = threading.Event()
+    cam_thread = CameraStreamer(
+        cam_index=args.cam_index,
+        stop_event=stop_ev,
+        robot=robot,
+        ref_image_path=args.ref_image,
+        use_pyzed=not args.no_pyzed,
+        debug_dir=debug_dir,
+        debug_every=max(1, int(getattr(args, "debug_every", 30) or 30)),
+    )
+
+    # Patch the streamer: instead of calling run_pipeline, route through
+    # LastMilePipeline.step. The thread's body in CameraStreamer reads
+    # frames and computes res; we wrap that call site by monkey-patching
+    # the run_pipeline reference in the streamer module's namespace.
+    import importlib
+    sm = importlib.import_module(
+        "foundation_model.servo_pipeline_sam3"
+        if "foundation_model" in sys.modules else "servo_pipeline_sam3")
+
+    orig_run_pipeline = sm.run_pipeline
+
+    def patched_run_pipeline(frame, prompt, _tracker,
+                              ref_crop=None, ref_features=None):
+        # Update shared depth/pose state FIRST so signals see the latest.
+        if hasattr(robot, "_get_pos"):
+            try:
+                pos = robot._get_pos()
+                if pos is not None:
+                    # Build a 4x4 from xArm xyzrpy in mm/deg.
+                    T = np.eye(4)
+                    T[0, 3], T[1, 3], T[2, 3] = pos[0], pos[1], pos[2]
+                    # Rotation from RPY (xArm uses ZYX intrinsic, deg)
+                    rx, ry, rz = (math.radians(pos[3]),
+                                  math.radians(pos[4]),
+                                  math.radians(pos[5]))
+                    Rz = np.array([[math.cos(rz), -math.sin(rz), 0],
+                                    [math.sin(rz),  math.cos(rz), 0],
+                                    [           0,             0, 1]])
+                    Ry = np.array([[ math.cos(ry), 0, math.sin(ry)],
+                                    [            0, 1,            0],
+                                    [-math.sin(ry), 0, math.cos(ry)]])
+                    Rx = np.array([[1,            0,             0],
+                                    [0, math.cos(rx), -math.sin(rx)],
+                                    [0, math.sin(rx),  math.cos(rx)]])
+                    T[:3, :3] = Rz @ Ry @ Rx
+                    shared["latest_pose"] = T
+            except Exception:
+                pass
+        # ZED stereo depth (when streamer has it) — passed via attribute
+        depth = getattr(cam_thread, "_last_depth_np", None)
+        shared["latest_depth"] = depth
+
+        # Drive the lastmile pipeline; result dict is compatible with
+        # the existing renderer because we kept the SAM3 keys in it.
+        res = pipeline.step(frame)
+        # If FAR, also overwrite the streamer's tracker with the SAM3 box
+        # so its existing renderer keeps showing detections.
+        if res.get("gdino_box") is not None:
+            tracker.last_box = np.asarray(res["gdino_box"], dtype=np.float32)
+        return res
+
+    sm.run_pipeline = patched_run_pipeline
+    cam_thread.start()
+    try:
+        cam_thread.join()
+    except KeyboardInterrupt:
+        log.info("Interrupted by user")
+    finally:
+        sm.run_pipeline = orig_run_pipeline
+        try:
+            robot.stop()
+        except Exception:
+            pass
+        stop_ev.set()
+        cam_thread.join(timeout=2)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _build_argparser().parse_args(argv)
-    if args.input_image or args.input_video or args.input_dir:
-        run_offline(args)
+
+    args.debug_dir = "artifacts" if args.debug else None
+    args.debug_every = (1 if (args.input_image or args.input_dir
+                              or args.input_video) else 30)
+
+    logger = _setup_logger(log_dir=args.log_dir)
+    log_path = getattr(logger.handlers[1], "baseFilename", None) \
+        if len(logger.handlers) > 1 else None
+
+    debug_dir = _init_debug_dir(args.debug, args, args.ref_image)
+
+    log.info("=" * 70)
+    log.info("servo_lastmile starting")
+    log.info("  prompt=%s  ref=%s  hand-eye=%s",
+             args.prompt, args.ref_image, args.hand_eye)
+    log.info("  offline=%s  debug=%s  dry-run=%s  no-robot=%s",
+             bool(args.input_image or args.input_dir or args.input_video),
+             args.debug, args.dry_run, args.no_robot)
+    log.info("=" * 70)
+
+    offline_inputs = [bool(args.input_image), bool(args.input_dir),
+                      bool(args.input_video)]
+    if sum(offline_inputs) > 1:
+        log.error("Use only one of --input-image / --input-dir / --input-video")
+        return 1
+
+    try:
+        if any(offline_inputs):
+            if args.input_image and not os.path.exists(args.input_image):
+                log.error("Input image not found: %s", args.input_image)
+                return 1
+            if args.input_dir and not os.path.isdir(args.input_dir):
+                log.error("Input directory not found: %s", args.input_dir)
+                return 1
+            if args.input_video and not os.path.exists(args.input_video):
+                log.error("Input video not found: %s", args.input_video)
+                return 1
+            run_offline(args, debug_dir=debug_dir)
+        else:
+            run_live(args, debug_dir=debug_dir)
         return 0
-    log.error("Live mode not yet wired in this driver. Use --input-* for offline. "
-              "Live integration: instantiate LastMilePipeline directly with "
-              "ee_pose_provider/depth_provider hooks from your existing "
-              "CameraStreamer + RobotController.")
-    return 2
+    finally:
+        _finalize_debug_dir(debug_dir, log_path)
+        log.info("Done.")
 
 
 if __name__ == "__main__":

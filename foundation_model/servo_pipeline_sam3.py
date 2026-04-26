@@ -534,22 +534,10 @@ _depth_model    = None
 
 def _get_sam3():
     """
-    Load SAM 3 (facebook/sam3) via HuggingFace transformers. Returns
-    (processor, model) or (None, None) on any failure (the caller
-    degrades gracefully so the pipeline still produces a frame).
-
-    Override the model with: SAM3_HF_MODEL_ID env var
-      "facebook/sam3"   (default)
-      "facebook/sam3.1"
-
-    NOTE: facebook/sam3 and facebook/sam3.1 are GATED repos. You must:
-      1. Visit https://huggingface.co/facebook/sam3 and accept the
-         license ("Agree and access repository").
-      2. Authenticate locally:
-           pip install -U "huggingface_hub[cli]"
-           huggingface-cli login   # paste an HF token
-         or set HF_TOKEN in the environment.
-    Without this, the from_pretrained call returns 401 Client Error.
+    Load SAM 3 (facebook/sam3) via HuggingFace transformers from the
+    local HF cache. Uses local_files_only=True so the gated-repo Hub
+    revalidation is skipped: if the model has been downloaded once on
+    this machine, it loads. Override the model id with SAM3_HF_MODEL_ID.
     """
     global _sam3_processor, _sam3_model, _sam3_failed
     if _sam3_failed:
@@ -557,24 +545,16 @@ def _get_sam3():
     if _sam3_model is None:
         try:
             from transformers import Sam3Processor, Sam3Model
-            _sam3_processor = Sam3Processor.from_pretrained(SAM3_HF_MODEL_ID)
+            _sam3_processor = Sam3Processor.from_pretrained(
+                SAM3_HF_MODEL_ID, local_files_only=True)
             _sam3_model = (Sam3Model
-                           .from_pretrained(SAM3_HF_MODEL_ID)
+                           .from_pretrained(SAM3_HF_MODEL_ID,
+                                            local_files_only=True)
                            .to(_device()).eval())
             log.info("SAM3 loaded: %s on %s",
                      SAM3_HF_MODEL_ID, _device())
         except Exception as e:
-            msg = str(e)
             log.error("SAM3 load failed (won't retry): %s", e)
-            if ("gated" in msg.lower() or "401" in msg
-                    or "restricted" in msg.lower()):
-                log.error(
-                    "SAM3 hint: '%s' is a gated HuggingFace repo. "
-                    "1) Accept the license at "
-                    "https://huggingface.co/%s  "
-                    "2) Run `huggingface-cli login` (or set HF_TOKEN). "
-                    "Then re-run the pipeline.",
-                    SAM3_HF_MODEL_ID, SAM3_HF_MODEL_ID)
             _sam3_failed = True
             return None, None
     return _sam3_processor, _sam3_model
