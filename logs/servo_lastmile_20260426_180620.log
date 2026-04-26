@@ -1,0 +1,21 @@
+18:06:20.116 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260426_180620.log
+18:06:20.139 [INFO ] Debug artifacts dir: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_lastmile_20260426_180620
+18:06:20.139 [INFO ] ======================================================================
+18:06:20.139 [INFO ] servo_lastmile starting
+18:06:20.139 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+18:06:20.139 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+18:06:20.139 [INFO ] ======================================================================
+18:06:20.155 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+18:06:21.218 [INFO ] Robot connected: 192.168.1.241
+18:06:21.224 [INFO ] Processing reference image ...
+18:06:24.013 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+18:06:24.481 [INFO ] SAM3: 1 detection(s) for 'box'
+18:06:24.481 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+18:06:24.560 [INFO ] Feature extractor (ResNet-18) loaded
+18:06:24.583 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:06:24.583 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+18:06:24.709 [ERROR] ZED open failed (CAMERA STREAM FAILED TO START); falling back to OpenCV.
+18:06:24.711 [ERROR] OpenCV: failed to open camera 0
+18:06:24.712 [INFO ] Robot stopped.
+18:06:24.713 [INFO ] Copied log to artifacts/debug_lastmile_20260426_180620/run.log
+18:06:24.713 [INFO ] Done.
