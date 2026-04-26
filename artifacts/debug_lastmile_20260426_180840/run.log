@@ -1,0 +1,142 @@
+18:08:40.629 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260426_180840.log
+18:08:40.643 [INFO ] Debug artifacts dir: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_lastmile_20260426_180840
+18:08:40.644 [INFO ] ======================================================================
+18:08:40.644 [INFO ] servo_lastmile starting
+18:08:40.644 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+18:08:40.644 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+18:08:40.644 [INFO ] ======================================================================
+18:08:40.658 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+18:08:41.721 [INFO ] Robot connected: 192.168.1.241
+18:08:41.728 [INFO ] Processing reference image ...
+18:08:44.573 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+18:08:45.037 [INFO ] SAM3: 1 detection(s) for 'box'
+18:08:45.037 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+18:08:45.113 [INFO ] Feature extractor (ResNet-18) loaded
+18:08:45.134 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:08:45.135 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+18:08:47.123 [INFO ] ZED intrinsics: fx=732.5 fy=732.5 cx=616.3 cy=360.6  size=1280x720
+18:08:47.123 [INFO ] ZED capture loop running (depth=PERFORMANCE, mm). Ctrl-C to stop.
+18:08:47.416 [INFO ] SAM3: 6 detection(s) for 'box'
+18:08:47.420 [DEBUG]   det conf=0.98 sim=0.919 pos=0.43 prox=0.00 -> 0.622
+18:08:47.421 [DEBUG]   det conf=0.98 sim=0.616 pos=0.51 prox=0.00 -> 0.483
+18:08:47.423 [DEBUG]   det conf=0.98 sim=0.609 pos=0.25 prox=0.00 -> 0.440
+18:08:47.424 [DEBUG]   det conf=0.97 sim=0.629 pos=0.36 prox=0.00 -> 0.465
+18:08:47.425 [DEBUG]   det conf=0.93 sim=0.639 pos=0.79 prox=0.00 -> 0.531
+18:08:47.426 [DEBUG]   det conf=0.92 sim=0.573 pos=0.61 prox=0.00 -> 0.469
+18:08:47.428 [INFO ] SAM3: 'box' score=0.98 @ [528 197 761 626]  (top of 6)  sim=0.919
+18:08:47.428 [INFO ] SAM3: mask obtained (score=0.982, area=93021 px)
+18:08:47.624 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:08:47.624 [INFO ] === Calibration: waiting for camera frame ===
+18:08:47.624 [INFO ] Home: [205.3, 5.6, -52.9] mm
+18:08:47.635 [DEBUG] Grasp point: robust centroid (644, 411)
+18:08:47.637 [DEBUG] Servo: waiting [calibrating Y...]
+18:08:47.699 [INFO ] frame=0 state=FAR       c=(643,412) z=452.9mm
+18:08:47.925 [INFO ]   [Y] moving +4 mm at 30 mm/s...
+18:08:47.966 [INFO ] SAM3: 6 detection(s) for 'box'
+18:08:47.968 [DEBUG]   det conf=0.98 sim=0.920 pos=0.43 prox=0.99 -> 0.871
+18:08:47.970 [DEBUG]   det conf=0.98 sim=0.613 pos=0.51 prox=0.04 -> 0.491
+18:08:47.971 [DEBUG]   det conf=0.98 sim=0.600 pos=0.25 prox=0.00 -> 0.436
+18:08:47.973 [DEBUG]   det conf=0.97 sim=0.625 pos=0.36 prox=0.00 -> 0.463
+18:08:47.974 [DEBUG]   det conf=0.92 sim=0.644 pos=0.78 prox=0.00 -> 0.531
+18:08:47.975 [DEBUG]   det conf=0.90 sim=0.575 pos=0.61 prox=0.00 -> 0.469
+18:08:47.977 [INFO ] SAM3: 'box' score=0.98 @ [528 197 761 626]  (top of 6)  sim=0.920
+18:08:47.977 [INFO ] SAM3: mask obtained (score=0.981, area=92956 px)
+18:08:48.005 [DEBUG] Grasp point: robust centroid (644, 411)
+18:08:48.011 [INFO ] frame=1 state=FAR       c=(643,412) z=453.1mm
+18:08:48.268 [INFO ] SAM3: 6 detection(s) for 'box'
+18:08:48.270 [DEBUG]   det conf=0.98 sim=0.916 pos=0.43 prox=0.99 -> 0.869
+18:08:48.272 [DEBUG]   det conf=0.98 sim=0.616 pos=0.51 prox=0.04 -> 0.492
+18:08:48.273 [DEBUG]   det conf=0.97 sim=0.611 pos=0.25 prox=0.00 -> 0.441
+18:08:48.274 [DEBUG]   det conf=0.97 sim=0.625 pos=0.36 prox=0.00 -> 0.463
+18:08:48.276 [DEBUG]   det conf=0.92 sim=0.642 pos=0.78 prox=0.00 -> 0.531
+18:08:48.277 [DEBUG]   det conf=0.90 sim=0.575 pos=0.61 prox=0.00 -> 0.469
+18:08:48.278 [INFO ] SAM3: 'box' score=0.98 @ [528 197 761 626]  (top of 6)  sim=0.916
+18:08:48.279 [INFO ] SAM3: mask obtained (score=0.982, area=92997 px)
+18:08:48.307 [DEBUG] Grasp point: robust centroid (644, 411)
+18:08:49.159 [INFO ] Signal B: CoTracker3 online initialized with 80 points
+18:08:49.880 [INFO ]   [Y] returning home...
+18:08:50.347 [INFO ]   [Y] flow: (+0.0, -0.1) px / 4 mm  -> J[:,{col}]=[+0.0002, -0.0146]
+18:08:50.407 [INFO ] Signal C: SAM2 propagation initialized.
+18:08:50.647 [INFO ]   [Z] moving +4 mm at 30 mm/s...
+18:08:51.028 [INFO ] Signal D: DINOv2 reference features cached (19 x 36 patches).
+18:08:51.028 [INFO ] LOCK captured @ frame 3: c_px=(643.1, 411.9), z=453.2mm, 3D_base=(207.4, -27.9, -506.0) mm, 80 init points
+18:08:51.034 [INFO ] frame=2 state=NEAR      c=(643,412) z=453.2mm
+18:08:51.041 [WARNING] Signal B: CoTracker3 step failed ('NoneType' object has no attribute 'detach'); downgrading to LK for the rest of approach.
+18:08:51.214 [INFO ] frame=3 state=NEAR      c=(642,418) z=453.4mm
+18:08:51.418 [INFO ] frame=4 state=NEAR      c=(642,416) z=453.8mm
+18:08:51.604 [INFO ] frame=5 state=NEAR      c=(642,417) z=453.9mm
+18:08:51.794 [INFO ] frame=6 state=NEAR      c=(642,415) z=454.1mm
+18:08:51.981 [INFO ] frame=7 state=NEAR      c=(642,416) z=454.2mm
+18:08:52.174 [INFO ] frame=8 state=NEAR      c=(642,417) z=454.1mm
+18:08:52.374 [INFO ] frame=9 state=NEAR      c=(642,417) z=454.1mm
+18:08:52.559 [INFO ] frame=10 state=NEAR      c=(642,417) z=454.1mm
+18:08:52.604 [INFO ]   [Z] returning home...
+18:08:52.743 [DEBUG] Servo: waiting [calibrating Z...]
+18:08:52.749 [INFO ] frame=11 state=NEAR      c=(642,417) z=454.1mm
+18:08:52.941 [INFO ] frame=12 state=NEAR      c=(642,417) z=454.1mm
+18:08:53.028 [INFO ]   [Z] flow: (+0.1, +0.6) px / 4 mm  -> J[:,{col}]=[+0.0357, +0.1607]
+18:08:53.028 [INFO ] J_yz (px/mm):
+[[ 0.00021362  0.03569031]
+ [-0.01457977  0.16067505]]
+18:08:53.029 [INFO ] J_yz_inv (mm/px):
+[[289.67136227 -64.34390469]
+ [ 26.28499398   0.38512812]]
+18:08:53.029 [INFO ] === Calibration complete [calibrated] ===
+18:08:53.135 [WARNING] Servo: clamping Z -64.9 -> 0.0 mm (base limit)
+18:08:54.644 [INFO ] Servo: err=(+2,+56)px r=56  Δ=(+3.0,+12.0,-12.0)mm  pos=(208,18,0)  [calibrated]
+18:08:54.649 [INFO ] frame=13 state=NEAR      c=(642,416) z=454.1mm
+18:08:54.795 [WARNING] Servo: clamping Z -8.7 -> 0.0 mm (base limit)
+18:08:55.551 [INFO ] Servo: err=(-1,+113)px r=113  Δ=(+3.0,+12.0,-8.7)mm  pos=(211,30,0)  [calibrated]
+18:08:55.556 [INFO ] frame=14 state=NEAR      c=(639,473) z=453.3mm
+18:08:55.698 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:08:56.453 [INFO ] Servo: err=(+12,+120)px r=121  Δ=(+3.0,+12.0,-12.0)mm  pos=(214,42,0)  [calibrated]
+18:08:56.459 [INFO ] frame=15 state=NEAR      c=(652,480) z=450.4mm
+18:08:56.604 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:08:57.359 [INFO ] Servo: err=(+32,+128)px r=132  Δ=(+3.0,-12.0,-12.0)mm  pos=(217,30,0)  [calibrated]
+18:08:57.365 [INFO ] frame=16 state=NEAR      c=(672,488) z=447.4mm
+18:08:57.510 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:08:58.266 [INFO ] Servo: err=(+13,+121)px r=122  Δ=(+3.0,+12.0,-12.0)mm  pos=(220,42,0)  [calibrated]
+18:08:58.274 [INFO ] frame=17 state=NEAR      c=(653,481) z=445.1mm
+18:08:58.423 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:08:59.179 [INFO ] Servo: err=(+32,+128)px r=132  Δ=(+3.0,-12.0,-12.0)mm  pos=(223,30,0)  [calibrated]
+18:08:59.183 [INFO ] frame=18 state=NEAR      c=(672,488) z=441.0mm
+18:08:59.333 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:00.091 [INFO ] Servo: err=(+14,+123)px r=124  Δ=(+3.0,+12.0,-12.0)mm  pos=(226,42,0)  [calibrated]
+18:09:00.095 [INFO ] frame=19 state=NEAR      c=(654,483) z=438.8mm
+18:09:00.238 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:00.994 [INFO ] Servo: err=(+33,+120)px r=125  Δ=(+3.0,-12.0,-12.0)mm  pos=(229,30,0)  [calibrated]
+18:09:00.998 [INFO ] frame=20 state=NEAR      c=(673,480) z=435.0mm
+18:09:01.142 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:01.897 [INFO ] Servo: err=(+13,+122)px r=122  Δ=(+3.0,+12.0,-12.0)mm  pos=(232,42,0)  [calibrated]
+18:09:01.902 [INFO ] frame=21 state=NEAR      c=(653,482) z=432.6mm
+18:09:02.055 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:02.810 [INFO ] Servo: err=(+31,+121)px r=125  Δ=(+3.0,-12.0,-12.0)mm  pos=(235,30,0)  [calibrated]
+18:09:02.815 [INFO ] frame=22 state=NEAR      c=(671,481) z=429.0mm
+18:09:02.959 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:03.715 [INFO ] Servo: err=(+13,+122)px r=122  Δ=(+3.0,+12.0,-12.0)mm  pos=(238,42,0)  [calibrated]
+18:09:03.719 [INFO ] frame=23 state=NEAR      c=(653,482) z=426.9mm
+18:09:03.863 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:04.618 [INFO ] Servo: err=(+30,+124)px r=128  Δ=(+3.0,-12.0,-12.0)mm  pos=(241,30,0)  [calibrated]
+18:09:04.623 [INFO ] frame=24 state=NEAR      c=(670,484) z=423.2mm
+18:09:04.777 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+18:09:05.532 [INFO ] Servo: err=(+11,+117)px r=118  Δ=(+3.0,+12.0,-12.0)mm  pos=(244,42,0)  [calibrated]
+18:09:05.539 [INFO ] frame=25 state=NEAR      c=(651,477) z=420.5mm
+18:09:06.545 [INFO ] Servo: err=(-51,+96)px r=108  Δ=(+3.0,+12.0,+12.0)mm  pos=(247,54,12)  [calibrated]
+18:09:06.549 [INFO ] frame=26 state=NEAR      c=(589,456) z=424.4mm
+18:09:07.559 [INFO ] Servo: err=(-54,+110)px r=122  Δ=(+3.0,+12.0,+12.0)mm  pos=(250,66,24)  [calibrated]
+18:09:07.568 [INFO ] frame=27 state=NEAR      c=(586,470) z=423.1mm
+18:09:08.581 [INFO ] Servo: err=(-57,+123)px r=135  Δ=(+3.0,+12.0,+12.0)mm  pos=(253,78,36)  [calibrated]
+18:09:08.585 [INFO ] frame=28 state=NEAR      c=(583,483) z=421.8mm
+18:09:09.588 [INFO ] Servo: err=(-59,+136)px r=148  Δ=(+3.0,+12.0,+12.0)mm  pos=(256,90,48)  [calibrated]
+18:09:09.595 [INFO ] frame=29 state=NEAR      c=(581,496) z=419.8mm
+18:09:09.748 [ERROR] WATCHDOG: SAM2 disagreement sustained for 5 frames; flagging hold.
+18:09:10.607 [INFO ] Servo: err=(-62,+148)px r=160  Δ=(+3.0,+12.0,+12.0)mm  pos=(259,102,60)  [calibrated]
+18:09:10.667 [INFO ] frame=30 state=NEAR      c=(578,508) z=417.5mm
+18:09:10.805 [ERROR] WATCHDOG: SAM2 disagreement sustained for 6 frames; flagging hold.
+18:09:11.663 [INFO ] Servo: err=(-64,+160)px r=172  Δ=(+3.0,+12.0,+12.0)mm  pos=(262,114,72)  [calibrated]
+18:09:11.667 [INFO ] frame=31 state=NEAR      c=(576,520) z=418.5mm
+18:09:11.813 [ERROR] WATCHDOG: SAM2 disagreement sustained for 7 frames; flagging hold.
+18:09:12.671 [INFO ] Servo: err=(-67,+171)px r=183  Δ=(+3.0,+12.0,+12.0)mm  pos=(265,126,84)  [calibrated]
+18:09:12.676 [INFO ] Quit requested via window key.
+18:09:12.677 [INFO ] frame=32 state=NEAR      c=(573,531) z=407.7mm
+18:09:12.721 [INFO ] Robot stopped.
