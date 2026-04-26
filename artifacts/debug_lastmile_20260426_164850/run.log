@@ -1,0 +1,8 @@
+16:48:50.087 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260426_164850.log
+16:48:50.109 [INFO ] Debug artifacts dir: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_lastmile_20260426_164850
+16:48:50.109 [INFO ] ======================================================================
+16:48:50.110 [INFO ] servo_lastmile starting
+16:48:50.110 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+16:48:50.110 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+16:48:50.110 [INFO ] ======================================================================
+16:49:03.629 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
