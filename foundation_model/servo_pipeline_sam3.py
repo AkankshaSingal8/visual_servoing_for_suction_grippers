@@ -402,6 +402,14 @@ class MaskTracker:
 
         self._anchor_source: str | None        = None
 
+        # Last centroid captured while the bbox was fully inside the frame
+        # (no border touch). Used to stabilize the grasp target once the
+        # camera approaches close enough that the bbox starts cropping.
+        # When cropping happens, _robust_centroid(mask) reports the centroid
+        # of the visible portion only — biased toward whichever side stays
+        # in view — so we slow its drift toward the cropped centroid.
+        self.last_full_frame_centroid: tuple | None = None
+
     def reset(self, keep_anchor: bool = True):
         self.prev_logits    = None
         self.prev_mask      = None
@@ -411,6 +419,7 @@ class MaskTracker:
         self.mask_history.clear()
         self._iou_streak    = 0
         self._last_iou      = 1.0
+        self.last_full_frame_centroid = None
         if not keep_anchor:
             self.anchor_logits  = None
             self.anchor_mask    = None
@@ -1098,6 +1107,55 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
         log.debug("Grasp point: bbox centre %s (no SAM3 mask)",
                   res["best_centroid"])
 
+    # ── Step 4b: Stabilize grasp point when bbox is cropping ─────────
+    # When the bbox starts touching a frame border, _robust_centroid
+    # reports the centroid of the VISIBLE portion only — biased toward
+    # whichever side of the object stays in view. Without a 3D anchor
+    # (full lastmile pipeline), we cannot recover the true centroid,
+    # but we can rate-limit the drift toward image center so the grasp
+    # point doesn't snap to a different physical point on the box face
+    # frame-to-frame. While the bbox is fully framed, we just track the
+    # last good centroid for use as a drift reference.
+    if res["best_centroid"] is not None and tracker is not None \
+            and res["gdino_box"] is not None:
+        bx = np.asarray(res["gdino_box"], dtype=np.float32)
+        # Border margin: 8px floor or 5% of bbox max-side (matches lastmile)
+        side = max(float(bx[2] - bx[0]), float(bx[3] - bx[1]))
+        margin = max(8, int(0.05 * side))
+        x1, y1, x2, y2 = bx
+        bbox_at_border = (
+            x1 < margin or y1 < margin
+            or x2 > w - margin or y2 > h - margin
+        )
+
+        if not bbox_at_border:
+            # Healthy frame: refresh the freeze reference
+            tracker.last_full_frame_centroid = tuple(int(v)
+                for v in res["best_centroid"])
+        elif tracker.last_full_frame_centroid is not None:
+            # Cropping: rate-limit drift away from the last good centroid.
+            # 6 px/frame at 30fps = ~3.6 px/servo-step at 0.3s, which is
+            # well below the controller's 15px dead-zone — large enough
+            # for legitimate Y/Z error correction, small enough that an
+            # 80px snap (the prior failure mode) gets stretched over ~13
+            # frames so the controller can damp it instead of slewing.
+            MAX_DRIFT_PX = 6
+            ref = tracker.last_full_frame_centroid
+            cur = res["best_centroid"]
+            dx, dy = float(cur[0] - ref[0]), float(cur[1] - ref[1])
+            d = (dx * dx + dy * dy) ** 0.5
+            if d > MAX_DRIFT_PX:
+                scale = MAX_DRIFT_PX / d
+                limited = (int(ref[0] + dx * scale),
+                            int(ref[1] + dy * scale))
+                log.info("Grasp point: bbox at border, drift %.1f px > %d "
+                         "px cap; clamping %s -> %s",
+                         d, MAX_DRIFT_PX, cur, limited)
+                res["best_centroid"] = limited
+                # The reference now creeps with the limited centroid so
+                # we don't permanently anchor at a wildly stale point.
+                tracker.last_full_frame_centroid = limited
+
     # ── Step 5: Update tracker ──────────────────────────────────────
     if tracker is not None:
         tracker.update(res["mask_np"], None, res.get("best_centroid"))
@@ -1673,13 +1731,25 @@ class CameraStreamer(threading.Thread):
                                        cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(display, cnts, -1, (0, 255, 0), 2)
 
-        if self._tracker.anchor_locked and self._tracker.anchor_mask is not None:
+        # Anchor contour: only draw when it actually agrees with the current
+        # mask (IoU > 0.7). The anchor is locked once IoU streak hits 5,
+        # which usually happens DURING the Y/Z Jacobian calibration sweep
+        # (small EE motions don't break the streak). After calibration the
+        # robot moves to a new servo pose and the live mask shifts, but the
+        # anchor is frozen — drawing it then produces the misleading "blue
+        # box" offset to the side of the actual object. Suppressing it when
+        # IoU is low keeps the anchor available for re-acquisition logic
+        # without showing stale geometry on the overlay.
+        if (self._tracker.anchor_locked
+                and self._tracker.anchor_mask is not None
+                and mask_np_r is not None):
             am_r = self._tracker.anchor_mask
             if am_r.shape[:2] != (h, w):
                 am_r = cv2.resize(am_r, (w, h), interpolation=cv2.INTER_NEAREST)
-            a_cnts, _ = cv2.findContours(am_r, cv2.RETR_EXTERNAL,
-                                          cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(display, a_cnts, -1, (255, 200, 0), 1)
+            if _mask_iou(am_r, mask_np_r) > 0.7:
+                a_cnts, _ = cv2.findContours(am_r, cv2.RETR_EXTERNAL,
+                                              cv2.CHAIN_APPROX_SIMPLE)
+                cv2.drawContours(display, a_cnts, -1, (255, 200, 0), 1)
 
         if gdino_box is not None:
             x1, y1, x2, y2 = gdino_box.astype(int)
