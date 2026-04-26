@@ -1406,6 +1406,9 @@ def _build_argparser() -> argparse.ArgumentParser:
                         "fused centroid, mask, overlay, and the full log file. "
                         "Offline: every frame. Live: every 30th frame. Push "
                         "artifacts/debug_lastmile_<ts>/ to share results.")
+    p.add_argument("--no-window", action="store_true",
+                   help="Live mode only: skip the cv2 preview window "
+                        "(SSH without X11 forwarding).")
     return p
 
 
@@ -1481,12 +1484,34 @@ def _dump_debug_frame(debug_dir: str | None, frame_idx: int,
         log.warning("debug dump frame %d failed: %s", frame_idx, e)
 
 
-def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
+def _make_overlay(frame: np.ndarray, res: dict) -> np.ndarray:
+    """Build the lastmile overlay (BGR copy of frame) for live or disk."""
     img = frame.copy()
     h, w = img.shape[:2]
     state = res.get("state", "?")
     cv2.putText(img, f"STATE: {state}", (12, 28),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+
+    # SAM3 mask (semi-transparent green fill + green contour) so the user
+    # sees what's being detected.
+    mask = res.get("mask_np")
+    if mask is not None:
+        if mask.shape[:2] != (h, w):
+            mask = cv2.resize(mask, (w, h), interpolation=cv2.INTER_NEAREST)
+        m_u8 = mask if mask.dtype == np.uint8 else (mask * 255).astype(np.uint8)
+        green = np.zeros_like(img); green[:, :, 1] = m_u8
+        img = cv2.addWeighted(img, 0.78, green, 0.22, 0)
+        cnts, _ = cv2.findContours(m_u8, cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(img, cnts, -1, (0, 255, 0), 2)
+
+    bx = res.get("gdino_box")
+    if bx is not None:
+        x1, y1, x2, y2 = [int(v) for v in bx]
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 165, 255), 2)
+
+    ic = (w // 2, h // 2)
+    cv2.drawMarker(img, ic, (255, 80, 0), cv2.MARKER_CROSS, 22, 2)
 
     color_map = {"A": (0, 255, 0), "B": (255, 200, 0),
                  "C": (255, 0, 255), "D": (0, 200, 255)}
@@ -1498,18 +1523,30 @@ def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
         cv2.putText(img, k[-1], (int(c[0]) + 8, int(c[1]) - 8),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_map[k[-1]], 1)
 
-    cf = res.get("c_fused")
+    cf = res.get("best_centroid") or res.get("c_fused")
     if cf is not None:
-        cv2.circle(img, (int(cf[0]), int(cf[1])), 12, (255, 255, 255), 2)
-        cv2.drawMarker(img, (int(cf[0]), int(cf[1])), (255, 255, 255),
-                       cv2.MARKER_CROSS, 24, 2)
+        gp = (int(cf[0]), int(cf[1]))
+        cv2.circle(img, gp, 18, (0, 0, 255), 2)
+        cv2.drawMarker(img, gp, (0, 0, 255), cv2.MARKER_CROSS, 26, 2)
+        cv2.putText(img, "GRASP", (gp[0] + 22, gp[1] - 8),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
+        cv2.arrowedLine(img, ic, gp, (0, 220, 255), 2, tipLength=0.12)
+
+    z = res.get("z_mm")
+    if z is not None:
+        cv2.putText(img, f"z={z:.0f} mm", (12, h - 14),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 220, 255), 2)
 
     if res.get("watchdog_alarm"):
         cv2.rectangle(img, (0, 0), (w - 1, h - 1), (0, 0, 255), 8)
         cv2.putText(img, "WATCHDOG", (w // 2 - 80, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
 
-    cv2.imwrite(out_path, img)
+    return img
+
+
+def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
+    cv2.imwrite(out_path, _make_overlay(frame, res))
 
 
 def _serialize_result(res: dict) -> dict:
@@ -1689,6 +1726,29 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
     frame_idx = [0]
     debug_every = max(1, int(getattr(args, "debug_every", 30) or 30))
 
+    # Live OpenCV preview window. Mirrors what servo_pipeline_sam3's
+    # CameraStreamer does so the user actually sees the camera feed +
+    # mask + grasp marker. Purely additive — does not touch perception
+    # or controller logic.
+    show_window = not getattr(args, "no_window", False)
+    win_name = "lastmile  |  [v] servo  [r] reset  [q] quit"
+    if show_window:
+        try:
+            cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(win_name, 1280, 720)
+        except Exception as e:
+            log.warning("Could not create preview window (%s); use "
+                        "--no-window for headless.", e)
+            show_window = False
+
+    def _handle_key(key: int) -> None:
+        if key in (ord("q"), 27):  # q or ESC
+            log.info("Quit requested via window key.")
+            stop_ev.set()
+        elif key == ord("v") and robot is not None:
+            robot.enabled = not robot.enabled
+            log.info("Servo: %s", "ON" if robot.enabled else "OFF")
+
     def perception_loop_for_frame(frame_bgr: np.ndarray) -> dict:
         # Update EE pose every frame from xArm
         if not (args.dry_run or args.no_robot) and hasattr(robot, "_get_pos"):
@@ -1711,16 +1771,32 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
             except Exception as e:
                 log.error("servo_step failed: %s", e)
 
+        # Build overlay every frame for live preview + (periodically) disk
+        overlay = None
+        try:
+            overlay = _make_overlay(frame_bgr, res)
+        except Exception as e:
+            log.debug("overlay build failed: %s", e)
+
+        if show_window and overlay is not None:
+            try:
+                cv2.imshow(win_name, overlay)
+                key = cv2.waitKey(1) & 0xFF
+                if key != 255:
+                    _handle_key(key)
+            except Exception as e:
+                log.debug("imshow failed: %s", e)
+
         # Periodic per-frame artifact dump
         i = frame_idx[0]
         frame_idx[0] += 1
         if debug_dir is not None and i % debug_every == 0:
-            overlay_path = os.path.join(debug_dir, "overlay_preview.png")
             try:
-                _save_overlay(frame_bgr, res, overlay_path)
-                overlay = cv2.imread(overlay_path)
+                if overlay is not None:
+                    cv2.imwrite(os.path.join(
+                        debug_dir, "overlay_preview.png"), overlay)
             except Exception:
-                overlay = None
+                pass
             _dump_debug_frame(debug_dir, i, frame_bgr, res, overlay, "live")
 
         # Always log a one-line summary so the user sees motion
@@ -1743,6 +1819,12 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
     if not (args.dry_run or args.no_robot):
         try:
             robot.stop()
+        except Exception:
+            pass
+
+    if show_window:
+        try:
+            cv2.destroyAllWindows()
         except Exception:
             pass
 
