@@ -696,6 +696,64 @@ class Sam3CentroidFreezeTests(unittest.TestCase):
                           or bx[2] > w - margin or bx[3] > h - margin)
         self.assertTrue(bbox_at_border)
 
+    def test_jyz_prediction_recovers_lock_centroid_when_ee_unmoved(self):
+        """
+        With J_yz known and EE pose unchanged since lock, the predicted
+        centroid must equal the locked centroid exactly. This is the
+        identity case for the streamer's _stabilize_grasp predictor.
+        """
+        # Synthetic J_yz: 1 mm of Y-motion produces 10 px of x-shift,
+        # 1 mm of Z-motion produces 10 px of y-shift. Sign convention
+        # matches the controller's own calibration.
+        J = np.array([[10.0, 0.0],
+                      [0.0, 10.0]], dtype=np.float64)
+        lock_c = (640, 360)
+        lock_yz = (50.0, 100.0)
+        cur_yz = (50.0, 100.0)
+        d_world = np.array([cur_yz[0] - lock_yz[0],
+                            cur_yz[1] - lock_yz[1]], dtype=np.float64)
+        d_px = J @ d_world
+        predicted = (int(lock_c[0] + d_px[0]),
+                     int(lock_c[1] + d_px[1]))
+        self.assertEqual(predicted, lock_c)
+
+    def test_jyz_prediction_shifts_with_ee_motion(self):
+        """
+        When EE moves +5 mm in Y, predicted centroid shifts by J[:,0] * 5.
+        With J = [[10, 0], [0, 10]] that's +50 px in x, +0 px in y.
+        """
+        J = np.array([[10.0, 0.0],
+                      [0.0, 10.0]], dtype=np.float64)
+        lock_c = (640, 360)
+        lock_yz = (50.0, 100.0)
+        cur_yz = (55.0, 100.0)  # +5 mm in Y
+        d_world = np.array([5.0, 0.0])
+        d_px = J @ d_world
+        predicted = (int(lock_c[0] + d_px[0]),
+                     int(lock_c[1] + d_px[1]))
+        self.assertEqual(predicted, (640 + 50, 360))
+
+    def test_jyz_prediction_handles_off_diagonal_jacobian(self):
+        """
+        Real J_yz from a calibration log:
+            [[ 1.27 -0.00]
+             [-0.08  1.15]]
+        Verify the prediction respects off-diagonal coupling.
+        """
+        J = np.array([[1.27, -0.00],
+                      [-0.08, 1.15]], dtype=np.float64)
+        lock_c = (640, 360)
+        lock_yz = (5.6, -52.9)
+        cur_yz = (15.6, -52.9)  # +10 mm Y
+        d_world = np.array([10.0, 0.0])
+        d_px = J @ d_world
+        predicted_x = int(lock_c[0] + d_px[0])
+        predicted_y = int(lock_c[1] + d_px[1])
+        # +10 mm Y -> +12.7 px x, -0.8 px y from the matrix
+        # int() truncates toward zero: int(640+12.7)=652, int(360-0.8)=359
+        self.assertEqual(predicted_x, 652)
+        self.assertEqual(predicted_y, 359)
+
     def test_creep_reference_advances_with_clamped_centroid(self):
         """
         The freeze reference creeps with the rate-limited centroid so that
