@@ -137,6 +137,12 @@ CTRL_GAIN    = 0.5
 
 CAL_DELTA    = 8.0
 CAL_WAIT     = 1.5
+# Calibration moves at a much slower speed than servoing so the operator
+# can clearly see the small Y/Z probe sweeps and the optical flow remains
+# unblurred. VS_SPEED=150 mm/s for an 8 mm probe finishes in ~50 ms which
+# looks like a sudden jolt; CAL_SPEED=30 mm/s spreads it over ~270 ms.
+CAL_SPEED    = 30
+CAL_MVACC    = 100
 
 MIN_Z_MM     = 0.0
 
@@ -402,6 +408,16 @@ class MaskTracker:
 
         self._anchor_source: str | None        = None
 
+        # Lock state captured at the last frame where the bbox was fully
+        # inside the image. The streamer uses this together with the
+        # robot's calibrated J_yz Jacobian to PREDICT where the grasp
+        # centroid should be in the current frame given the EE motion
+        # since lock — instead of trusting the cropped-mask centroid,
+        # which drifts toward whichever side of the object stays in
+        # view as the camera approaches.
+        self.last_full_frame_centroid: tuple | None = None
+        self.last_full_frame_ee_yz:    tuple | None = None  # (Y_mm, Z_mm)
+
     def reset(self, keep_anchor: bool = True):
         self.prev_logits    = None
         self.prev_mask      = None
@@ -411,6 +427,8 @@ class MaskTracker:
         self.mask_history.clear()
         self._iou_streak    = 0
         self._last_iou      = 1.0
+        self.last_full_frame_centroid = None
+        self.last_full_frame_ee_yz    = None
         if not keep_anchor:
             self.anchor_logits  = None
             self.anchor_mask    = None
@@ -1098,6 +1116,22 @@ def run_pipeline(image_bgr: np.ndarray, prompt: str,
         log.debug("Grasp point: bbox centre %s (no SAM3 mask)",
                   res["best_centroid"])
 
+    # ── Step 4b: Detect bbox-at-border for downstream stabilization ──
+    # Pure detection; the streamer owns the actual stabilization because
+    # only it has access to the robot's calibrated J_yz and live EE pose
+    # needed for the J_yz-based prediction. Recording bbox_at_border in
+    # the result so the streamer can read it without recomputing.
+    res["bbox_at_border"] = False
+    if res["best_centroid"] is not None and res["gdino_box"] is not None:
+        bx = np.asarray(res["gdino_box"], dtype=np.float32)
+        side = max(float(bx[2] - bx[0]), float(bx[3] - bx[1]))
+        margin = max(8, int(0.05 * side))
+        x1, y1, x2, y2 = bx
+        res["bbox_at_border"] = bool(
+            x1 < margin or y1 < margin
+            or x2 > w - margin or y2 > h - margin
+        )
+
     # ── Step 5: Update tracker ──────────────────────────────────────
     if tracker is not None:
         tracker.update(res["mask_np"], None, res.get("best_centroid"))
@@ -1150,11 +1184,13 @@ class RobotController:
         log.error("get_position failed: %s", ret)
         return None
 
-    def _move_abs(self, pos, wait=True):
+    def _move_abs(self, pos, wait=True, speed: float | None = None,
+                  mvacc: float | None = None):
         self._arm.set_position(
             x=pos[0], y=pos[1], z=pos[2],
             roll=pos[3], pitch=pos[4], yaw=pos[5],
-            speed=VS_SPEED, mvacc=VS_MVACC, wait=wait)
+            speed=VS_SPEED if speed is None else speed,
+            mvacc=VS_MVACC if mvacc is None else mvacc, wait=wait)
 
     def connect(self) -> bool:
         try:
@@ -1212,15 +1248,18 @@ class RobotController:
                 log.warning("  [%s] no frame before move - skipping axis", ax)
                 continue
 
-            log.info("  [%s] moving +%.0f mm...", ax, CAL_DELTA)
+            log.info("  [%s] moving +%.0f mm at %.0f mm/s...",
+                     ax, CAL_DELTA, CAL_SPEED)
             fwd = list(pos0)
             fwd[robot_idx] += CAL_DELTA
-            self._move_abs(fwd, wait=True)
+            self._move_abs(fwd, wait=True,
+                           speed=CAL_SPEED, mvacc=CAL_MVACC)
             time.sleep(CAL_WAIT)
 
             frame_after = get_frame_fn()
             log.info("  [%s] returning home...", ax)
-            self._move_abs(pos0, wait=True)
+            self._move_abs(pos0, wait=True,
+                           speed=CAL_SPEED, mvacc=CAL_MVACC)
 
             if frame_after is None:
                 log.warning("  [%s] no frame after move - skipping axis", ax)
@@ -1417,6 +1456,21 @@ class CameraStreamer(threading.Thread):
                 res = run_pipeline(frame, PROMPT, self._tracker,
                                    ref_crop=self.ref_crop,
                                    ref_features=self.ref_features)
+
+                # Grasp point stabilization across the cropping transition.
+                # When the bbox is fully framed, _robust_centroid is reliable
+                # and we record (centroid, EE_yz) as the lock state. Once the
+                # bbox starts touching a frame border, the visible-portion
+                # centroid drifts toward whichever side stays in view, which
+                # makes the grasp point chase a different physical point on
+                # the box face every frame. Instead, predict the centroid
+                # from the lock + the calibrated J_yz Jacobian * EE motion
+                # since lock. This keeps the grasp anchored to the same
+                # physical point as long as J_yz is roughly correct, which
+                # it is by construction (it was calibrated at a similar
+                # camera-to-object distance).
+                self._stabilize_grasp(res)
+
                 with self.data_lock:
                     self._result = res
 
@@ -1442,6 +1496,66 @@ class CameraStreamer(threading.Thread):
                 log.error("Pipeline error: %s", e)
                 import traceback; traceback.print_exc()
                 time.sleep(1)
+
+    def _stabilize_grasp(self, res: dict) -> None:
+        """
+        Image-space stabilization of best_centroid across the bbox-touches-
+        border transition. Uses the calibrated J_yz Jacobian (px/mm) and
+        the live EE pose to predict the centroid's image position from
+        the last fully-framed lock, instead of trusting the cropped-mask
+        centroid.
+
+        Falls back gracefully:
+          - No robot or no J_yz: leave centroid unchanged.
+          - bbox_at_border but no lock yet: hard-freeze at current centroid
+            (better than letting it drift).
+          - bbox fully framed: refresh the lock with current centroid + EE.
+        """
+        centroid = res.get("best_centroid")
+        if centroid is None:
+            return
+        at_border = bool(res.get("bbox_at_border"))
+
+        if not at_border:
+            # Healthy frame: refresh lock state for use during cropping.
+            if self.robot is not None:
+                pos = self.robot._get_pos()
+                if pos is not None:
+                    self._tracker.last_full_frame_centroid = (
+                        int(centroid[0]), int(centroid[1]))
+                    self._tracker.last_full_frame_ee_yz = (
+                        float(pos[1]), float(pos[2]))
+            else:
+                self._tracker.last_full_frame_centroid = (
+                    int(centroid[0]), int(centroid[1]))
+            return
+
+        # Cropping: try J_yz prediction first.
+        lock_c = self._tracker.last_full_frame_centroid
+        lock_yz = self._tracker.last_full_frame_ee_yz
+        jac = getattr(self.robot, "_jac_yz", None) if self.robot else None
+        cur_pos = self.robot._get_pos() if self.robot else None
+
+        if (lock_c is not None and lock_yz is not None
+                and jac is not None and cur_pos is not None):
+            dy = float(cur_pos[1]) - lock_yz[0]
+            dz = float(cur_pos[2]) - lock_yz[1]
+            d_world = np.array([dy, dz], dtype=np.float64)
+            d_px = jac @ d_world  # (2,) pixel displacement
+            predicted = (int(lock_c[0] + d_px[0]),
+                         int(lock_c[1] + d_px[1]))
+            if predicted != tuple(int(v) for v in centroid):
+                log.info("Grasp stab: predicted %s from lock %s "
+                         "(Δyz=%+.1f,%+.1f mm); raw was %s",
+                         predicted, lock_c, dy, dz, tuple(int(v) for v in centroid))
+            res["best_centroid"] = predicted
+            return
+
+        # Hard freeze fallback: no J_yz or no pose, but we have a lock.
+        if lock_c is not None:
+            log.info("Grasp stab: hard-freeze at %s (no J_yz/pose); raw was %s",
+                     lock_c, tuple(int(v) for v in centroid))
+            res["best_centroid"] = lock_c
 
     def run(self):
         if self._use_pyzed:
@@ -1673,13 +1787,17 @@ class CameraStreamer(threading.Thread):
                                        cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(display, cnts, -1, (0, 255, 0), 2)
 
-        if self._tracker.anchor_locked and self._tracker.anchor_mask is not None:
-            am_r = self._tracker.anchor_mask
-            if am_r.shape[:2] != (h, w):
-                am_r = cv2.resize(am_r, (w, h), interpolation=cv2.INTER_NEAREST)
-            a_cnts, _ = cv2.findContours(am_r, cv2.RETR_EXTERNAL,
-                                          cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(display, a_cnts, -1, (255, 200, 0), 1)
+        # Anchor contour was previously drawn here (cv2.drawContours with
+        # cyan color BGR(255,200,0)). Removed: the anchor is a
+        # MaskTracker-internal reference for re-acquisition / drift
+        # detection and has no user-facing meaning. Drawing it produced
+        # the "blue box offset from the protein bar" artefact during and
+        # after calibration, when the anchor was locked at one image
+        # location but the live mask had moved to another. Suppressing
+        # the IoU-gated draw was a half-measure (the contour still
+        # surfaced when IoU happened to exceed the threshold). Keeping
+        # the anchor alive in tracker state but not on screen.
+        _ = mask_np_r  # anchor logic still uses tracker state internally
 
         if gdino_box is not None:
             x1, y1, x2, y2 = gdino_box.astype(int)

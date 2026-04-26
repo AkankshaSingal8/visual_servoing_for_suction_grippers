@@ -129,11 +129,8 @@ LOCK_BORDER_MARGIN_PX     = 8
 LOCK_BORDER_MARGIN_FRAC   = 0.05
 LOCK_AREA_MIN_FRAC        = 0.05
 LOCK_AREA_MAX_FRAC        = 0.25
-LOCK_DEPTH_MIN_MM         = 100.0
-# Bumped from 400 -> 700 mm because the rig's home pose puts the camera
-# ~450 mm above the table, well outside the original [150, 400] band, so
-# the LOCK trigger never fired and the FSM sat in FAR forever.
-LOCK_DEPTH_MAX_MM         = 700.0
+LOCK_DEPTH_MIN_MM         = 150.0
+LOCK_DEPTH_MAX_MM         = 400.0
 LOCK_CONSEC_FRAMES        = 3
 
 # NEAR trigger: any of border-touch / area>30% / Z<80mm flips state
@@ -1083,18 +1080,13 @@ class LastMilePipeline:
                  ee_pose_provider: Callable[[], np.ndarray] | None = None,
                  depth_provider: Callable[[np.ndarray], np.ndarray | None] | None = None,
                  hand_eye_path: str | None = None,
-                 intrinsics: dict | None = None,
-                 enable_fusion: bool = False):
+                 intrinsics: dict | None = None):
         self.sam3_runner = sam3_runner
         self.ee_pose_provider = ee_pose_provider or (lambda: np.eye(4))
         self.depth_provider = depth_provider or (lambda f: None)
         self.T_ee_cam = load_hand_eye(hand_eye_path)
         self.intrinsics = intrinsics or DEFAULT_INTRINSICS
         self.K = make_intrinsics_matrix(self.intrinsics)
-        # Default OFF: in FAR, best_centroid is just the SAM3 mask
-        # centroid (= original sam3 pipeline behaviour). Only flip on
-        # when hand-eye is calibrated and Signal A can carry fusion.
-        self.enable_fusion = bool(enable_fusion)
 
         self.fsm = StateMachine()
         self.signal_A = SignalA(self.T_ee_cam, self.K)
@@ -1213,33 +1205,13 @@ class LastMilePipeline:
             z_mm = self._depth_at_px(depth_map, cx_cy) if cx_cy else None
             res["z_mm"] = z_mm
 
-            # LOCK capture: continuously refresh the lock while the bbox
-            # is fully framed. Decoupled from the NEAR transition so we
-            # don't engage the multi-source fusion until cropping actually
-            # starts -- in pure FAR conditions the simple mask centroid is
-            # already correct and adding fusion only introduces noise.
             if self.fsm.evaluate_far(sam3_res, z_mm, frame_bgr.shape):
                 lock = self._enter_lock(frame_bgr, sam3_res, depth_map)
                 if lock is not None:
                     self.fsm.lock_state = lock
+                    self.fsm.state = State.NEAR
+                    res["state"] = State.NEAR
                     res["best_centroid"] = lock.centroid_px
-
-            # NEAR fusion is OPT-IN via the orchestrator's enable_fusion
-            # flag (CLI: --enable-fusion). Default off because, on this
-            # rig with no hand-eye calibrated, the multi-source fusion
-            # (B+C+D) produces a worse centroid than the simple SAM3
-            # mask centroid the user had in the original pipeline. Until
-            # hand-eye is calibrated and Signal A can carry the fusion,
-            # lastmile by default just runs SAM3 perception + the live
-            # preview window and never leaves FAR.
-            if (self.enable_fusion
-                    and self.fsm.lock_state is not None
-                    and self.fsm.near_trigger_fired(
-                        sam3_res, z_mm, frame_bgr.shape)):
-                self.fsm.state = State.NEAR
-                res["state"] = State.NEAR
-                log.info("State -> NEAR @ frame %d (cropping detected)",
-                         self.fsm.frame_idx)
             return res
 
         # ============ NEAR ============
@@ -1434,16 +1406,6 @@ def _build_argparser() -> argparse.ArgumentParser:
                         "fused centroid, mask, overlay, and the full log file. "
                         "Offline: every frame. Live: every 30th frame. Push "
                         "artifacts/debug_lastmile_<ts>/ to share results.")
-    p.add_argument("--no-window", action="store_true",
-                   help="Live mode only: skip the cv2 preview window "
-                        "(use over SSH without X11 forwarding).")
-    p.add_argument("--enable-fusion", action="store_true",
-                   help="Engage the multi-source fusion (Signals A/B/C/D) "
-                        "when bbox starts cropping. Default OFF: the FSM "
-                        "stays in FAR and best_centroid is just the SAM3 "
-                        "mask centroid (matches the working sam3 pipeline). "
-                        "Only turn on once hand-eye is calibrated so Signal "
-                        "A can anchor the fusion.")
     return p
 
 
@@ -1519,39 +1481,13 @@ def _dump_debug_frame(debug_dir: str | None, frame_idx: int,
         log.warning("debug dump frame %d failed: %s", frame_idx, e)
 
 
-def _make_overlay(frame: np.ndarray, res: dict) -> np.ndarray:
-    """Render the lastmile overlay onto a BGR copy of frame and return it."""
+def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
     img = frame.copy()
     h, w = img.shape[:2]
     state = res.get("state", "?")
     cv2.putText(img, f"STATE: {state}", (12, 28),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
 
-    # SAM3 mask overlay (semi-transparent green) so the user can see what
-    # the detector is locked onto.
-    mask = res.get("mask_np")
-    if mask is not None:
-        if mask.shape[:2] != (h, w):
-            mask = cv2.resize(mask, (w, h), interpolation=cv2.INTER_NEAREST)
-        green = np.zeros_like(img)
-        green[:, :, 1] = mask if mask.dtype == np.uint8 else (mask * 255).astype(np.uint8)
-        img = cv2.addWeighted(img, 0.78, green, 0.22, 0)
-        cnts, _ = cv2.findContours(
-            mask if mask.dtype == np.uint8 else (mask * 255).astype(np.uint8),
-            cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(img, cnts, -1, (0, 255, 0), 2)
-
-    # SAM3 bbox if present
-    bx = res.get("gdino_box")
-    if bx is not None:
-        x1, y1, x2, y2 = [int(v) for v in bx]
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 165, 255), 2)
-
-    # Image center cross
-    ic = (w // 2, h // 2)
-    cv2.drawMarker(img, ic, (255, 80, 0), cv2.MARKER_CROSS, 22, 2)
-
-    # Per-signal centroids (small colored circles)
     color_map = {"A": (0, 255, 0), "B": (255, 200, 0),
                  "C": (255, 0, 255), "D": (0, 200, 255)}
     for k in ("c_A", "c_B", "c_C", "c_D"):
@@ -1562,33 +1498,18 @@ def _make_overlay(frame: np.ndarray, res: dict) -> np.ndarray:
         cv2.putText(img, k[-1], (int(c[0]) + 8, int(c[1]) - 8),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, color_map[k[-1]], 1)
 
-    # Fused / best centroid (the value the controller consumes)
-    cf = res.get("best_centroid") or res.get("c_fused")
+    cf = res.get("c_fused")
     if cf is not None:
-        gp = (int(cf[0]), int(cf[1]))
-        cv2.circle(img, gp, 18, (0, 0, 255), 2)
-        cv2.drawMarker(img, gp, (0, 0, 255), cv2.MARKER_CROSS, 26, 2)
-        cv2.putText(img, "GRASP", (gp[0] + 22, gp[1] - 8),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
-        cv2.arrowedLine(img, ic, gp, (0, 220, 255), 2, tipLength=0.12)
-
-    # Z depth readout
-    z = res.get("z_mm")
-    if z is not None:
-        cv2.putText(img, f"z={z:.0f} mm", (12, h - 14),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 220, 255), 2)
+        cv2.circle(img, (int(cf[0]), int(cf[1])), 12, (255, 255, 255), 2)
+        cv2.drawMarker(img, (int(cf[0]), int(cf[1])), (255, 255, 255),
+                       cv2.MARKER_CROSS, 24, 2)
 
     if res.get("watchdog_alarm"):
         cv2.rectangle(img, (0, 0), (w - 1, h - 1), (0, 0, 255), 8)
         cv2.putText(img, "WATCHDOG", (w // 2 - 80, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
 
-    return img
-
-
-def _save_overlay(frame: np.ndarray, res: dict, out_path: str) -> None:
-    """Backward-compatible wrapper: build overlay and write to disk."""
-    cv2.imwrite(out_path, _make_overlay(frame, res))
+    cv2.imwrite(out_path, img)
 
 
 def _serialize_result(res: dict) -> dict:
@@ -1618,7 +1539,6 @@ def run_offline(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         ee_pose_provider=lambda: np.eye(4),   # offline: stationary
         depth_provider=lambda f: None,        # offline: no depth
         hand_eye_path=args.hand_eye,
-        enable_fusion=getattr(args, "enable_fusion", False),
     )
 
     frames_iter = []
@@ -1730,11 +1650,7 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
 
     # Pipeline plumbing: the orchestrator pulls EE pose and depth via
     # callbacks; we keep the latest values in shared mutable state.
-    # latest_frame is also kept here so the J_yz calibration thread (which
-    # needs raw camera frames before/after each probe move) can read frames
-    # without coupling to the capture loop's internal vars.
     shared = dict(latest_pose=np.eye(4), latest_depth=None,
-                  latest_frame=None,
                   intrinsics=DEFAULT_INTRINSICS)
 
     def ee_pose_provider() -> np.ndarray:
@@ -1746,11 +1662,6 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
             d = shared["latest_depth"]
             return None if d is None else d.copy()
 
-    def get_frame_for_calibration() -> np.ndarray | None:
-        with shared_lock:
-            f = shared["latest_frame"]
-            return None if f is None else f.copy()
-
     sam3_runner = make_default_sam3_runner(args.ref_image, args.prompt)
     pipeline = LastMilePipeline(
         sam3_runner=sam3_runner,
@@ -1758,7 +1669,6 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         depth_provider=depth_provider,
         hand_eye_path=args.hand_eye,
         intrinsics=shared["intrinsics"],
-        enable_fusion=getattr(args, "enable_fusion", False),
     )
 
     shared_lock = threading.Lock()
@@ -1778,39 +1688,6 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
 
     frame_idx = [0]
     debug_every = max(1, int(getattr(args, "debug_every", 30) or 30))
-
-    # Live OpenCV preview window. Mirrors what servo_pipeline_sam3's
-    # CameraStreamer does so the user sees the camera + annotations
-    # (fused centroid, state label, mask overlay, watchdog alarm).
-    show_window = not getattr(args, "no_window", False)
-    win_name = "lastmile  |  [v] servo  [r] reset  [q] quit"
-    if show_window:
-        try:
-            cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-            cv2.resizeWindow(win_name, 1280, 720)
-        except Exception as e:
-            log.warning("Could not create preview window (%s); --no-window?", e)
-            show_window = False
-
-    def _handle_key(key: int) -> bool:
-        """Returns True if the loop should keep running."""
-        if key in (ord("q"), 27):  # q or ESC
-            log.info("Quit requested via window key.")
-            stop_ev.set()
-            return False
-        if key == ord("v") and robot is not None:
-            robot.enabled = not robot.enabled
-            log.info("Servo: %s", "ON" if robot.enabled else "OFF")
-        if key == ord("r"):
-            log.info("Manual tracker reset.")
-            try:
-                pipeline.fsm.reset()
-                pipeline.signal_B = SignalB()
-                pipeline.signal_C = SignalC()
-                pipeline.signal_D = SignalD()
-            except Exception as e:
-                log.error("Reset failed: %s", e)
-        return True
 
     def perception_loop_for_frame(frame_bgr: np.ndarray) -> dict:
         # Update EE pose every frame from xArm
@@ -1834,33 +1711,16 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
             except Exception as e:
                 log.error("servo_step failed: %s", e)
 
-        # Build overlay every frame (used for both live window and debug dump)
-        overlay = None
-        try:
-            overlay = _make_overlay(frame_bgr, res)
-        except Exception as e:
-            log.debug("overlay build failed: %s", e)
-
-        # Live preview window
-        if show_window and overlay is not None:
-            try:
-                cv2.imshow(win_name, overlay)
-                key = cv2.waitKey(1) & 0xFF
-                if key != 255:
-                    _handle_key(key)
-            except Exception as e:
-                log.debug("imshow failed: %s", e)
-
         # Periodic per-frame artifact dump
         i = frame_idx[0]
         frame_idx[0] += 1
         if debug_dir is not None and i % debug_every == 0:
+            overlay_path = os.path.join(debug_dir, "overlay_preview.png")
             try:
-                if overlay is not None:
-                    cv2.imwrite(os.path.join(
-                        debug_dir, "overlay_preview.png"), overlay)
+                _save_overlay(frame_bgr, res, overlay_path)
+                overlay = cv2.imread(overlay_path)
             except Exception:
-                pass
+                overlay = None
             _dump_debug_frame(debug_dir, i, frame_bgr, res, overlay, "live")
 
         # Always log a one-line summary so the user sees motion
@@ -1873,36 +1733,6 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
                  f"{z:.1f}mm" if z is not None else "-")
         return res
 
-    # Spawn the J_yz Jacobian calibration thread BEFORE entering the
-    # capture loop. The robot starts disabled (cal_status="waiting for
-    # calibration..."); calibrate() flips robot.enabled=True after the
-    # Y/Z probe sweep, at which point servo_step actually moves the arm.
-    # Without this, the lastmile pipeline runs perception correctly but
-    # the robot never moves and every servo_step logs the dreaded
-    # "Servo: waiting [waiting for calibration...]" line forever.
-    if not (args.dry_run or args.no_robot):
-        def _calibration_runner():
-            # Wait briefly for the first frame so calibrate() doesn't hit
-            # its 30-second timeout on a slow camera open.
-            for _ in range(30):
-                if stop_ev.is_set():
-                    return
-                if get_frame_for_calibration() is not None:
-                    break
-                time.sleep(0.5)
-            else:
-                log.warning("Calibration: no frames within 15 s; skipping.")
-                return
-            log.info("Calibration thread: starting Y/Z Jacobian calibration.")
-            try:
-                robot.calibrate(get_frame_for_calibration)
-            except Exception as e:
-                log.error("Calibration failed: %s", e, exc_info=True)
-
-        threading.Thread(target=_calibration_runner,
-                          daemon=True,
-                          name="lastmile-cal").start()
-
     if use_pyzed and pyzed_ok:
         _run_zed_loop(sl, args, stop_ev, shared, shared_lock,
                        perception_loop_for_frame)
@@ -1913,12 +1743,6 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
     if not (args.dry_run or args.no_robot):
         try:
             robot.stop()
-        except Exception:
-            pass
-
-    if show_window:
-        try:
-            cv2.destroyAllWindows()
         except Exception:
             pass
 
@@ -1972,10 +1796,6 @@ def _run_zed_loop(sl, args, stop_ev: threading.Event,
             depth = depth_mat.get_data().astype(np.float32, copy=False)
             with shared_lock:
                 shared["latest_depth"] = depth.copy()
-                # Publish for the calibration thread (which reads frames
-                # via get_frame_for_calibration() to compute optical flow
-                # before/after each Y/Z probe move).
-                shared["latest_frame"] = frame.copy()
             try:
                 per_frame(frame)
             except Exception as e:
@@ -2005,8 +1825,6 @@ def _run_opencv_loop(args, stop_ev: threading.Event,
                 continue
             h, w = frame.shape[:2]
             left = frame[:, : w // 2].copy()
-            with shared_lock:
-                shared["latest_frame"] = left.copy()
             try:
                 per_frame(left)
             except Exception as e:

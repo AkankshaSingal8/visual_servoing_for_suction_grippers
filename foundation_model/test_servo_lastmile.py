@@ -557,18 +557,12 @@ class OrchestratorEndToEndTests(unittest.TestCase):
         ee_pose_provider = lambda: np.eye(4)
 
         intr = intrinsics or sl.DEFAULT_INTRINSICS
-        # enable_fusion=True so the FSM still transitions through
-        # FAR -> NEAR -> TERMINAL for state-machine tests. Production
-        # default is OFF (lastmile stays in FAR with the simple SAM3
-        # mask centroid -- matches the original sam3 pipeline behaviour
-        # the user has been running successfully without hand-eye cal).
         pipe = sl.LastMilePipeline(
             sam3_runner=sam3_stub,
             ee_pose_provider=ee_pose_provider,
             depth_provider=depth_provider,
             hand_eye_path=None,
             intrinsics=intr,
-            enable_fusion=True,
         )
         return pipe, state
 
@@ -738,14 +732,6 @@ class Sam3CentroidFreezeTests(unittest.TestCase):
         predicted = (int(lock_c[0] + d_px[0]),
                      int(lock_c[1] + d_px[1]))
         self.assertEqual(predicted, (640 + 50, 360))
-
-    # NOTE: test_prediction_cap_triggers_hard_freeze_under_large_dyz
-    # was removed when servo_pipeline_sam3.py was hard-reverted to its
-    # pre-meddling state (commit 2a94142). PREDICT_MAX_DELTA_MM and the
-    # _stabilize_grasp method no longer exist in that file. The other
-    # tests in this class (border detection, drift formulas) test math
-    # primitives that remain in test scope and still pass.
-
 
     def test_jyz_prediction_handles_off_diagonal_jacobian(self):
         """
