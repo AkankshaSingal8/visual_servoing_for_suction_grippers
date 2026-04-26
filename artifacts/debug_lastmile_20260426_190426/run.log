@@ -1,0 +1,560 @@
+19:04:26.372 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260426_190426.log
+19:04:26.394 [INFO ] Debug artifacts dir: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_lastmile_20260426_190426
+19:04:26.394 [INFO ] ======================================================================
+19:04:26.394 [INFO ] servo_lastmile starting
+19:04:26.395 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+19:04:26.395 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+19:04:26.395 [INFO ] ======================================================================
+19:04:26.409 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+19:04:27.473 [INFO ] Robot connected: 192.168.1.241
+19:04:27.479 [INFO ] Processing reference image ...
+19:04:30.328 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+19:04:30.809 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:30.809 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+19:04:30.888 [INFO ] Feature extractor (ResNet-18) loaded
+19:04:30.910 [INFO ] Ref features: 512-d vector (norm=1.000)
+19:04:30.911 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+19:04:32.589 [INFO ] ZED intrinsics: fx=732.5 fy=732.5 cx=616.3 cy=360.6  size=1280x720
+19:04:32.589 [INFO ] ZED capture loop running (depth=PERFORMANCE, mm). Ctrl-C to stop.
+19:04:32.869 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:32.872 [DEBUG]   det conf=0.96 sim=0.930 pos=0.41 prox=0.00 -> 0.622
+19:04:32.873 [INFO ] SAM3: 'box' score=0.96 @ [576 208 804 644]  (top of 1)  sim=0.930
+19:04:32.874 [INFO ] SAM3: mask obtained (score=0.957, area=94355 px)
+19:04:33.068 [DEBUG] Grasp point: robust centroid (690, 426)
+19:04:33.070 [DEBUG] Servo: waiting [waiting for calibration...]
+19:04:33.090 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+19:04:33.090 [INFO ] === Calibration: waiting for camera frame ===
+19:04:33.090 [INFO ] Home: [205.3, 5.6, -52.9] mm
+19:04:33.131 [INFO ] frame=0 state=FAR       c=(690,425) z=449.5mm
+19:04:33.377 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:33.379 [DEBUG]   det conf=0.96 sim=0.933 pos=0.41 prox=1.00 -> 0.874
+19:04:33.381 [INFO ] SAM3: 'box' score=0.96 @ [575 207 804 643]  (top of 1)  sim=0.933
+19:04:33.381 [INFO ] SAM3: mask obtained (score=0.961, area=94333 px)
+19:04:33.391 [INFO ]   [Y] moving +8 mm at 30 mm/s...
+19:04:33.407 [DEBUG] Grasp point: robust centroid (689, 426)
+19:04:33.413 [INFO ] frame=1 state=FAR       c=(690,425) z=449.0mm
+19:04:33.659 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:33.661 [DEBUG]   det conf=0.96 sim=0.933 pos=0.41 prox=1.00 -> 0.873
+19:04:33.662 [INFO ] SAM3: 'box' score=0.96 @ [576 208 804 643]  (top of 1)  sim=0.933
+19:04:33.663 [INFO ] SAM3: mask obtained (score=0.962, area=94334 px)
+19:04:33.688 [DEBUG] Grasp point: robust centroid (690, 426)
+19:04:33.695 [INFO ] frame=2 state=FAR       c=(690,425) z=449.1mm
+19:04:33.943 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:33.945 [DEBUG]   det conf=0.95 sim=0.932 pos=0.41 prox=0.99 -> 0.871
+19:04:33.947 [INFO ] SAM3: 'box' score=0.95 @ [578 207 807 643]  (top of 1)  sim=0.932
+19:04:33.947 [INFO ] SAM3: mask obtained (score=0.955, area=94363 px)
+19:04:33.973 [DEBUG] Grasp point: robust centroid (692, 425)
+19:04:33.980 [INFO ] frame=3 state=FAR       c=(692,424) z=448.8mm
+19:04:34.230 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:34.232 [DEBUG]   det conf=0.96 sim=0.932 pos=0.41 prox=0.97 -> 0.866
+19:04:34.234 [INFO ] SAM3: 'box' score=0.96 @ [586 207 816 643]  (top of 1)  sim=0.932
+19:04:34.234 [INFO ] SAM3: mask obtained (score=0.963, area=94222 px)
+19:04:34.261 [DEBUG] Grasp point: robust centroid (700, 425)
+19:04:34.268 [INFO ] frame=4 state=FAR       c=(701,424) z=449.0mm
+19:04:34.513 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:34.515 [DEBUG]   det conf=0.96 sim=0.927 pos=0.41 prox=0.99 -> 0.869
+19:04:34.517 [INFO ] SAM3: 'box' score=0.96 @ [588 207 817 642]  (top of 1)  sim=0.927
+19:04:34.517 [INFO ] SAM3: mask obtained (score=0.961, area=94133 px)
+19:04:34.544 [DEBUG] Grasp point: robust centroid (702, 425)
+19:04:34.544 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.989)
+19:04:34.552 [INFO ] frame=5 state=FAR       c=(702,424) z=448.9mm
+19:04:34.797 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:34.799 [DEBUG]   det conf=0.96 sim=0.929 pos=0.41 prox=1.00 -> 0.872
+19:04:34.801 [INFO ] SAM3: 'box' score=0.96 @ [588 207 816 642]  (top of 1)  sim=0.929
+19:04:34.801 [INFO ] SAM3: mask obtained (score=0.959, area=94082 px)
+19:04:34.828 [DEBUG] Grasp point: robust centroid (702, 425)
+19:04:34.828 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.999)
+19:04:34.836 [INFO ] frame=6 state=FAR       c=(702,424) z=448.9mm
+19:04:35.082 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:35.084 [DEBUG]   det conf=0.96 sim=0.926 pos=0.41 prox=1.00 -> 0.870
+19:04:35.086 [INFO ] SAM3: 'box' score=0.96 @ [588 207 817 642]  (top of 1)  sim=0.926
+19:04:35.086 [INFO ] SAM3: mask obtained (score=0.965, area=94066 px)
+19:04:35.113 [DEBUG] Grasp point: robust centroid (702, 425)
+19:04:35.114 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.998)
+19:04:35.122 [INFO ] frame=7 state=FAR       c=(702,424) z=449.1mm
+19:04:35.371 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:35.373 [DEBUG]   det conf=0.96 sim=0.928 pos=0.41 prox=1.00 -> 0.871
+19:04:35.375 [INFO ] SAM3: 'box' score=0.96 @ [588 207 817 642]  (top of 1)  sim=0.928
+19:04:35.375 [INFO ] SAM3: mask obtained (score=0.961, area=94060 px)
+19:04:35.403 [DEBUG] Grasp point: robust centroid (702, 425)
+19:04:35.403 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.999)
+19:04:35.411 [INFO ] frame=8 state=FAR       c=(702,424) z=449.3mm
+19:04:35.498 [INFO ]   [Y] returning home...
+19:04:35.659 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:35.661 [DEBUG]   det conf=0.96 sim=0.929 pos=0.41 prox=1.00 -> 0.871
+19:04:35.662 [INFO ] SAM3: 'box' score=0.96 @ [588 207 816 642]  (top of 1)  sim=0.929
+19:04:35.662 [INFO ] SAM3: mask obtained (score=0.960, area=94141 px)
+19:04:35.689 [DEBUG] Grasp point: robust centroid (702, 424)
+19:04:35.689 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.998)
+19:04:35.697 [INFO ] frame=9 state=FAR       c=(702,424) z=449.4mm
+19:04:35.941 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:35.944 [DEBUG]   det conf=0.96 sim=0.925 pos=0.41 prox=1.00 -> 0.869
+19:04:35.946 [INFO ] SAM3: 'box' score=0.96 @ [588 207 816 643]  (top of 1)  sim=0.925
+19:04:35.946 [INFO ] SAM3: mask obtained (score=0.958, area=94112 px)
+19:04:35.973 [DEBUG] Grasp point: robust centroid (702, 425)
+19:04:35.973 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.997)
+19:04:35.981 [INFO ] frame=10 state=FAR       c=(702,424) z=449.6mm
+19:04:36.110 [INFO ]   [Y] flow: (+13.1, -0.9) px / 8 mm  -> J[:,{col}]=[+1.6336, -0.1158]
+19:04:36.228 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:36.231 [DEBUG]   det conf=0.96 sim=0.929 pos=0.41 prox=0.97 -> 0.865
+19:04:36.233 [INFO ] SAM3: 'box' score=0.96 @ [579 208 807 644]  (top of 1)  sim=0.929
+19:04:36.233 [INFO ] SAM3: mask obtained (score=0.959, area=94352 px)
+19:04:36.259 [DEBUG] Grasp point: robust centroid (692, 426)
+19:04:36.259 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.918)
+19:04:36.267 [INFO ] frame=11 state=FAR       c=(693,425) z=449.3mm
+19:04:36.411 [INFO ]   [Z] moving +8 mm at 30 mm/s...
+19:04:36.515 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:36.517 [DEBUG]   det conf=0.96 sim=0.926 pos=0.41 prox=0.99 -> 0.868
+19:04:36.519 [INFO ] SAM3: 'box' score=0.96 @ [575 208 803 644]  (top of 1)  sim=0.926
+19:04:36.519 [INFO ] SAM3: mask obtained (score=0.959, area=94315 px)
+19:04:36.546 [DEBUG] Grasp point: robust centroid (689, 426)
+19:04:36.546 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.962)
+19:04:36.552 [INFO ] frame=12 state=FAR       c=(689,426) z=449.3mm
+19:04:36.797 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:36.799 [DEBUG]   det conf=0.96 sim=0.928 pos=0.41 prox=1.00 -> 0.870
+19:04:36.800 [INFO ] SAM3: 'box' score=0.96 @ [575 208 803 644]  (top of 1)  sim=0.928
+19:04:36.801 [INFO ] SAM3: mask obtained (score=0.959, area=94344 px)
+19:04:36.827 [DEBUG] Grasp point: robust centroid (689, 427)
+19:04:36.827 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.997)
+19:04:36.832 [INFO ] frame=13 state=FAR       c=(689,426) z=449.3mm
+19:04:37.079 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:37.081 [DEBUG]   det conf=0.96 sim=0.923 pos=0.40 prox=0.98 -> 0.862
+19:04:37.083 [INFO ] SAM3: 'box' score=0.96 @ [575 215 803 652]  (top of 1)  sim=0.923
+19:04:37.083 [INFO ] SAM3: mask obtained (score=0.960, area=94480 px)
+19:04:37.109 [DEBUG] Grasp point: robust centroid (689, 433)
+19:04:37.110 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.967)
+19:04:37.118 [INFO ] frame=14 state=FAR       c=(689,433) z=449.3mm
+19:04:37.362 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:37.365 [DEBUG]   det conf=0.96 sim=0.925 pos=0.39 prox=0.98 -> 0.862
+19:04:37.367 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.925
+19:04:37.367 [INFO ] SAM3: mask obtained (score=0.960, area=94412 px)
+19:04:37.394 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:37.394 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.971)
+19:04:37.401 [INFO ] frame=15 state=FAR       c=(689,439) z=449.3mm
+19:04:37.646 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:37.648 [DEBUG]   det conf=0.96 sim=0.922 pos=0.39 prox=1.00 -> 0.866
+19:04:37.650 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.922
+19:04:37.650 [INFO ] SAM3: mask obtained (score=0.962, area=94308 px)
+19:04:37.677 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:37.677 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.998)
+19:04:37.684 [INFO ] frame=16 state=FAR       c=(689,439) z=449.4mm
+19:04:37.933 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:37.935 [DEBUG]   det conf=0.96 sim=0.924 pos=0.39 prox=1.00 -> 0.866
+19:04:37.937 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.924
+19:04:37.937 [INFO ] SAM3: mask obtained (score=0.959, area=94334 px)
+19:04:37.964 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:37.964 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.999)
+19:04:37.971 [INFO ] frame=17 state=FAR       c=(689,439) z=449.5mm
+19:04:38.217 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:38.219 [DEBUG]   det conf=0.96 sim=0.925 pos=0.39 prox=1.00 -> 0.866
+19:04:38.221 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.925
+19:04:38.221 [INFO ] SAM3: mask obtained (score=0.958, area=94318 px)
+19:04:38.248 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:38.249 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.999)
+19:04:38.250 [DEBUG] Servo: waiting [calibrating Z...]
+19:04:38.255 [INFO ] frame=18 state=FAR       c=(689,439) z=449.7mm
+19:04:38.499 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:38.502 [DEBUG]   det conf=0.96 sim=0.924 pos=0.39 prox=1.00 -> 0.866
+19:04:38.503 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.924
+19:04:38.504 [INFO ] SAM3: mask obtained (score=0.964, area=94258 px)
+19:04:38.517 [INFO ]   [Z] returning home...
+19:04:38.531 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:38.531 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.999)
+19:04:38.538 [INFO ] frame=19 state=FAR       c=(689,439) z=449.9mm
+19:04:38.785 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:38.787 [DEBUG]   det conf=0.96 sim=0.924 pos=0.39 prox=1.00 -> 0.866
+19:04:38.789 [INFO ] SAM3: 'box' score=0.96 @ [575 221 803 657]  (top of 1)  sim=0.924
+19:04:38.789 [INFO ] SAM3: mask obtained (score=0.959, area=94333 px)
+19:04:38.817 [DEBUG] Grasp point: robust centroid (689, 439)
+19:04:38.817 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.999)
+19:04:38.824 [INFO ] frame=20 state=FAR       c=(689,439) z=449.9mm
+19:04:39.070 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:39.072 [DEBUG]   det conf=0.96 sim=0.924 pos=0.39 prox=0.99 -> 0.865
+19:04:39.074 [INFO ] SAM3: 'box' score=0.96 @ [575 218 803 654]  (top of 1)  sim=0.924
+19:04:39.074 [INFO ] SAM3: mask obtained (score=0.962, area=94162 px)
+19:04:39.103 [DEBUG] Grasp point: robust centroid (689, 436)
+19:04:39.103 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.985)
+19:04:39.109 [INFO ] frame=21 state=FAR       c=(689,436) z=450.0mm
+19:04:39.129 [INFO ]   [Z] flow: (-0.1, +13.0) px / 8 mm  -> J[:,{col}]=[-0.0064, +1.6196]
+19:04:39.129 [INFO ] J_yz (px/mm):
+[[ 1.63359451 -0.0063858 ]
+ [-0.1158123   1.61955643]]
+19:04:39.130 [INFO ] J_yz_inv (mm/px):
+[[0.61231817 0.00241433]
+ [0.04378605 0.61762566]]
+19:04:39.130 [INFO ] === Calibration complete [calibrated] ===
+19:04:39.352 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:39.355 [DEBUG]   det conf=0.96 sim=0.929 pos=0.41 prox=0.97 -> 0.865
+19:04:39.357 [INFO ] SAM3: 'box' score=0.96 @ [575 209 804 645]  (top of 1)  sim=0.929
+19:04:39.357 [INFO ] SAM3: mask obtained (score=0.959, area=94258 px)
+19:04:39.384 [DEBUG] Grasp point: robust centroid (689, 427)
+19:04:39.385 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.953)
+19:04:39.386 [WARNING] Servo: clamping Z -64.9 -> 0.0 mm (base limit)
+19:04:40.896 [INFO ] Servo: err=(+50,+67)px r=83  Δ=(+3.0,-12.0,-12.0)mm  pos=(208,-6,0)  [calibrated]
+19:04:40.901 [INFO ] frame=22 state=FAR       c=(690,427) z=449.7mm
+19:04:41.147 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:41.149 [DEBUG]   det conf=0.95 sim=0.932 pos=0.30 prox=0.74 -> 0.791
+19:04:41.151 [INFO ] SAM3: 'box' score=0.95 @ [556 293 785 720]  (top of 1)  sim=0.932
+19:04:41.151 [INFO ] SAM3: mask obtained (score=0.946, area=93039 px)
+19:04:41.177 [DEBUG] Grasp point: robust centroid (669, 507)
+19:04:41.179 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:41.834 [INFO ] Servo: err=(+30,+146)px r=149  Δ=(+3.0,-9.4,-12.0)mm  pos=(211,-16,0)  [calibrated]
+19:04:41.840 [INFO ] frame=23 state=FAR       c=(670,506) z=448.2mm
+19:04:42.091 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:42.093 [DEBUG]   det conf=0.96 sim=0.935 pos=0.29 prox=0.96 -> 0.848
+19:04:42.095 [INFO ] SAM3: 'box' score=0.96 @ [541 294 772 721]  (top of 1)  sim=0.935
+19:04:42.095 [INFO ] SAM3: mask obtained (score=0.957, area=93806 px)
+19:04:42.122 [DEBUG] Grasp point: robust centroid (656, 508)
+19:04:42.123 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:42.627 [INFO ] Servo: err=(+16,+147)px r=148  Δ=(+3.0,-5.2,-12.0)mm  pos=(214,-21,0)  [calibrated]
+19:04:42.632 [INFO ] frame=24 state=FAR       c=(656,507) z=446.1mm
+19:04:42.878 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:42.880 [DEBUG]   det conf=0.96 sim=0.936 pos=0.29 prox=0.98 -> 0.852
+19:04:42.882 [INFO ] SAM3: 'box' score=0.96 @ [532 294 764 721]  (top of 1)  sim=0.936
+19:04:42.882 [INFO ] SAM3: mask obtained (score=0.956, area=94293 px)
+19:04:42.908 [DEBUG] Grasp point: robust centroid (648, 508)
+19:04:42.910 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:43.364 [INFO ] Servo: err=(+8,+147)px r=147  Δ=(+3.0,-2.6,-12.0)mm  pos=(217,-24,0)  [calibrated]
+19:04:43.372 [INFO ] frame=25 state=FAR       c=(648,507) z=443.1mm
+19:04:43.632 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:43.634 [DEBUG]   det conf=0.95 sim=0.939 pos=0.29 prox=0.99 -> 0.855
+19:04:43.636 [INFO ] SAM3: 'box' score=0.95 @ [526 294 760 721]  (top of 1)  sim=0.939
+19:04:43.636 [INFO ] SAM3: mask obtained (score=0.948, area=95169 px)
+19:04:43.664 [DEBUG] Grasp point: robust centroid (643, 508)
+19:04:43.666 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:44.069 [INFO ] Servo: err=(+3,+147)px r=147  Δ=(+3.0,-1.2,-12.0)mm  pos=(220,-25,0)  [calibrated]
+19:04:44.073 [INFO ] frame=26 state=FAR       c=(643,507) z=441.0mm
+19:04:44.315 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:44.318 [DEBUG]   det conf=0.95 sim=0.932 pos=0.30 prox=1.00 -> 0.855
+19:04:44.319 [INFO ] SAM3: 'box' score=0.95 @ [524 293 759 721]  (top of 1)  sim=0.932
+19:04:44.320 [INFO ] SAM3: mask obtained (score=0.950, area=95888 px)
+19:04:44.347 [DEBUG] Grasp point: robust centroid (641, 508)
+19:04:44.349 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:44.752 [INFO ] Servo: err=(+2,+147)px r=147  Δ=(+3.0,-0.7,-12.0)mm  pos=(223,-26,0)  [calibrated]
+19:04:44.759 [INFO ] frame=27 state=FAR       c=(642,507) z=436.6mm
+19:04:45.007 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:45.010 [DEBUG]   det conf=0.94 sim=0.929 pos=0.30 prox=1.00 -> 0.852
+19:04:45.011 [INFO ] SAM3: 'box' score=0.94 @ [522 292 759 721]  (top of 1)  sim=0.929
+19:04:45.011 [INFO ] SAM3: mask obtained (score=0.942, area=96707 px)
+19:04:45.038 [DEBUG] Grasp point: robust centroid (640, 507)
+19:04:45.039 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.986)
+19:04:45.040 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:45.444 [INFO ] Servo: err=(+1,+147)px r=147  Δ=(+3.0,-0.4,-12.0)mm  pos=(226,-26,0)  [calibrated]
+19:04:45.451 [INFO ] frame=28 state=FAR       c=(641,507) z=435.2mm
+19:04:45.695 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:45.698 [DEBUG]   det conf=0.95 sim=0.927 pos=0.30 prox=1.00 -> 0.852
+19:04:45.699 [INFO ] SAM3: 'box' score=0.95 @ [521 292 760 721]  (top of 1)  sim=0.927
+19:04:45.700 [INFO ] SAM3: mask obtained (score=0.946, area=97449 px)
+19:04:45.726 [DEBUG] Grasp point: robust centroid (640, 507)
+19:04:45.727 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.991)
+19:04:45.728 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:46.131 [INFO ] Servo: err=(+1,+146)px r=146  Δ=(+3.0,-0.4,-12.0)mm  pos=(229,-26,0)  [calibrated]
+19:04:46.138 [INFO ] frame=29 state=FAR       c=(641,506) z=430.9mm
+19:04:46.388 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:46.390 [DEBUG]   det conf=0.94 sim=0.935 pos=0.30 prox=1.00 -> 0.855
+19:04:46.392 [INFO ] SAM3: 'box' score=0.94 @ [520 291 760 721]  (top of 1)  sim=0.935
+19:04:46.392 [INFO ] SAM3: mask obtained (score=0.935, area=98332 px)
+19:04:46.419 [DEBUG] Grasp point: robust centroid (639, 506)
+19:04:46.419 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.991)
+19:04:46.421 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:46.824 [INFO ] Servo: err=(+0,+146)px r=146  Δ=(+3.0,-0.3,-12.0)mm  pos=(232,-27,0)  [calibrated]
+19:04:46.884 [INFO ] frame=30 state=FAR       c=(640,506) z=427.3mm
+19:04:47.130 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:47.132 [DEBUG]   det conf=0.95 sim=0.935 pos=0.30 prox=0.99 -> 0.856
+19:04:47.133 [INFO ] SAM3: 'box' score=0.95 @ [519 290 761 721]  (top of 1)  sim=0.935
+19:04:47.133 [INFO ] SAM3: mask obtained (score=0.951, area=99279 px)
+19:04:47.160 [DEBUG] Grasp point: robust centroid (639, 506)
+19:04:47.160 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.990)
+19:04:47.162 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:47.565 [INFO ] Servo: err=(+0,+145)px r=145  Δ=(+3.0,-0.2,-12.0)mm  pos=(235,-27,0)  [calibrated]
+19:04:47.569 [INFO ] frame=31 state=FAR       c=(640,505) z=425.4mm
+19:04:47.813 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:47.815 [DEBUG]   det conf=0.95 sim=0.937 pos=0.30 prox=1.00 -> 0.857
+19:04:47.817 [INFO ] SAM3: 'box' score=0.95 @ [518 290 762 721]  (top of 1)  sim=0.937
+19:04:47.817 [INFO ] SAM3: mask obtained (score=0.949, area=99993 px)
+19:04:47.844 [DEBUG] Grasp point: robust centroid (640, 506)
+19:04:47.844 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.993)
+19:04:47.846 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:48.249 [INFO ] Servo: err=(-0,+145)px r=145  Δ=(+3.0,-0.2,-12.0)mm  pos=(238,-27,0)  [calibrated]
+19:04:48.256 [INFO ] frame=32 state=FAR       c=(640,505) z=422.4mm
+19:04:48.503 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:48.505 [DEBUG]   det conf=0.95 sim=0.935 pos=0.30 prox=1.00 -> 0.857
+19:04:48.507 [INFO ] SAM3: 'box' score=0.95 @ [517 289 762 720]  (top of 1)  sim=0.935
+19:04:48.507 [INFO ] SAM3: mask obtained (score=0.951, area=100728 px)
+19:04:48.534 [DEBUG] Grasp point: robust centroid (639, 506)
+19:04:48.534 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.992)
+19:04:48.536 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:48.939 [INFO ] Servo: err=(-0,+145)px r=145  Δ=(+3.0,-0.1,-12.0)mm  pos=(241,-27,0)  [calibrated]
+19:04:48.945 [INFO ] frame=33 state=FAR       c=(640,505) z=418.9mm
+19:04:49.192 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:49.194 [DEBUG]   det conf=0.95 sim=0.929 pos=0.30 prox=1.00 -> 0.854
+19:04:49.196 [INFO ] SAM3: 'box' score=0.95 @ [517 289 763 720]  (top of 1)  sim=0.929
+19:04:49.196 [INFO ] SAM3: mask obtained (score=0.953, area=101597 px)
+19:04:49.221 [DEBUG] Grasp point: robust centroid (639, 506)
+19:04:49.222 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.990)
+19:04:49.224 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:49.627 [INFO ] Servo: err=(-0,+145)px r=145  Δ=(+3.0,-0.1,-12.0)mm  pos=(244,-27,0)  [calibrated]
+19:04:49.634 [INFO ] frame=34 state=FAR       c=(640,505) z=415.6mm
+19:04:49.887 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:49.890 [DEBUG]   det conf=0.96 sim=0.940 pos=0.30 prox=1.00 -> 0.859
+19:04:49.892 [INFO ] SAM3: 'box' score=0.96 @ [516 288 764 721]  (top of 1)  sim=0.940
+19:04:49.893 [INFO ] SAM3: mask obtained (score=0.957, area=102376 px)
+19:04:49.921 [DEBUG] Grasp point: robust centroid (640, 506)
+19:04:49.922 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.992)
+19:04:49.923 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:50.326 [INFO ] Servo: err=(+0,+145)px r=145  Δ=(+3.0,-0.2,-12.0)mm  pos=(247,-27,0)  [calibrated]
+19:04:50.334 [INFO ] frame=35 state=FAR       c=(640,505) z=412.2mm
+19:04:50.585 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:50.587 [DEBUG]   det conf=0.96 sim=0.944 pos=0.30 prox=1.00 -> 0.862
+19:04:50.589 [INFO ] SAM3: 'box' score=0.96 @ [515 288 765 720]  (top of 1)  sim=0.944
+19:04:50.589 [INFO ] SAM3: mask obtained (score=0.957, area=103418 px)
+19:04:50.617 [DEBUG] Grasp point: robust centroid (639, 505)
+19:04:50.617 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.989)
+19:04:50.619 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:51.022 [INFO ] Servo: err=(+0,+144)px r=144  Δ=(+3.0,-0.2,-12.0)mm  pos=(250,-28,0)  [calibrated]
+19:04:51.027 [INFO ] frame=36 state=FAR       c=(640,504) z=408.7mm
+19:04:51.282 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:51.284 [DEBUG]   det conf=0.96 sim=0.946 pos=0.30 prox=1.00 -> 0.863
+19:04:51.288 [INFO ] SAM3: 'box' score=0.96 @ [514 287 766 720]  (top of 1)  sim=0.946
+19:04:51.288 [INFO ] SAM3: mask obtained (score=0.955, area=104270 px)
+19:04:51.316 [DEBUG] Grasp point: robust centroid (639, 504)
+19:04:51.316 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.990)
+19:04:51.318 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:51.721 [INFO ] Servo: err=(-0,+144)px r=144  Δ=(+3.0,-0.1,-12.0)mm  pos=(253,-28,0)  [calibrated]
+19:04:51.763 [INFO ] frame=37 state=FAR       c=(640,504) z=406.2mm
+19:04:52.013 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:52.016 [DEBUG]   det conf=0.95 sim=0.942 pos=0.30 prox=1.00 -> 0.860
+19:04:52.017 [INFO ] SAM3: 'box' score=0.95 @ [513 286 767 720]  (top of 1)  sim=0.942
+19:04:52.017 [INFO ] SAM3: mask obtained (score=0.953, area=105234 px)
+19:04:52.044 [DEBUG] Grasp point: robust centroid (639, 504)
+19:04:52.044 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.990)
+19:04:52.046 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:52.449 [INFO ] Servo: err=(-0,+143)px r=143  Δ=(+3.0,-0.1,-12.0)mm  pos=(256,-28,0)  [calibrated]
+19:04:52.481 [INFO ] frame=38 state=FAR       c=(640,503) z=403.1mm
+19:04:52.731 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:52.734 [DEBUG]   det conf=0.94 sim=0.947 pos=0.30 prox=1.00 -> 0.862
+19:04:52.736 [INFO ] SAM3: 'box' score=0.94 @ [512 286 768 720]  (top of 1)  sim=0.947
+19:04:52.736 [INFO ] SAM3: mask obtained (score=0.942, area=106061 px)
+19:04:52.763 [DEBUG] Grasp point: robust centroid (639, 504)
+19:04:52.763 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.992)
+19:04:52.765 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:53.168 [INFO ] Servo: err=(-0,+143)px r=143  Δ=(+3.0,-0.2,-12.0)mm  pos=(259,-28,0)  [calibrated]
+19:04:53.186 [INFO ] frame=39 state=FAR       c=(640,503) z=399.7mm
+19:04:53.431 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:53.433 [DEBUG]   det conf=0.94 sim=0.943 pos=0.30 prox=1.00 -> 0.859
+19:04:53.435 [INFO ] SAM3: 'box' score=0.94 @ [511 285 769 720]  (top of 1)  sim=0.943
+19:04:53.435 [INFO ] SAM3: mask obtained (score=0.939, area=107009 px)
+19:04:53.462 [DEBUG] Grasp point: robust centroid (639, 504)
+19:04:53.462 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.991)
+19:04:53.464 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:53.866 [INFO ] Servo: err=(-0,+143)px r=143  Δ=(+3.0,-0.1,-12.0)mm  pos=(262,-28,0)  [calibrated]
+19:04:53.882 [INFO ] frame=40 state=FAR       c=(640,503) z=396.6mm
+19:04:54.131 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:54.133 [DEBUG]   det conf=0.94 sim=0.943 pos=0.30 prox=0.99 -> 0.860
+19:04:54.135 [INFO ] SAM3: 'box' score=0.94 @ [510 284 770 720]  (top of 1)  sim=0.943
+19:04:54.135 [INFO ] SAM3: mask obtained (score=0.944, area=108020 px)
+19:04:54.161 [DEBUG] Grasp point: robust centroid (639, 504)
+19:04:54.162 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.990)
+19:04:54.164 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:54.566 [INFO ] Servo: err=(-0,+142)px r=142  Δ=(+3.0,-0.2,-12.0)mm  pos=(265,-28,0)  [calibrated]
+19:04:54.584 [INFO ] frame=41 state=FAR       c=(640,502) z=393.8mm
+19:04:54.831 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:54.833 [DEBUG]   det conf=0.95 sim=0.935 pos=0.30 prox=0.99 -> 0.857
+19:04:54.834 [INFO ] SAM3: 'box' score=0.95 @ [509 284 771 720]  (top of 1)  sim=0.935
+19:04:54.834 [INFO ] SAM3: mask obtained (score=0.953, area=109124 px)
+19:04:54.861 [DEBUG] Grasp point: robust centroid (639, 503)
+19:04:54.861 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.989)
+19:04:54.863 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:55.266 [INFO ] Servo: err=(-0,+142)px r=142  Δ=(+3.0,-0.1,-12.0)mm  pos=(268,-28,0)  [calibrated]
+19:04:55.283 [INFO ] frame=42 state=FAR       c=(640,502) z=390.6mm
+19:04:55.530 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:55.532 [DEBUG]   det conf=0.95 sim=0.938 pos=0.30 prox=1.00 -> 0.858
+19:04:55.534 [INFO ] SAM3: 'box' score=0.95 @ [508 283 771 721]  (top of 1)  sim=0.938
+19:04:55.534 [INFO ] SAM3: mask obtained (score=0.947, area=110099 px)
+19:04:55.560 [DEBUG] Grasp point: robust centroid (639, 503)
+19:04:55.561 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.991)
+19:04:55.562 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:55.965 [INFO ] Servo: err=(-1,+142)px r=142  Δ=(+3.0,-0.0,-12.0)mm  pos=(271,-28,0)  [calibrated]
+19:04:56.001 [INFO ] frame=43 state=FAR       c=(639,502) z=387.4mm
+19:04:56.250 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:56.252 [DEBUG]   det conf=0.94 sim=0.931 pos=0.30 prox=1.00 -> 0.854
+19:04:56.254 [INFO ] SAM3: 'box' score=0.94 @ [507 283 773 721]  (top of 1)  sim=0.931
+19:04:56.254 [INFO ] SAM3: mask obtained (score=0.944, area=111156 px)
+19:04:56.281 [DEBUG] Grasp point: robust centroid (639, 503)
+19:04:56.281 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.990)
+19:04:56.283 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:56.686 [INFO ] Servo: err=(-0,+141)px r=141  Δ=(+3.0,-0.1,-12.0)mm  pos=(274,-28,0)  [calibrated]
+19:04:56.704 [INFO ] frame=44 state=FAR       c=(640,501) z=384.5mm
+19:04:56.952 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:56.954 [DEBUG]   det conf=0.94 sim=0.934 pos=0.30 prox=0.99 -> 0.856
+19:04:56.955 [INFO ] SAM3: 'box' score=0.94 @ [506 282 773 720]  (top of 1)  sim=0.934
+19:04:56.956 [INFO ] SAM3: mask obtained (score=0.943, area=112022 px)
+19:04:56.983 [DEBUG] Grasp point: robust centroid (639, 502)
+19:04:56.983 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.991)
+19:04:56.985 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:57.388 [INFO ] Servo: err=(-0,+141)px r=141  Δ=(+3.0,-0.1,-12.0)mm  pos=(277,-28,0)  [calibrated]
+19:04:57.405 [INFO ] frame=45 state=FAR       c=(640,501) z=380.8mm
+19:04:57.653 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:57.655 [DEBUG]   det conf=0.95 sim=0.937 pos=0.30 prox=1.00 -> 0.858
+19:04:57.656 [INFO ] SAM3: 'box' score=0.95 @ [505 281 774 720]  (top of 1)  sim=0.937
+19:04:57.657 [INFO ] SAM3: mask obtained (score=0.953, area=113107 px)
+19:04:57.684 [DEBUG] Grasp point: robust centroid (639, 502)
+19:04:57.684 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.989)
+19:04:57.686 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:58.089 [INFO ] Servo: err=(-0,+141)px r=141  Δ=(+3.0,-0.2,-12.0)mm  pos=(280,-29,0)  [calibrated]
+19:04:58.124 [INFO ] frame=46 state=FAR       c=(640,501) z=378.6mm
+19:04:58.371 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:58.373 [DEBUG]   det conf=0.95 sim=0.935 pos=0.30 prox=0.99 -> 0.857
+19:04:58.375 [INFO ] SAM3: 'box' score=0.95 @ [504 280 775 720]  (top of 1)  sim=0.935
+19:04:58.376 [INFO ] SAM3: mask obtained (score=0.947, area=114253 px)
+19:04:58.402 [DEBUG] Grasp point: robust centroid (639, 501)
+19:04:58.403 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.990)
+19:04:58.405 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:58.807 [INFO ] Servo: err=(-0,+140)px r=140  Δ=(+3.0,-0.1,-12.0)mm  pos=(283,-29,0)  [calibrated]
+19:04:58.842 [INFO ] frame=47 state=FAR       c=(640,500) z=375.3mm
+19:04:59.090 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:59.092 [DEBUG]   det conf=0.93 sim=0.936 pos=0.31 prox=1.00 -> 0.855
+19:04:59.093 [INFO ] SAM3: 'box' score=0.93 @ [503 279 776 720]  (top of 1)  sim=0.936
+19:04:59.094 [INFO ] SAM3: mask obtained (score=0.926, area=115367 px)
+19:04:59.120 [DEBUG] Grasp point: robust centroid (639, 501)
+19:04:59.121 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.988)
+19:04:59.122 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:04:59.525 [INFO ] Servo: err=(-0,+140)px r=140  Δ=(+3.0,-0.1,-12.0)mm  pos=(286,-29,0)  [calibrated]
+19:04:59.561 [INFO ] frame=48 state=FAR       c=(640,500) z=372.6mm
+19:04:59.810 [INFO ] SAM3: 1 detection(s) for 'box'
+19:04:59.812 [DEBUG]   det conf=0.94 sim=0.937 pos=0.31 prox=1.00 -> 0.857
+19:04:59.813 [INFO ] SAM3: 'box' score=0.94 @ [501 278 777 720]  (top of 1)  sim=0.937
+19:04:59.813 [INFO ] SAM3: mask obtained (score=0.941, area=116361 px)
+19:04:59.840 [DEBUG] Grasp point: robust centroid (639, 500)
+19:04:59.840 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.989)
+19:04:59.842 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:00.245 [INFO ] Servo: err=(-0,+139)px r=139  Δ=(+3.0,-0.1,-12.0)mm  pos=(289,-29,0)  [calibrated]
+19:05:00.275 [INFO ] frame=49 state=FAR       c=(640,499) z=369.5mm
+19:05:00.524 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:00.526 [DEBUG]   det conf=0.94 sim=0.940 pos=0.31 prox=1.00 -> 0.859
+19:05:00.528 [INFO ] SAM3: 'box' score=0.94 @ [501 278 779 720]  (top of 1)  sim=0.940
+19:05:00.528 [INFO ] SAM3: mask obtained (score=0.943, area=117452 px)
+19:05:00.554 [DEBUG] Grasp point: robust centroid (639, 500)
+19:05:00.555 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.990)
+19:05:00.557 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:00.960 [INFO ] Servo: err=(-0,+139)px r=139  Δ=(+3.0,-0.2,-12.0)mm  pos=(292,-29,0)  [calibrated]
+19:05:00.978 [INFO ] frame=50 state=FAR       c=(640,499) z=366.9mm
+19:05:01.225 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:01.228 [DEBUG]   det conf=0.94 sim=0.943 pos=0.31 prox=1.00 -> 0.861
+19:05:01.229 [INFO ] SAM3: 'box' score=0.94 @ [499 277 779 721]  (top of 1)  sim=0.943
+19:05:01.229 [INFO ] SAM3: mask obtained (score=0.941, area=118736 px)
+19:05:01.255 [DEBUG] Grasp point: robust centroid (638, 500)
+19:05:01.256 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.988)
+19:05:01.258 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:01.660 [INFO ] Servo: err=(-0,+139)px r=139  Δ=(+3.0,-0.1,-12.0)mm  pos=(295,-29,0)  [calibrated]
+19:05:01.677 [INFO ] frame=51 state=FAR       c=(640,499) z=363.5mm
+19:05:01.928 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:01.930 [DEBUG]   det conf=0.95 sim=0.942 pos=0.31 prox=0.99 -> 0.861
+19:05:01.932 [INFO ] SAM3: 'box' score=0.95 @ [498 277 780 722]  (top of 1)  sim=0.942
+19:05:01.932 [INFO ] SAM3: mask obtained (score=0.951, area=119895 px)
+19:05:01.958 [DEBUG] Grasp point: robust centroid (639, 500)
+19:05:01.958 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.990)
+19:05:01.960 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:02.363 [INFO ] Servo: err=(-0,+138)px r=138  Δ=(+3.0,-0.1,-12.0)mm  pos=(298,-29,0)  [calibrated]
+19:05:02.381 [INFO ] frame=52 state=FAR       c=(640,498) z=360.1mm
+19:05:02.629 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:02.631 [DEBUG]   det conf=0.95 sim=0.947 pos=0.31 prox=0.99 -> 0.864
+19:05:02.634 [INFO ] SAM3: 'box' score=0.95 @ [497 275 781 720]  (top of 1)  sim=0.947
+19:05:02.634 [INFO ] SAM3: mask obtained (score=0.951, area=121211 px)
+19:05:02.661 [DEBUG] Grasp point: robust centroid (639, 499)
+19:05:02.661 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.989)
+19:05:02.663 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:03.066 [INFO ] Servo: err=(-0,+138)px r=138  Δ=(+3.0,-0.1,-12.0)mm  pos=(301,-29,0)  [calibrated]
+19:05:03.084 [INFO ] frame=53 state=FAR       c=(640,498) z=358.7mm
+19:05:03.331 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:03.333 [DEBUG]   det conf=0.95 sim=0.946 pos=0.31 prox=1.00 -> 0.864
+19:05:03.335 [INFO ] SAM3: 'box' score=0.95 @ [496 274 783 720]  (top of 1)  sim=0.946
+19:05:03.335 [INFO ] SAM3: mask obtained (score=0.954, area=122405 px)
+19:05:03.362 [DEBUG] Grasp point: robust centroid (639, 499)
+19:05:03.362 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.990)
+19:05:03.364 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:03.767 [INFO ] Servo: err=(+0,+137)px r=137  Δ=(+3.0,-0.2,-12.0)mm  pos=(304,-30,0)  [calibrated]
+19:05:03.785 [INFO ] frame=54 state=FAR       c=(640,497) z=354.2mm
+19:05:04.030 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:04.032 [DEBUG]   det conf=0.95 sim=0.947 pos=0.31 prox=0.99 -> 0.863
+19:05:04.034 [INFO ] SAM3: 'box' score=0.95 @ [495 273 784 720]  (top of 1)  sim=0.947
+19:05:04.034 [INFO ] SAM3: mask obtained (score=0.949, area=123633 px)
+19:05:04.061 [DEBUG] Grasp point: robust centroid (638, 498)
+19:05:04.061 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.989)
+19:05:04.063 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:04.466 [INFO ] Servo: err=(-0,+137)px r=137  Δ=(+3.0,-0.1,-12.0)mm  pos=(307,-30,0)  [calibrated]
+19:05:04.482 [INFO ] frame=55 state=FAR       c=(640,497) z=350.9mm
+19:05:04.731 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:04.734 [DEBUG]   det conf=0.94 sim=0.943 pos=0.31 prox=0.99 -> 0.860
+19:05:04.736 [INFO ] SAM3: 'box' score=0.94 @ [494 273 785 721]  (top of 1)  sim=0.943
+19:05:04.736 [INFO ] SAM3: mask obtained (score=0.941, area=124943 px)
+19:05:04.764 [DEBUG] Grasp point: robust centroid (639, 498)
+19:05:04.764 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.988)
+19:05:04.766 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:05.169 [INFO ] Servo: err=(-0,+137)px r=137  Δ=(+3.0,-0.1,-12.0)mm  pos=(310,-30,0)  [calibrated]
+19:05:05.185 [INFO ] frame=56 state=FAR       c=(640,497) z=347.8mm
+19:05:05.431 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:05.433 [DEBUG]   det conf=0.94 sim=0.945 pos=0.31 prox=0.99 -> 0.861
+19:05:05.435 [INFO ] SAM3: 'box' score=0.94 @ [492 272 787 721]  (top of 1)  sim=0.945
+19:05:05.436 [INFO ] SAM3: mask obtained (score=0.937, area=126171 px)
+19:05:05.462 [DEBUG] Grasp point: robust centroid (639, 498)
+19:05:05.463 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.987)
+19:05:05.464 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:05.867 [INFO ] Servo: err=(-0,+136)px r=136  Δ=(+3.0,-0.2,-12.0)mm  pos=(313,-30,0)  [calibrated]
+19:05:05.885 [INFO ] frame=57 state=FAR       c=(640,496) z=344.3mm
+19:05:06.131 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:06.133 [DEBUG]   det conf=0.93 sim=0.939 pos=0.31 prox=0.99 -> 0.858
+19:05:06.135 [INFO ] SAM3: 'box' score=0.93 @ [492 271 788 721]  (top of 1)  sim=0.939
+19:05:06.135 [INFO ] SAM3: mask obtained (score=0.933, area=127337 px)
+19:05:06.161 [DEBUG] Grasp point: robust centroid (639, 497)
+19:05:06.162 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.987)
+19:05:06.163 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:06.566 [INFO ] Servo: err=(+0,+135)px r=135  Δ=(+3.0,-0.2,-12.0)mm  pos=(316,-30,0)  [calibrated]
+19:05:06.584 [INFO ] frame=58 state=FAR       c=(640,495) z=341.1mm
+19:05:06.831 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:06.833 [DEBUG]   det conf=0.93 sim=0.944 pos=0.31 prox=1.00 -> 0.861
+19:05:06.835 [INFO ] SAM3: 'box' score=0.93 @ [490 270 789 721]  (top of 1)  sim=0.944
+19:05:06.835 [INFO ] SAM3: mask obtained (score=0.931, area=128845 px)
+19:05:06.862 [DEBUG] Grasp point: robust centroid (639, 497)
+19:05:06.862 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.988)
+19:05:06.864 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:07.267 [INFO ] Servo: err=(-0,+135)px r=135  Δ=(+3.0,-0.1,-12.0)mm  pos=(319,-30,0)  [calibrated]
+19:05:07.282 [INFO ] frame=59 state=FAR       c=(640,495) z=337.0mm
+19:05:07.530 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:07.532 [DEBUG]   det conf=0.94 sim=0.944 pos=0.31 prox=0.99 -> 0.861
+19:05:07.534 [INFO ] SAM3: 'box' score=0.94 @ [489 269 791 720]  (top of 1)  sim=0.944
+19:05:07.534 [INFO ] SAM3: mask obtained (score=0.936, area=130300 px)
+19:05:07.561 [DEBUG] Grasp point: robust centroid (639, 496)
+19:05:07.561 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.987)
+19:05:07.563 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:07.966 [INFO ] Servo: err=(-0,+134)px r=134  Δ=(+3.0,-0.1,-12.0)mm  pos=(322,-30,0)  [calibrated]
+19:05:08.039 [INFO ] frame=60 state=FAR       c=(640,494) z=335.5mm
+19:05:08.285 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:08.287 [DEBUG]   det conf=0.93 sim=0.946 pos=0.31 prox=0.99 -> 0.862
+19:05:08.289 [INFO ] SAM3: 'box' score=0.93 @ [487 268 792 720]  (top of 1)  sim=0.946
+19:05:08.289 [INFO ] SAM3: mask obtained (score=0.934, area=131796 px)
+19:05:08.316 [DEBUG] Grasp point: robust centroid (639, 496)
+19:05:08.316 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.987)
+19:05:08.318 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:08.721 [INFO ] Servo: err=(+0,+134)px r=134  Δ=(+3.0,-0.2,-12.0)mm  pos=(325,-30,0)  [calibrated]
+19:05:08.739 [INFO ] frame=61 state=FAR       c=(640,494) z=332.1mm
+19:05:08.988 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:08.990 [DEBUG]   det conf=0.93 sim=0.943 pos=0.31 prox=0.99 -> 0.861
+19:05:08.992 [INFO ] SAM3: 'box' score=0.93 @ [486 267 793 721]  (top of 1)  sim=0.943
+19:05:08.992 [INFO ] SAM3: mask obtained (score=0.934, area=133155 px)
+19:05:09.018 [DEBUG] Grasp point: robust centroid (639, 495)
+19:05:09.019 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.989)
+19:05:09.020 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:09.424 [INFO ] Servo: err=(+0,+133)px r=133  Δ=(+3.0,-0.2,-12.0)mm  pos=(328,-31,0)  [calibrated]
+19:05:09.456 [INFO ] frame=62 state=FAR       c=(640,493) z=329.6mm
+19:05:09.703 [INFO ] SAM3: 1 detection(s) for 'box'
+19:05:09.705 [DEBUG]   det conf=0.92 sim=0.942 pos=0.31 prox=1.00 -> 0.860
+19:05:09.707 [INFO ] SAM3: 'box' score=0.92 @ [485 266 794 721]  (top of 1)  sim=0.942
+19:05:09.707 [INFO ] SAM3: mask obtained (score=0.925, area=134913 px)
+19:05:09.734 [DEBUG] Grasp point: robust centroid (639, 495)
+19:05:09.734 [INFO ] MaskTracker: anchor locked (IoU streak=40, last IoU=0.986)
+19:05:09.736 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+19:05:10.139 [INFO ] Servo: err=(-0,+133)px r=133  Δ=(+3.0,-0.1,-12.0)mm  pos=(331,-31,0)  [calibrated]
+19:05:10.156 [INFO ] Quit requested via window key.
+19:05:10.156 [INFO ] frame=63 state=FAR       c=(640,493) z=325.9mm
+19:05:10.222 [INFO ] Robot stopped.

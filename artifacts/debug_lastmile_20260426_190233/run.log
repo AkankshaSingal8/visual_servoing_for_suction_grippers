@@ -1,0 +1,349 @@
+19:02:33.783 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260426_190233.log
+19:02:33.803 [INFO ] Debug artifacts dir: /data/user/akanksha/repo/visual_servoing_for_suction_grippers/artifacts/debug_lastmile_20260426_190233
+19:02:33.803 [INFO ] ======================================================================
+19:02:33.803 [INFO ] servo_lastmile starting
+19:02:33.803 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+19:02:33.803 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+19:02:33.803 [INFO ] ======================================================================
+19:02:33.818 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+19:02:34.864 [ERROR] Robot connect failed: connect socket failed
+19:02:34.870 [INFO ] Processing reference image ...
+19:02:37.692 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+19:02:38.160 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:38.160 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+19:02:38.235 [INFO ] Feature extractor (ResNet-18) loaded
+19:02:38.257 [INFO ] Ref features: 512-d vector (norm=1.000)
+19:02:38.258 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+19:02:41.516 [INFO ] ZED intrinsics: fx=732.5 fy=732.5 cx=616.3 cy=360.6  size=1280x720
+19:02:41.516 [INFO ] ZED capture loop running (depth=PERFORMANCE, mm). Ctrl-C to stop.
+19:02:41.556 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:41.811 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:41.814 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=0.00 -> 0.625
+19:02:41.815 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:41.816 [INFO ] SAM3: mask obtained (score=0.961, area=92983 px)
+19:02:42.017 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+19:02:42.017 [INFO ] === Calibration: waiting for camera frame ===
+19:02:42.017 [ERROR] Calibration failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1841, in _calibration_runner
+    robot.calibrate(get_frame_for_calibration)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1233, in calibrate
+    pos0 = self._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1181, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+19:02:42.025 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:42.026 [DEBUG] Servo: arm not connected
+19:02:42.088 [INFO ] frame=0 state=FAR       c=(682,415) z=453.6mm
+19:02:42.094 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:42.355 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:42.357 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:42.359 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.933
+19:02:42.359 [INFO ] SAM3: mask obtained (score=0.960, area=92974 px)
+19:02:42.387 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:42.396 [INFO ] frame=1 state=FAR       c=(682,415) z=453.8mm
+19:02:42.401 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:42.660 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:42.663 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.875
+19:02:42.664 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:42.665 [INFO ] SAM3: mask obtained (score=0.960, area=92994 px)
+19:02:42.691 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:42.699 [INFO ] frame=2 state=FAR       c=(682,415) z=453.8mm
+19:02:42.705 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:42.966 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:42.968 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:42.970 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:42.970 [INFO ] SAM3: mask obtained (score=0.962, area=92893 px)
+19:02:42.997 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:43.003 [INFO ] frame=3 state=FAR       c=(682,415) z=453.7mm
+19:02:43.009 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:43.255 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:43.258 [DEBUG]   det conf=0.96 sim=0.935 pos=0.42 prox=1.00 -> 0.876
+19:02:43.260 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.935
+19:02:43.260 [INFO ] SAM3: mask obtained (score=0.962, area=92991 px)
+19:02:43.287 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:43.294 [INFO ] frame=4 state=FAR       c=(682,415) z=453.6mm
+19:02:43.299 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:43.550 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:43.552 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:43.554 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.933
+19:02:43.555 [INFO ] SAM3: mask obtained (score=0.959, area=92979 px)
+19:02:43.582 [DEBUG] Grasp point: robust centroid (681, 416)
+19:02:43.582 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.999)
+19:02:43.589 [INFO ] frame=5 state=FAR       c=(682,415) z=453.6mm
+19:02:43.594 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:43.842 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:43.845 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:43.847 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:43.847 [INFO ] SAM3: mask obtained (score=0.956, area=92941 px)
+19:02:43.876 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:43.876 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.999)
+19:02:43.883 [INFO ] frame=6 state=FAR       c=(682,415) z=453.5mm
+19:02:43.888 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:44.136 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:44.138 [DEBUG]   det conf=0.96 sim=0.935 pos=0.42 prox=1.00 -> 0.876
+19:02:44.140 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.935
+19:02:44.140 [INFO ] SAM3: mask obtained (score=0.957, area=92945 px)
+19:02:44.167 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:44.167 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.999)
+19:02:44.174 [INFO ] frame=7 state=FAR       c=(682,415) z=453.1mm
+19:02:44.179 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:44.429 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:44.431 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.874
+19:02:44.433 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:44.433 [INFO ] SAM3: mask obtained (score=0.956, area=92966 px)
+19:02:44.461 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:44.462 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.999)
+19:02:44.468 [INFO ] frame=8 state=FAR       c=(682,415) z=453.1mm
+19:02:44.474 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:44.732 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:44.734 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:44.736 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:44.736 [INFO ] SAM3: mask obtained (score=0.963, area=92976 px)
+19:02:44.763 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:44.764 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.999)
+19:02:44.770 [INFO ] frame=9 state=FAR       c=(682,415) z=453.3mm
+19:02:44.776 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:45.023 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:45.026 [DEBUG]   det conf=0.96 sim=0.935 pos=0.42 prox=1.00 -> 0.876
+19:02:45.027 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.935
+19:02:45.027 [INFO ] SAM3: mask obtained (score=0.962, area=92918 px)
+19:02:45.056 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:45.056 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.998)
+19:02:45.063 [INFO ] frame=10 state=FAR       c=(682,415) z=453.4mm
+19:02:45.068 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:45.329 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:45.331 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.875
+19:02:45.333 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:45.333 [INFO ] SAM3: mask obtained (score=0.961, area=92941 px)
+19:02:45.361 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:45.361 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.998)
+19:02:45.368 [INFO ] frame=11 state=FAR       c=(682,415) z=453.4mm
+19:02:45.373 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:45.638 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:45.640 [DEBUG]   det conf=0.96 sim=0.935 pos=0.42 prox=1.00 -> 0.876
+19:02:45.642 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.935
+19:02:45.643 [INFO ] SAM3: mask obtained (score=0.959, area=92958 px)
+19:02:45.670 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:45.670 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.999)
+19:02:45.677 [INFO ] frame=12 state=FAR       c=(682,415) z=453.3mm
+19:02:45.682 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:45.950 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:45.952 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:45.954 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:45.954 [INFO ] SAM3: mask obtained (score=0.958, area=92930 px)
+19:02:45.981 [DEBUG] Grasp point: robust centroid (683, 415)
+19:02:45.981 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.999)
+19:02:45.987 [INFO ] frame=13 state=FAR       c=(682,415) z=453.4mm
+19:02:45.993 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:46.243 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:46.245 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=0.99 -> 0.874
+19:02:46.247 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:46.247 [INFO ] SAM3: mask obtained (score=0.961, area=92939 px)
+19:02:46.276 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:46.276 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.999)
+19:02:46.282 [INFO ] frame=14 state=FAR       c=(682,415) z=453.4mm
+19:02:46.288 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:46.533 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:46.535 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.874
+19:02:46.537 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.932
+19:02:46.537 [INFO ] SAM3: mask obtained (score=0.956, area=92964 px)
+19:02:46.564 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:46.564 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.999)
+19:02:46.570 [INFO ] frame=15 state=FAR       c=(682,415) z=453.3mm
+19:02:46.576 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:46.824 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:46.826 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.876
+19:02:46.828 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:46.828 [INFO ] SAM3: mask obtained (score=0.959, area=92924 px)
+19:02:46.855 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:46.856 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.999)
+19:02:46.862 [INFO ] frame=16 state=FAR       c=(682,415) z=453.2mm
+19:02:46.868 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:47.116 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:47.118 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:47.119 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:47.120 [INFO ] SAM3: mask obtained (score=0.960, area=92933 px)
+19:02:47.146 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:47.147 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.998)
+19:02:47.148 [DEBUG] Servo: arm not connected
+19:02:47.153 [INFO ] frame=17 state=FAR       c=(682,415) z=453.2mm
+19:02:47.159 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:47.408 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:47.410 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.876
+19:02:47.412 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:47.412 [INFO ] SAM3: mask obtained (score=0.957, area=92975 px)
+19:02:47.442 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:47.442 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.999)
+19:02:47.448 [INFO ] frame=18 state=FAR       c=(682,415) z=453.2mm
+19:02:47.454 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:47.701 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:47.703 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:47.705 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:47.705 [INFO ] SAM3: mask obtained (score=0.961, area=92963 px)
+19:02:47.732 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:47.733 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.998)
+19:02:47.739 [INFO ] frame=19 state=FAR       c=(682,415) z=453.1mm
+19:02:47.745 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:47.993 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:47.996 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.875
+19:02:47.997 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:47.997 [INFO ] SAM3: mask obtained (score=0.957, area=92961 px)
+19:02:48.026 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:48.026 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.999)
+19:02:48.033 [INFO ] frame=20 state=FAR       c=(682,415) z=453.1mm
+19:02:48.038 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:48.289 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:48.291 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.876
+19:02:48.293 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:48.293 [INFO ] SAM3: mask obtained (score=0.964, area=92919 px)
+19:02:48.321 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:48.321 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.999)
+19:02:48.328 [INFO ] frame=21 state=FAR       c=(682,415) z=453.1mm
+19:02:48.333 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:48.581 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:48.583 [DEBUG]   det conf=0.95 sim=0.936 pos=0.42 prox=1.00 -> 0.876
+19:02:48.585 [INFO ] SAM3: 'box' score=0.95 @ [567 199 795 631]  (top of 1)  sim=0.936
+19:02:48.585 [INFO ] SAM3: mask obtained (score=0.954, area=92950 px)
+19:02:48.611 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:48.612 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.998)
+19:02:48.618 [INFO ] frame=22 state=FAR       c=(682,415) z=453.1mm
+19:02:48.624 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:48.871 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:48.873 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:48.875 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:48.875 [INFO ] SAM3: mask obtained (score=0.957, area=92926 px)
+19:02:48.902 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:48.903 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.998)
+19:02:48.909 [INFO ] frame=23 state=FAR       c=(682,415) z=452.9mm
+19:02:48.914 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:49.165 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:49.167 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.874
+19:02:49.169 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:49.169 [INFO ] SAM3: mask obtained (score=0.958, area=92910 px)
+19:02:49.195 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:49.196 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.999)
+19:02:49.202 [INFO ] frame=24 state=FAR       c=(682,415) z=452.9mm
+19:02:49.208 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:49.458 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:49.460 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:49.462 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:49.463 [INFO ] SAM3: mask obtained (score=0.964, area=92955 px)
+19:02:49.491 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:49.491 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.999)
+19:02:49.497 [INFO ] frame=25 state=FAR       c=(682,415) z=452.7mm
+19:02:49.503 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:49.758 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:49.761 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:49.762 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:49.763 [INFO ] SAM3: mask obtained (score=0.964, area=92937 px)
+19:02:49.791 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:49.791 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.998)
+19:02:49.797 [INFO ] frame=26 state=FAR       c=(682,415) z=452.8mm
+19:02:49.803 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:50.055 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:50.057 [DEBUG]   det conf=0.96 sim=0.927 pos=0.42 prox=1.00 -> 0.872
+19:02:50.059 [INFO ] SAM3: 'box' score=0.96 @ [568 199 795 631]  (top of 1)  sim=0.927
+19:02:50.059 [INFO ] SAM3: mask obtained (score=0.959, area=92929 px)
+19:02:50.088 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:50.088 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.999)
+19:02:50.095 [INFO ] frame=27 state=FAR       c=(682,415) z=452.8mm
+19:02:50.101 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:50.358 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:50.361 [DEBUG]   det conf=0.96 sim=0.936 pos=0.42 prox=1.00 -> 0.877
+19:02:50.362 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.936
+19:02:50.363 [INFO ] SAM3: mask obtained (score=0.960, area=92940 px)
+19:02:50.391 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:50.391 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.999)
+19:02:50.396 [INFO ] frame=28 state=FAR       c=(682,415) z=452.8mm
+19:02:50.401 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:50.663 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:50.666 [DEBUG]   det conf=0.96 sim=0.935 pos=0.42 prox=1.00 -> 0.876
+19:02:50.668 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.935
+19:02:50.668 [INFO ] SAM3: mask obtained (score=0.957, area=92923 px)
+19:02:50.695 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:50.695 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.999)
+19:02:50.703 [INFO ] frame=29 state=FAR       c=(682,415) z=452.9mm
+19:02:50.709 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:50.964 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:50.966 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.875
+19:02:50.968 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:50.968 [INFO ] SAM3: mask obtained (score=0.961, area=92957 px)
+19:02:50.995 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:50.996 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.999)
+19:02:51.056 [INFO ] frame=30 state=FAR       c=(682,415) z=452.8mm
+19:02:51.062 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:51.314 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:51.317 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:51.318 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:51.318 [INFO ] SAM3: mask obtained (score=0.958, area=92918 px)
+19:02:51.346 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:51.346 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.998)
+19:02:51.353 [INFO ] frame=31 state=FAR       c=(682,415) z=452.8mm
+19:02:51.358 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:51.618 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:51.620 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=1.00 -> 0.875
+19:02:51.622 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:51.622 [INFO ] SAM3: mask obtained (score=0.962, area=92965 px)
+19:02:51.649 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:51.650 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.998)
+19:02:51.656 [INFO ] frame=32 state=FAR       c=(682,415) z=452.9mm
+19:02:51.661 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:51.909 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:51.911 [DEBUG]   det conf=0.96 sim=0.931 pos=0.42 prox=1.00 -> 0.874
+19:02:51.913 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.931
+19:02:51.913 [INFO ] SAM3: mask obtained (score=0.959, area=92995 px)
+19:02:51.941 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:51.941 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.999)
+19:02:51.948 [INFO ] frame=33 state=FAR       c=(682,415) z=452.8mm
+19:02:51.953 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:52.207 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:52.210 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.875
+19:02:52.212 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.933
+19:02:52.212 [INFO ] SAM3: mask obtained (score=0.957, area=92964 px)
+19:02:52.240 [DEBUG] Grasp point: robust centroid (683, 415)
+19:02:52.241 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.999)
+19:02:52.242 [DEBUG] Servo: arm not connected
+19:02:52.247 [INFO ] frame=34 state=FAR       c=(682,415) z=452.8mm
+19:02:52.252 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:52.500 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:52.502 [DEBUG]   det conf=0.96 sim=0.932 pos=0.42 prox=0.99 -> 0.874
+19:02:52.504 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.932
+19:02:52.504 [INFO ] SAM3: mask obtained (score=0.960, area=92992 px)
+19:02:52.532 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:52.533 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.999)
+19:02:52.539 [INFO ] frame=35 state=FAR       c=(682,415) z=452.8mm
+19:02:52.544 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:52.804 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:52.806 [DEBUG]   det conf=0.95 sim=0.934 pos=0.42 prox=1.00 -> 0.875
+19:02:52.807 [INFO ] SAM3: 'box' score=0.95 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:52.807 [INFO ] SAM3: mask obtained (score=0.952, area=92932 px)
+19:02:52.835 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:52.835 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.999)
+19:02:52.842 [INFO ] frame=36 state=FAR       c=(682,415) z=452.8mm
+19:02:52.848 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:53.110 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:53.112 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.876
+19:02:53.114 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.934
+19:02:53.114 [INFO ] SAM3: mask obtained (score=0.959, area=92961 px)
+19:02:53.142 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:53.142 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.999)
+19:02:53.148 [INFO ] frame=37 state=FAR       c=(682,415) z=452.8mm
+19:02:53.154 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:53.404 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:53.406 [DEBUG]   det conf=0.96 sim=0.933 pos=0.42 prox=1.00 -> 0.876
+19:02:53.408 [INFO ] SAM3: 'box' score=0.96 @ [568 199 794 631]  (top of 1)  sim=0.933
+19:02:53.408 [INFO ] SAM3: mask obtained (score=0.961, area=92978 px)
+19:02:53.435 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:53.436 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.999)
+19:02:53.442 [INFO ] frame=38 state=FAR       c=(682,415) z=452.9mm
+19:02:53.447 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:53.692 [INFO ] SAM3: 1 detection(s) for 'box'
+19:02:53.694 [DEBUG]   det conf=0.96 sim=0.934 pos=0.42 prox=1.00 -> 0.876
+19:02:53.695 [INFO ] SAM3: 'box' score=0.96 @ [567 199 794 631]  (top of 1)  sim=0.934
+19:02:53.696 [INFO ] SAM3: mask obtained (score=0.961, area=92973 px)
+19:02:53.725 [DEBUG] Grasp point: robust centroid (681, 415)
+19:02:53.726 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.998)
+19:02:53.732 [INFO ] frame=39 state=FAR       c=(682,415) z=452.7mm
+19:02:53.737 [DEBUG] Pose read failed: 'NoneType' object has no attribute 'get_position'
+19:02:53.750 [INFO ] Interrupted by user.
