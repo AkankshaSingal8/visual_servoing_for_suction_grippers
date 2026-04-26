@@ -1687,7 +1687,11 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
 
     # Pipeline plumbing: the orchestrator pulls EE pose and depth via
     # callbacks; we keep the latest values in shared mutable state.
+    # latest_frame is also kept here so the J_yz Jacobian calibration
+    # thread (which needs raw camera frames before/after each probe move)
+    # can read frames without coupling to the capture loop's locals.
     shared = dict(latest_pose=np.eye(4), latest_depth=None,
+                  latest_frame=None,
                   intrinsics=DEFAULT_INTRINSICS)
 
     def ee_pose_provider() -> np.ndarray:
@@ -1698,6 +1702,11 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         with shared_lock:
             d = shared["latest_depth"]
             return None if d is None else d.copy()
+
+    def get_frame_for_calibration() -> np.ndarray | None:
+        with shared_lock:
+            f = shared["latest_frame"]
+            return None if f is None else f.copy()
 
     sam3_runner = make_default_sam3_runner(args.ref_image, args.prompt)
     pipeline = LastMilePipeline(
@@ -1809,6 +1818,34 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
                  f"{z:.1f}mm" if z is not None else "-")
         return res
 
+    # Spawn the J_yz Jacobian calibration thread BEFORE entering the
+    # capture loop. The robot starts disabled (cal_status="waiting for
+    # calibration..."); robot.calibrate() flips robot.enabled=True after
+    # the Y/Z probe sweep, at which point servo_step actually moves the
+    # arm. Without this, servo_step is a no-op every frame and the
+    # robot just sits there logging "Servo: waiting for calibration"
+    # forever.
+    if not (args.dry_run or args.no_robot):
+        def _calibration_runner():
+            for _ in range(30):
+                if stop_ev.is_set():
+                    return
+                if get_frame_for_calibration() is not None:
+                    break
+                time.sleep(0.5)
+            else:
+                log.warning("Calibration: no frames within 15 s; skipping.")
+                return
+            log.info("Calibration thread: starting Y/Z Jacobian calibration.")
+            try:
+                robot.calibrate(get_frame_for_calibration)
+            except Exception as e:
+                log.error("Calibration failed: %s", e, exc_info=True)
+
+        threading.Thread(target=_calibration_runner,
+                          daemon=True,
+                          name="lastmile-cal").start()
+
     if use_pyzed and pyzed_ok:
         _run_zed_loop(sl, args, stop_ev, shared, shared_lock,
                        perception_loop_for_frame)
@@ -1878,6 +1915,7 @@ def _run_zed_loop(sl, args, stop_ev: threading.Event,
             depth = depth_mat.get_data().astype(np.float32, copy=False)
             with shared_lock:
                 shared["latest_depth"] = depth.copy()
+                shared["latest_frame"] = frame.copy()
             try:
                 per_frame(frame)
             except Exception as e:
@@ -1907,6 +1945,8 @@ def _run_opencv_loop(args, stop_ev: threading.Event,
                 continue
             h, w = frame.shape[:2]
             left = frame[:, : w // 2].copy()
+            with shared_lock:
+                shared["latest_frame"] = left.copy()
             try:
                 per_frame(left)
             except Exception as e:
