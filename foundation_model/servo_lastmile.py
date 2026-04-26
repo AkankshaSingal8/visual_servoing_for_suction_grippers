@@ -1083,13 +1083,18 @@ class LastMilePipeline:
                  ee_pose_provider: Callable[[], np.ndarray] | None = None,
                  depth_provider: Callable[[np.ndarray], np.ndarray | None] | None = None,
                  hand_eye_path: str | None = None,
-                 intrinsics: dict | None = None):
+                 intrinsics: dict | None = None,
+                 enable_fusion: bool = False):
         self.sam3_runner = sam3_runner
         self.ee_pose_provider = ee_pose_provider or (lambda: np.eye(4))
         self.depth_provider = depth_provider or (lambda f: None)
         self.T_ee_cam = load_hand_eye(hand_eye_path)
         self.intrinsics = intrinsics or DEFAULT_INTRINSICS
         self.K = make_intrinsics_matrix(self.intrinsics)
+        # Default OFF: in FAR, best_centroid is just the SAM3 mask
+        # centroid (= original sam3 pipeline behaviour). Only flip on
+        # when hand-eye is calibrated and Signal A can carry fusion.
+        self.enable_fusion = bool(enable_fusion)
 
         self.fsm = StateMachine()
         self.signal_A = SignalA(self.T_ee_cam, self.K)
@@ -1219,11 +1224,16 @@ class LastMilePipeline:
                     self.fsm.lock_state = lock
                     res["best_centroid"] = lock.centroid_px
 
-            # NEAR transition only when cropping is real: bbox at border
-            # OR area > 30% OR depth < threshold. While the user is far
-            # from the object the SAM3 mask centroid is reliable, so we
-            # stay in FAR and don't engage fusion.
-            if (self.fsm.lock_state is not None
+            # NEAR fusion is OPT-IN via the orchestrator's enable_fusion
+            # flag (CLI: --enable-fusion). Default off because, on this
+            # rig with no hand-eye calibrated, the multi-source fusion
+            # (B+C+D) produces a worse centroid than the simple SAM3
+            # mask centroid the user had in the original pipeline. Until
+            # hand-eye is calibrated and Signal A can carry the fusion,
+            # lastmile by default just runs SAM3 perception + the live
+            # preview window and never leaves FAR.
+            if (self.enable_fusion
+                    and self.fsm.lock_state is not None
                     and self.fsm.near_trigger_fired(
                         sam3_res, z_mm, frame_bgr.shape)):
                 self.fsm.state = State.NEAR
@@ -1427,6 +1437,13 @@ def _build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--no-window", action="store_true",
                    help="Live mode only: skip the cv2 preview window "
                         "(use over SSH without X11 forwarding).")
+    p.add_argument("--enable-fusion", action="store_true",
+                   help="Engage the multi-source fusion (Signals A/B/C/D) "
+                        "when bbox starts cropping. Default OFF: the FSM "
+                        "stays in FAR and best_centroid is just the SAM3 "
+                        "mask centroid (matches the working sam3 pipeline). "
+                        "Only turn on once hand-eye is calibrated so Signal "
+                        "A can anchor the fusion.")
     return p
 
 
@@ -1601,6 +1618,7 @@ def run_offline(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         ee_pose_provider=lambda: np.eye(4),   # offline: stationary
         depth_provider=lambda f: None,        # offline: no depth
         hand_eye_path=args.hand_eye,
+        enable_fusion=getattr(args, "enable_fusion", False),
     )
 
     frames_iter = []
@@ -1740,6 +1758,7 @@ def run_live(args: argparse.Namespace, debug_dir: str | None = None) -> None:
         depth_provider=depth_provider,
         hand_eye_path=args.hand_eye,
         intrinsics=shared["intrinsics"],
+        enable_fusion=getattr(args, "enable_fusion", False),
     )
 
     shared_lock = threading.Lock()

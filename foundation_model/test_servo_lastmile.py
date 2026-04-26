@@ -557,12 +557,18 @@ class OrchestratorEndToEndTests(unittest.TestCase):
         ee_pose_provider = lambda: np.eye(4)
 
         intr = intrinsics or sl.DEFAULT_INTRINSICS
+        # enable_fusion=True so the FSM still transitions through
+        # FAR -> NEAR -> TERMINAL for state-machine tests. Production
+        # default is OFF (lastmile stays in FAR with the simple SAM3
+        # mask centroid -- matches the original sam3 pipeline behaviour
+        # the user has been running successfully without hand-eye cal).
         pipe = sl.LastMilePipeline(
             sam3_runner=sam3_stub,
             ee_pose_provider=ee_pose_provider,
             depth_provider=depth_provider,
             hand_eye_path=None,
             intrinsics=intr,
+            enable_fusion=True,
         )
         return pipe, state
 
@@ -733,45 +739,13 @@ class Sam3CentroidFreezeTests(unittest.TestCase):
                      int(lock_c[1] + d_px[1]))
         self.assertEqual(predicted, (640 + 50, 360))
 
-    def test_prediction_cap_triggers_hard_freeze_under_large_dyz(self):
-        """
-        When |Δyz| exceeds PREDICT_MAX_DELTA_MM the linear J_yz
-        extrapolation is unreliable (it's a small-motion linearization
-        around the calibration distance). The stabilizer must fall back
-        to a hard freeze at lock_centroid in that regime.
+    # NOTE: test_prediction_cap_triggers_hard_freeze_under_large_dyz
+    # was removed when servo_pipeline_sam3.py was hard-reverted to its
+    # pre-meddling state (commit 2a94142). PREDICT_MAX_DELTA_MM and the
+    # _stabilize_grasp method no longer exist in that file. The other
+    # tests in this class (border detection, drift formulas) test math
+    # primitives that remain in test scope and still pass.
 
-        This is the regime the user hit on the rig: MIN_Z_MM clamping
-        forces the EE to fly +52.9 mm in Z at the start of servoing,
-        which is well outside the J_yz validity range and produced an
-        80 px y-overshoot in the prediction. With the cap in place the
-        stabilizer detects |Δyz|=52.9 > 15 and uses the lock centroid
-        directly.
-        """
-        # Use the same J_yz from the user's actual calibration run
-        J = np.array([[1.6985, -0.0062],
-                      [-0.1309, 1.5447]], dtype=np.float64)
-        lock_c = (648, 461)
-        lock_yz = (5.6, -52.9)
-        cur_yz = (3.0, 0.0)  # The Z fly-up scenario
-        dy = cur_yz[0] - lock_yz[0]
-        dz = cur_yz[1] - lock_yz[1]
-        mag = (dy * dy + dz * dz) ** 0.5
-        # Δyz magnitude must exceed the cap
-        self.assertGreater(mag, self.sm.PREDICT_MAX_DELTA_MM)
-
-        # Without the cap, prediction would be:
-        d_world = np.array([dy, dz], dtype=np.float64)
-        d_px = J @ d_world
-        unguarded_predicted = (int(lock_c[0] + d_px[0]),
-                                int(lock_c[1] + d_px[1]))
-        # The unguarded prediction should be far below the actual
-        # protein bar (y=543) — proving the cap is necessary
-        self.assertGreater(unguarded_predicted[1], 540)
-
-        # With the cap in place, the stabilizer returns lock_c instead
-        # — preserving the grasp marker's position throughout the run.
-        capped = lock_c
-        self.assertEqual(capped, (648, 461))
 
     def test_jyz_prediction_handles_off_diagonal_jacobian(self):
         """
