@@ -1,0 +1,325 @@
+01:00:51.580 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260428_010051.log
+01:00:51.598 [INFO ] ======================================================================
+01:00:51.598 [INFO ] servo_lastmile_v2 starting
+01:00:51.598 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+01:00:51.598 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+01:00:51.598 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+01:00:51.598 [INFO ] ======================================================================
+01:00:51.614 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+01:00:52.664 [INFO ] Robot connected: 192.168.1.241
+01:00:52.664 [INFO ] Home position captured: [205.3, 5.6, -52.9] mm
+01:00:52.671 [INFO ] Processing reference image ...
+01:00:55.578 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+01:00:56.036 [INFO ] SAM3: 1 detection(s) for 'box'
+01:00:56.036 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+01:00:56.179 [INFO ] Feature extractor (ResNet-18) loaded
+01:00:56.215 [INFO ] Ref features: 512-d vector (norm=1.000)
+01:00:56.215 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+01:00:58.225 [INFO ] SAM3: 1 detection(s) for 'box'
+01:00:58.227 [DEBUG]   det conf=0.97 sim=0.926 pos=0.43 prox=0.00 -> 0.624
+01:00:58.229 [INFO ] SAM3: 'box' score=0.97 @ [555 243 734 583]  (top of 1)  sim=0.926
+01:00:58.229 [INFO ] SAM3: mask obtained (score=0.967, area=57490 px)
+01:00:58.419 [DEBUG] Grasp point: robust centroid (644, 413)
+01:00:58.420 [DEBUG] Servo: waiting [waiting for calibration...]
+01:00:58.427 [INFO ] Video recording: overlay=runs/v2_servo7/overlay.mp4  raw=runs/v2_servo7/raw.mp4
+01:00:58.442 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+01:00:58.442 [INFO ] === Calibration: waiting for camera frame ===
+01:00:58.442 [INFO ] Home: [205.3, 5.6, -52.9] mm
+01:00:58.491 [INFO ] frame=0 state=FAR       c=(644,412) z=577.9mm tilt=-
+01:00:58.743 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+01:00:58.903 [INFO ] SAM3: 1 detection(s) for 'box'
+01:00:58.905 [DEBUG]   det conf=0.97 sim=0.925 pos=0.43 prox=1.00 -> 0.873
+01:00:58.906 [INFO ] SAM3: 'box' score=0.97 @ [555 243 734 583]  (top of 1)  sim=0.925
+01:00:58.907 [INFO ] SAM3: mask obtained (score=0.966, area=57485 px)
+01:00:58.934 [DEBUG] Grasp point: robust centroid (644, 413)
+01:00:58.945 [INFO ] frame=1 state=FAR       c=(644,412) z=577.4mm tilt=-
+01:00:59.196 [INFO ] SAM3: 1 detection(s) for 'box'
+01:00:59.198 [DEBUG]   det conf=0.96 sim=0.930 pos=0.43 prox=1.00 -> 0.875
+01:00:59.200 [INFO ] SAM3: 'box' score=0.96 @ [555 243 734 582]  (top of 1)  sim=0.930
+01:00:59.200 [INFO ] SAM3: mask obtained (score=0.964, area=57478 px)
+01:00:59.226 [DEBUG] Grasp point: robust centroid (645, 413)
+01:01:01.402 [INFO ]   [Y] returning home...
+01:01:01.972 [INFO ] frame=2 state=NEAR      c=(645,412) z=577.3mm tilt=-
+01:01:01.981 [WARNING] Signal B: CoTracker3 step failed ('NoneType' object has no attribute 'detach'); downgrading to LK for the rest of approach.
+01:01:02.160 [DEBUG] NEAR plane: tilt=2.6° roll=-0.8° pitch=2.5° inliers=24137
+01:01:02.186 [INFO ] frame=3 state=NEAR      c=(678,416) z=576.9mm tilt=2.6°
+01:01:02.362 [DEBUG] NEAR plane: tilt=2.0° roll=-0.2° pitch=2.0° inliers=24386
+01:01:02.382 [INFO ] frame=4 state=NEAR      c=(674,417) z=577.2mm tilt=2.0°
+01:01:02.575 [WARNING]   [Y] flow too small (0.43 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+01:01:02.670 [DEBUG] NEAR plane: tilt=2.0° roll=0.2° pitch=2.0° inliers=24327
+01:01:02.700 [INFO ] frame=5 state=NEAR      c=(668,418) z=577.1mm tilt=2.0°
+01:01:02.857 [DEBUG] NEAR plane: tilt=1.8° roll=-0.1° pitch=1.8° inliers=24148
+01:01:02.870 [INFO ] frame=6 state=NEAR      c=(663,418) z=577.3mm tilt=1.8°
+01:01:02.876 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+01:01:03.056 [DEBUG] NEAR plane: tilt=0.9° roll=0.4° pitch=0.8° inliers=24394
+01:01:03.078 [INFO ] frame=7 state=NEAR      c=(660,418) z=577.5mm tilt=0.9°
+01:01:03.255 [DEBUG] NEAR plane: tilt=2.2° roll=-1.3° pitch=1.8° inliers=24269
+01:01:03.280 [INFO ] frame=8 state=NEAR      c=(659,419) z=577.5mm tilt=2.2°
+01:01:03.443 [DEBUG] NEAR plane: tilt=0.8° roll=-0.7° pitch=0.4° inliers=24494
+01:01:03.443 [DEBUG] Servo: waiting [calibrating Z...]
+01:01:03.466 [INFO ] frame=9 state=NEAR      c=(658,420) z=577.3mm tilt=0.8°
+01:01:03.638 [DEBUG] NEAR plane: tilt=2.3° roll=-1.9° pitch=1.2° inliers=24383
+01:01:03.651 [INFO ] frame=10 state=NEAR      c=(658,426) z=577.1mm tilt=2.3°
+01:01:03.832 [DEBUG] NEAR plane: tilt=1.4° roll=-0.1° pitch=1.4° inliers=24084
+01:01:03.853 [INFO ] frame=11 state=NEAR      c=(658,432) z=577.1mm tilt=1.4°
+01:01:04.128 [DEBUG] NEAR plane: tilt=1.5° roll=0.2° pitch=1.5° inliers=24084
+01:01:04.152 [INFO ] frame=12 state=NEAR      c=(657,439) z=577.2mm tilt=1.5°
+01:01:04.326 [DEBUG] NEAR plane: tilt=1.4° roll=0.1° pitch=1.4° inliers=24104
+01:01:04.344 [INFO ] frame=13 state=NEAR      c=(657,445) z=576.9mm tilt=1.4°
+01:01:04.522 [DEBUG] NEAR plane: tilt=0.6° roll=0.3° pitch=0.5° inliers=24247
+01:01:04.554 [INFO ] frame=14 state=NEAR      c=(657,447) z=577.1mm tilt=0.6°
+01:01:04.724 [DEBUG] NEAR plane: tilt=1.4° roll=-0.2° pitch=1.4° inliers=24108
+01:01:04.739 [INFO ] frame=15 state=NEAR      c=(657,449) z=577.1mm tilt=1.4°
+01:01:04.914 [DEBUG] NEAR plane: tilt=0.5° roll=0.5° pitch=0.0° inliers=24331
+01:01:04.935 [INFO ] frame=16 state=NEAR      c=(657,450) z=577.0mm tilt=0.5°
+01:01:05.109 [DEBUG] NEAR plane: tilt=2.4° roll=-1.7° pitch=1.8° inliers=24353
+01:01:05.130 [INFO ] frame=17 state=NEAR      c=(657,450) z=577.0mm tilt=2.4°
+01:01:05.301 [DEBUG] NEAR plane: tilt=1.1° roll=-0.4° pitch=1.0° inliers=24460
+01:01:05.319 [INFO ] frame=18 state=NEAR      c=(657,450) z=576.9mm tilt=1.1°
+01:01:05.552 [INFO ]   [Z] returning home...
+01:01:05.607 [DEBUG] NEAR plane: tilt=1.7° roll=-0.8° pitch=1.5° inliers=24280
+01:01:05.629 [INFO ] frame=19 state=NEAR      c=(657,451) z=577.0mm tilt=1.7°
+01:01:05.799 [DEBUG] NEAR plane: tilt=0.3° roll=0.1° pitch=-0.3° inliers=24335
+01:01:05.820 [INFO ] frame=20 state=NEAR      c=(657,450) z=577.2mm tilt=0.3°
+01:01:05.998 [DEBUG] NEAR plane: tilt=1.0° roll=0.8° pitch=0.6° inliers=24227
+01:01:06.017 [INFO ] frame=21 state=NEAR      c=(657,450) z=577.4mm tilt=1.0°
+01:01:06.191 [DEBUG] NEAR plane: tilt=1.5° roll=0.2° pitch=1.5° inliers=24073
+01:01:06.210 [INFO ] frame=22 state=NEAR      c=(657,447) z=577.4mm tilt=1.5°
+01:01:06.384 [DEBUG] NEAR plane: tilt=1.4° roll=1.3° pitch=-0.6° inliers=24374
+01:01:06.404 [INFO ] frame=23 state=NEAR      c=(657,441) z=577.3mm tilt=1.4°
+01:01:06.584 [DEBUG] NEAR plane: tilt=0.2° roll=-0.1° pitch=0.1° inliers=24347
+01:01:06.608 [INFO ] frame=24 state=NEAR      c=(657,435) z=577.4mm tilt=0.2°
+01:01:06.734 [INFO ]   [Z] flow: (-0.4, +31.6) px / 25 mm  -> J[:,{col}]=[-0.0153, +1.2659]
+01:01:06.734 [INFO ] J_yz (px/mm):
+[[ 0.         -0.01532715]
+ [ 0.          1.26592529]]
+01:01:06.735 [INFO ] J_yz_inv (mm/px):
+[[ 0.          0.        ]
+ [-0.00956272  0.78982025]]
+01:01:06.735 [INFO ] === Calibration complete [partial cal (rank=1)] ===
+01:01:06.772 [DEBUG] NEAR plane: tilt=1.1° roll=-0.4° pitch=1.0° inliers=24130
+01:01:07.477 [INFO ] Servo: err=(+17,+68)px r=70  Δ=(+0.0,-0.0,-12.0)mm  pos=(205,6,-65)  [partial cal (rank=1)]
+01:01:07.489 [INFO ] frame=25 state=NEAR      c=(657,428) z=577.3mm tilt=1.1°
+01:01:07.650 [DEBUG] NEAR plane: tilt=1.1° roll=0.8° pitch=0.7° inliers=24140
+01:01:08.358 [INFO ] Servo: err=(+17,+56)px r=59  Δ=(+0.0,-0.0,-12.0)mm  pos=(205,6,-77)  [partial cal (rank=1)]
+01:01:08.369 [INFO ] frame=26 state=NEAR      c=(657,416) z=577.7mm tilt=1.1°
+01:01:08.528 [DEBUG] NEAR plane: tilt=1.8° roll=-1.3° pitch=1.2° inliers=24578
+01:01:09.237 [INFO ] Servo: err=(+17,+43)px r=46  Δ=(+0.0,-0.0,-12.0)mm  pos=(205,6,-89)  [partial cal (rank=1)]
+01:01:09.249 [INFO ] frame=27 state=NEAR      c=(657,403) z=577.8mm tilt=1.8°
+01:01:09.478 [DEBUG] NEAR plane: tilt=0.1° roll=0.0° pitch=-0.1° inliers=24626
+01:01:10.186 [INFO ] Servo: err=(+16,+29)px r=34  Δ=(+0.0,-0.0,-11.5)mm  pos=(205,6,-100)  [partial cal (rank=1)]
+01:01:10.199 [INFO ] frame=28 state=NEAR      c=(656,389) z=577.8mm tilt=0.1°
+01:01:10.351 [DEBUG] NEAR plane: tilt=1.1° roll=-0.9° pitch=-0.6° inliers=24493
+01:01:10.859 [INFO ] Servo: err=(+16,+15)px r=22  Δ=(+0.0,-0.0,-5.9)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:10.870 [INFO ] frame=29 state=NEAR      c=(656,375) z=577.7mm tilt=1.1°
+01:01:11.030 [DEBUG] NEAR plane: tilt=2.0° roll=-1.8° pitch=0.9° inliers=24579
+01:01:11.333 [INFO ] Servo: err=(+16,+5)px r=17  Δ=(+0.0,-0.0,-1.8)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:11.403 [INFO ] frame=30 state=NEAR      c=(656,365) z=577.5mm tilt=2.0°
+01:01:11.568 [DEBUG] NEAR plane: tilt=1.7° roll=1.5° pitch=0.9° inliers=24271
+01:01:12.023 [INFO ] Servo: err=(+15,-1)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-112)  [partial cal (rank=1)]
+01:01:12.034 [INFO ] frame=31 state=NEAR      c=(655,359) z=577.5mm tilt=1.7°
+01:01:12.200 [DEBUG] NEAR plane: tilt=1.8° roll=-1.3° pitch=1.2° inliers=24887
+01:01:12.556 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,-0.0,+2.6)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:12.567 [INFO ] frame=32 state=NEAR      c=(654,354) z=577.5mm tilt=1.8°
+01:01:12.731 [DEBUG] NEAR plane: tilt=1.5° roll=-1.3° pitch=0.7° inliers=25183
+01:01:13.135 [INFO ] Servo: err=(+14,-9)px r=16  Δ=(+0.0,-0.0,+3.5)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:13.146 [INFO ] frame=33 state=NEAR      c=(654,351) z=577.1mm tilt=1.5°
+01:01:13.307 [DEBUG] NEAR plane: tilt=1.1° roll=-0.7° pitch=0.9° inliers=24925
+01:01:13.661 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.8)mm  pos=(205,6,-103)  [partial cal (rank=1)]
+01:01:13.671 [INFO ] frame=34 state=NEAR      c=(654,353) z=577.0mm tilt=1.1°
+01:01:13.856 [DEBUG] NEAR plane: tilt=1.3° roll=-1.3° pitch=0.3° inliers=24993
+01:01:14.313 [INFO ] Servo: err=(+14,-4)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-107)  [partial cal (rank=1)]
+01:01:14.324 [INFO ] frame=35 state=NEAR      c=(654,356) z=576.8mm tilt=1.3°
+01:01:14.508 [DEBUG] NEAR plane: tilt=1.3° roll=-0.7° pitch=1.1° inliers=24793
+01:01:14.966 [INFO ] Servo: err=(+13,-5)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-111)  [partial cal (rank=1)]
+01:01:14.976 [INFO ] frame=36 state=NEAR      c=(653,355) z=577.3mm tilt=1.3°
+01:01:15.151 [DEBUG] NEAR plane: tilt=1.8° roll=-0.0° pitch=1.8° inliers=24170
+01:01:15.560 [INFO ] Servo: err=(+13,-8)px r=16  Δ=(+0.0,-0.0,+3.2)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:15.571 [INFO ] frame=37 state=NEAR      c=(653,352) z=577.3mm tilt=1.8°
+01:01:15.740 [DEBUG] NEAR plane: tilt=1.0° roll=-0.9° pitch=0.5° inliers=25154
+01:01:16.144 [INFO ] Servo: err=(+14,-8)px r=16  Δ=(+0.0,-0.0,+3.2)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:16.155 [INFO ] frame=38 state=NEAR      c=(654,352) z=576.8mm tilt=1.0°
+01:01:16.310 [DEBUG] NEAR plane: tilt=1.1° roll=0.1° pitch=1.0° inliers=24725
+01:01:16.767 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:16.778 [INFO ] frame=39 state=NEAR      c=(654,354) z=576.8mm tilt=1.1°
+01:01:16.985 [DEBUG] NEAR plane: tilt=1.5° roll=0.4° pitch=1.4° inliers=24290
+01:01:17.439 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-113)  [partial cal (rank=1)]
+01:01:17.450 [INFO ] frame=40 state=NEAR      c=(653,353) z=577.1mm tilt=1.5°
+01:01:17.618 [DEBUG] NEAR plane: tilt=1.7° roll=-1.7° pitch=-0.0° inliers=24900
+01:01:18.075 [INFO ] Servo: err=(+13,-10)px r=17  Δ=(+0.0,-0.0,+4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:18.086 [INFO ] frame=41 state=NEAR      c=(653,350) z=577.3mm tilt=1.7°
+01:01:18.285 [DEBUG] NEAR plane: tilt=1.7° roll=1.3° pitch=-1.1° inliers=24724
+01:01:18.742 [INFO ] Servo: err=(+14,-10)px r=17  Δ=(+0.0,-0.0,+4.0)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:18.753 [INFO ] frame=42 state=NEAR      c=(654,350) z=576.4mm tilt=1.7°
+01:01:18.908 [DEBUG] NEAR plane: tilt=0.8° roll=0.8° pitch=0.2° inliers=24508
+01:01:19.365 [INFO ] Servo: err=(+13,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:19.376 [INFO ] frame=43 state=NEAR      c=(653,354) z=576.3mm tilt=0.8°
+01:01:19.585 [DEBUG] NEAR plane: tilt=1.3° roll=-0.2° pitch=1.3° inliers=24115
+01:01:20.039 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-113)  [partial cal (rank=1)]
+01:01:20.050 [INFO ] frame=44 state=NEAR      c=(653,353) z=577.4mm tilt=1.3°
+01:01:20.204 [DEBUG] NEAR plane: tilt=1.6° roll=0.7° pitch=-1.4° inliers=24798
+01:01:20.658 [INFO ] Servo: err=(+13,-10)px r=16  Δ=(+0.0,-0.0,+4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:20.669 [INFO ] frame=45 state=NEAR      c=(653,350) z=577.2mm tilt=1.6°
+01:01:20.883 [DEBUG] NEAR plane: tilt=2.0° roll=0.5° pitch=2.0° inliers=23735
+01:01:21.338 [INFO ] Servo: err=(+13,-10)px r=17  Δ=(+0.0,-0.0,+3.9)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:21.349 [INFO ] frame=46 state=NEAR      c=(653,350) z=576.9mm tilt=2.0°
+01:01:21.500 [DEBUG] NEAR plane: tilt=1.3° roll=-1.1° pitch=0.7° inliers=25149
+01:01:21.957 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:21.968 [INFO ] frame=47 state=NEAR      c=(653,353) z=577.1mm tilt=1.3°
+01:01:22.200 [DEBUG] NEAR plane: tilt=1.3° roll=-0.4° pitch=1.2° inliers=24495
+01:01:22.657 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-113)  [partial cal (rank=1)]
+01:01:22.667 [INFO ] frame=48 state=NEAR      c=(653,353) z=577.2mm tilt=1.3°
+01:01:22.824 [DEBUG] NEAR plane: tilt=1.7° roll=-0.4° pitch=1.7° inliers=24305
+01:01:23.282 [INFO ] Servo: err=(+13,-10)px r=16  Δ=(+0.0,-0.0,+4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:23.292 [INFO ] frame=49 state=NEAR      c=(653,350) z=577.2mm tilt=1.7°
+01:01:23.483 [DEBUG] NEAR plane: tilt=0.5° roll=-0.3° pitch=0.3° inliers=24991
+01:01:23.940 [INFO ] Servo: err=(+13,-10)px r=17  Δ=(+0.0,-0.0,+3.9)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:23.952 [INFO ] frame=50 state=NEAR      c=(653,350) z=576.8mm tilt=0.5°
+01:01:24.105 [DEBUG] NEAR plane: tilt=1.3° roll=0.4° pitch=1.2° inliers=24506
+01:01:24.561 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:24.572 [INFO ] frame=51 state=NEAR      c=(653,353) z=576.7mm tilt=1.3°
+01:01:24.760 [DEBUG] NEAR plane: tilt=1.7° roll=-0.9° pitch=1.5° inliers=24460
+01:01:25.165 [INFO ] Servo: err=(+13,-8)px r=15  Δ=(+0.0,-0.0,+3.2)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:25.176 [INFO ] frame=52 state=NEAR      c=(653,352) z=577.2mm tilt=1.7°
+01:01:25.336 [DEBUG] NEAR plane: tilt=1.3° roll=-0.3° pitch=1.3° inliers=24625
+01:01:25.794 [INFO ] Servo: err=(+13,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-110)  [partial cal (rank=1)]
+01:01:25.804 [INFO ] frame=53 state=NEAR      c=(653,354) z=577.2mm tilt=1.3°
+01:01:26.053 [DEBUG] NEAR plane: tilt=1.4° roll=-0.3° pitch=1.3° inliers=24450
+01:01:26.459 [INFO ] Servo: err=(+13,-8)px r=15  Δ=(+0.0,-0.0,+3.1)mm  pos=(205,6,-107)  [partial cal (rank=1)]
+01:01:26.470 [INFO ] frame=54 state=NEAR      c=(653,352) z=576.8mm tilt=1.4°
+01:01:26.627 [DEBUG] NEAR plane: tilt=1.1° roll=-1.0° pitch=-0.5° inliers=24583
+01:01:26.984 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.9)mm  pos=(205,6,-104)  [partial cal (rank=1)]
+01:01:26.995 [INFO ] frame=55 state=NEAR      c=(654,353) z=576.6mm tilt=1.1°
+01:01:27.233 [DEBUG] NEAR plane: tilt=1.8° roll=0.0° pitch=1.8° inliers=23884
+01:01:27.687 [INFO ] Servo: err=(+14,-5)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:27.698 [INFO ] frame=56 state=NEAR      c=(654,355) z=576.5mm tilt=1.8°
+01:01:27.866 [DEBUG] NEAR plane: tilt=0.4° roll=0.1° pitch=-0.4° inliers=24919
+01:01:28.324 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-112)  [partial cal (rank=1)]
+01:01:28.334 [INFO ] frame=57 state=NEAR      c=(654,354) z=576.8mm tilt=0.4°
+01:01:28.606 [DEBUG] NEAR plane: tilt=1.0° roll=1.0° pitch=0.3° inliers=24533
+01:01:29.010 [INFO ] Servo: err=(+14,-9)px r=16  Δ=(+0.0,-0.0,+3.5)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:29.021 [INFO ] frame=58 state=NEAR      c=(654,351) z=577.0mm tilt=1.0°
+01:01:29.177 [DEBUG] NEAR plane: tilt=2.1° roll=-1.8° pitch=1.2° inliers=24986
+01:01:29.582 [INFO ] Servo: err=(+14,-9)px r=17  Δ=(+0.0,-0.0,+3.6)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:29.593 [INFO ] frame=59 state=NEAR      c=(654,351) z=576.7mm tilt=2.1°
+01:01:29.806 [DEBUG] NEAR plane: tilt=1.6° roll=1.4° pitch=-0.8° inliers=24753
+01:01:30.160 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,-0.0,+2.6)mm  pos=(205,6,-102)  [partial cal (rank=1)]
+01:01:30.225 [INFO ] frame=60 state=NEAR      c=(654,354) z=576.6mm tilt=1.6°
+01:01:30.391 [DEBUG] NEAR plane: tilt=1.1° roll=-1.1° pitch=0.0° inliers=24655
+01:01:30.848 [INFO ] Servo: err=(+14,-3)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:30.859 [INFO ] frame=61 state=NEAR      c=(654,357) z=577.6mm tilt=1.1°
+01:01:31.057 [DEBUG] NEAR plane: tilt=1.5° roll=-0.0° pitch=1.5° inliers=24357
+01:01:31.511 [INFO ] Servo: err=(+13,-4)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-110)  [partial cal (rank=1)]
+01:01:31.522 [INFO ] frame=62 state=NEAR      c=(653,356) z=577.1mm tilt=1.5°
+01:01:31.684 [DEBUG] NEAR plane: tilt=1.0° roll=0.9° pitch=0.4° inliers=24808
+01:01:32.141 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-114)  [partial cal (rank=1)]
+01:01:32.152 [INFO ] frame=63 state=NEAR      c=(653,353) z=577.2mm tilt=1.0°
+01:01:32.351 [DEBUG] NEAR plane: tilt=0.7° roll=0.7° pitch=0.1° inliers=24914
+01:01:32.805 [INFO ] Servo: err=(+13,-10)px r=17  Δ=(+0.0,-0.0,+4.2)mm  pos=(205,6,-110)  [partial cal (rank=1)]
+01:01:32.816 [INFO ] frame=64 state=NEAR      c=(653,350) z=577.6mm tilt=0.7°
+01:01:32.982 [DEBUG] NEAR plane: tilt=1.4° roll=-1.1° pitch=0.8° inliers=25039
+01:01:33.443 [INFO ] Servo: err=(+14,-10)px r=17  Δ=(+0.0,-0.0,+4.2)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:33.457 [INFO ] frame=65 state=NEAR      c=(654,350) z=577.8mm tilt=1.4°
+01:01:33.652 [DEBUG] NEAR plane: tilt=1.6° roll=-1.6° pitch=0.5° inliers=24870
+01:01:34.057 [INFO ] Servo: err=(+14,-8)px r=16  Δ=(+0.0,-0.0,+3.1)mm  pos=(205,6,-103)  [partial cal (rank=1)]
+01:01:34.072 [INFO ] frame=66 state=NEAR      c=(654,352) z=577.0mm tilt=1.6°
+01:01:34.240 [DEBUG] NEAR plane: tilt=0.7° roll=-0.1° pitch=0.7° inliers=24806
+01:01:34.696 [INFO ] Servo: err=(+14,-4)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-107)  [partial cal (rank=1)]
+01:01:34.721 [INFO ] frame=67 state=NEAR      c=(654,356) z=577.0mm tilt=0.7°
+01:01:34.915 [DEBUG] NEAR plane: tilt=0.7° roll=-0.2° pitch=0.7° inliers=24798
+01:01:35.369 [INFO ] Servo: err=(+13,-4)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-111)  [partial cal (rank=1)]
+01:01:35.391 [INFO ] frame=68 state=NEAR      c=(653,356) z=577.5mm tilt=0.7°
+01:01:35.559 [DEBUG] NEAR plane: tilt=1.2° roll=-0.0° pitch=1.2° inliers=23772
+01:01:35.963 [INFO ] Servo: err=(+14,-7)px r=16  Δ=(+0.0,-0.0,+3.0)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:35.987 [INFO ] frame=69 state=NEAR      c=(654,353) z=577.3mm tilt=1.2°
+01:01:36.187 [DEBUG] NEAR plane: tilt=1.4° roll=-0.0° pitch=1.4° inliers=24197
+01:01:36.593 [INFO ] Servo: err=(+14,-8)px r=16  Δ=(+0.0,-0.0,+3.1)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:36.608 [INFO ] frame=70 state=NEAR      c=(654,352) z=577.2mm tilt=1.4°
+01:01:36.763 [DEBUG] NEAR plane: tilt=1.2° roll=1.2° pitch=0.0° inliers=24644
+01:01:37.219 [INFO ] Servo: err=(+14,-5)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:37.243 [INFO ] frame=71 state=NEAR      c=(654,355) z=577.8mm tilt=1.2°
+01:01:37.420 [DEBUG] NEAR plane: tilt=1.1° roll=0.1° pitch=1.1° inliers=24269
+01:01:37.877 [INFO ] Servo: err=(+13,-7)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-113)  [partial cal (rank=1)]
+01:01:37.893 [INFO ] frame=72 state=NEAR      c=(653,353) z=577.4mm tilt=1.1°
+01:01:38.057 [DEBUG] NEAR plane: tilt=2.5° roll=2.5° pitch=0.2° inliers=23866
+01:01:38.512 [INFO ] Servo: err=(+14,-10)px r=17  Δ=(+0.0,-0.0,+3.9)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:38.527 [INFO ] frame=73 state=NEAR      c=(654,350) z=577.4mm tilt=2.5°
+01:01:38.749 [DEBUG] NEAR plane: tilt=2.1° roll=-0.8° pitch=2.0° inliers=24017
+01:01:39.204 [INFO ] Servo: err=(+14,-10)px r=17  Δ=(+0.0,-0.0,+3.9)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:39.223 [INFO ] frame=74 state=NEAR      c=(654,350) z=577.0mm tilt=2.1°
+01:01:39.376 [DEBUG] NEAR plane: tilt=2.0° roll=-1.2° pitch=1.5° inliers=24530
+01:01:39.733 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.7)mm  pos=(205,6,-102)  [partial cal (rank=1)]
+01:01:39.749 [INFO ] frame=75 state=NEAR      c=(654,353) z=577.0mm tilt=2.0°
+01:01:39.899 [DEBUG] NEAR plane: tilt=2.6° roll=2.6° pitch=-0.3° inliers=23619
+01:01:40.356 [INFO ] Servo: err=(+14,-4)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:40.372 [INFO ] frame=76 state=NEAR      c=(654,356) z=576.9mm tilt=2.6°
+01:01:40.527 [DEBUG] NEAR plane: tilt=2.2° roll=1.3° pitch=1.8° inliers=23347
+01:01:40.983 [INFO ] Servo: err=(+14,-4)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-110)  [partial cal (rank=1)]
+01:01:40.999 [INFO ] frame=77 state=NEAR      c=(654,356) z=577.3mm tilt=2.2°
+01:01:41.155 [DEBUG] NEAR plane: tilt=1.4° roll=1.2° pitch=0.7° inliers=24222
+01:01:41.512 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.8)mm  pos=(205,6,-107)  [partial cal (rank=1)]
+01:01:41.528 [INFO ] frame=78 state=NEAR      c=(654,353) z=577.1mm tilt=1.4°
+01:01:41.687 [DEBUG] NEAR plane: tilt=1.8° roll=-0.5° pitch=1.7° inliers=24127
+01:01:42.092 [INFO ] Servo: err=(+14,-8)px r=16  Δ=(+0.0,-0.0,+3.2)mm  pos=(205,6,-104)  [partial cal (rank=1)]
+01:01:42.114 [INFO ] frame=79 state=NEAR      c=(654,352) z=577.5mm tilt=1.8°
+01:01:42.275 [DEBUG] NEAR plane: tilt=2.4° roll=-0.7° pitch=2.2° inliers=23562
+01:01:42.730 [INFO ] Servo: err=(+14,-5)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:42.752 [INFO ] frame=80 state=NEAR      c=(654,355) z=577.6mm tilt=2.4°
+01:01:42.916 [DEBUG] NEAR plane: tilt=1.9° roll=1.5° pitch=-1.1° inliers=24586
+01:01:43.372 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-112)  [partial cal (rank=1)]
+01:01:43.387 [INFO ] frame=81 state=NEAR      c=(654,354) z=577.4mm tilt=1.9°
+01:01:43.560 [DEBUG] NEAR plane: tilt=1.0° roll=-0.0° pitch=1.0° inliers=24280
+01:01:43.965 [INFO ] Servo: err=(+14,-9)px r=17  Δ=(+0.0,-0.0,+3.6)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:43.988 [INFO ] frame=82 state=NEAR      c=(654,351) z=577.8mm tilt=1.0°
+01:01:44.155 [DEBUG] NEAR plane: tilt=0.8° roll=-0.4° pitch=0.7° inliers=24677
+01:01:44.563 [INFO ] Servo: err=(+14,-9)px r=17  Δ=(+0.0,-0.0,+3.7)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:44.579 [INFO ] frame=83 state=NEAR      c=(654,351) z=577.1mm tilt=0.8°
+01:01:44.736 [DEBUG] NEAR plane: tilt=2.0° roll=1.4° pitch=1.4° inliers=23621
+01:01:45.093 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.6)mm  pos=(205,6,-102)  [partial cal (rank=1)]
+01:01:45.109 [INFO ] frame=84 state=NEAR      c=(654,353) z=577.2mm tilt=2.0°
+01:01:45.260 [DEBUG] NEAR plane: tilt=2.0° roll=-1.0° pitch=1.7° inliers=24092
+01:01:45.718 [INFO ] Servo: err=(+14,-3)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:45.735 [INFO ] frame=85 state=NEAR      c=(654,357) z=576.9mm tilt=2.0°
+01:01:45.892 [DEBUG] NEAR plane: tilt=2.3° roll=2.3° pitch=0.0° inliers=23592
+01:01:46.349 [INFO ] Servo: err=(+14,-4)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-110)  [partial cal (rank=1)]
+01:01:46.365 [INFO ] frame=86 state=NEAR      c=(654,356) z=577.6mm tilt=2.3°
+01:01:46.522 [DEBUG] NEAR plane: tilt=1.9° roll=0.6° pitch=1.8° inliers=23554
+01:01:46.877 [INFO ] Servo: err=(+14,-7)px r=15  Δ=(+0.0,-0.0,+2.7)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:46.893 [INFO ] frame=87 state=NEAR      c=(654,353) z=577.3mm tilt=1.9°
+01:01:47.048 [DEBUG] NEAR plane: tilt=2.1° roll=-2.0° pitch=-0.7° inliers=24337
+01:01:47.404 [INFO ] Servo: err=(+14,-7)px r=16  Δ=(+0.0,-0.0,+2.9)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:47.420 [INFO ] frame=88 state=NEAR      c=(654,353) z=577.5mm tilt=2.1°
+01:01:47.647 [DEBUG] NEAR plane: tilt=0.4° roll=-0.4° pitch=0.1° inliers=24826
+01:01:48.102 [INFO ] Servo: err=(+14,-5)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-109)  [partial cal (rank=1)]
+01:01:48.118 [INFO ] frame=89 state=NEAR      c=(654,355) z=576.9mm tilt=0.4°
+01:01:48.268 [DEBUG] NEAR plane: tilt=2.0° roll=0.6° pitch=-1.9° inliers=23791
+01:01:48.625 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,-0.0,+2.6)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:48.699 [INFO ] frame=90 state=NEAR      c=(654,354) z=577.1mm tilt=2.0°
+01:01:48.962 [DEBUG] NEAR plane: tilt=1.8° roll=-0.1° pitch=1.8° inliers=24111
+01:01:49.318 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,-0.0,+2.5)mm  pos=(205,6,-104)  [partial cal (rank=1)]
+01:01:49.334 [INFO ] frame=91 state=NEAR      c=(654,354) z=576.9mm tilt=1.8°
+01:01:49.503 [DEBUG] NEAR plane: tilt=1.0° roll=-0.7° pitch=-0.8° inliers=24471
+01:01:49.962 [INFO ] Servo: err=(+14,-4)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:49.979 [INFO ] frame=92 state=NEAR      c=(654,356) z=576.6mm tilt=1.0°
+01:01:50.221 [DEBUG] NEAR plane: tilt=1.7° roll=0.9° pitch=1.4° inliers=23803
+01:01:50.676 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-112)  [partial cal (rank=1)]
+01:01:50.693 [INFO ] frame=93 state=NEAR      c=(654,354) z=576.8mm tilt=1.7°
+01:01:50.854 [DEBUG] NEAR plane: tilt=1.4° roll=-0.1° pitch=1.4° inliers=24392
+01:01:51.259 [INFO ] Servo: err=(+14,-9)px r=16  Δ=(+0.0,-0.0,+3.5)mm  pos=(205,6,-108)  [partial cal (rank=1)]
+01:01:51.276 [INFO ] frame=94 state=NEAR      c=(654,351) z=577.2mm tilt=1.4°
+01:01:51.484 [DEBUG] NEAR plane: tilt=0.7° roll=-0.4° pitch=0.6° inliers=24970
+01:01:51.888 [INFO ] Servo: err=(+14,-9)px r=17  Δ=(+0.0,-0.0,+3.5)mm  pos=(205,6,-105)  [partial cal (rank=1)]
+01:01:51.904 [INFO ] frame=95 state=NEAR      c=(654,351) z=577.2mm tilt=0.7°
+01:01:52.064 [DEBUG] NEAR plane: tilt=2.6° roll=-2.2° pitch=1.3° inliers=24691
+01:01:52.420 [INFO ] Servo: err=(+14,-6)px r=15  Δ=(+0.0,-0.0,+2.5)mm  pos=(205,6,-102)  [partial cal (rank=1)]
+01:01:52.437 [INFO ] frame=96 state=NEAR      c=(654,354) z=576.8mm tilt=2.6°
+01:01:52.594 [DEBUG] NEAR plane: tilt=2.3° roll=2.2° pitch=0.5° inliers=23971
+01:01:53.051 [INFO ] Servo: err=(+14,-3)px r=14  Δ=(+0.0,+0.0,-4.0)mm  pos=(205,6,-106)  [partial cal (rank=1)]
+01:01:53.060 [INFO ] Quit requested via window key.
+01:01:53.066 [INFO ] frame=97 state=NEAR      c=(654,357) z=576.8mm tilt=2.3°
+01:01:53.341 [INFO ] Video saved: runs/v2_servo7/overlay.mp4
+01:01:53.341 [INFO ] Video saved: runs/v2_servo7/raw.mp4
+01:01:53.341 [INFO ] Returning to home position [205.3, 5.6, -52.9] mm …
+01:01:54.951 [INFO ] Home position reached.
+01:01:54.952 [INFO ] Robot stopped.
+01:01:54.958 [INFO ] Done.

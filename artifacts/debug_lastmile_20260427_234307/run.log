@@ -1,0 +1,214 @@
+23:43:07.532 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260427_234307.log
+23:43:07.550 [INFO ] ======================================================================
+23:43:07.550 [INFO ] servo_lastmile_v2 starting
+23:43:07.550 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+23:43:07.550 [INFO ]   prompt=protein bar  ref=masked_objects/protein_bar.png  hand-eye=None
+23:43:07.550 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+23:43:07.550 [INFO ] ======================================================================
+23:43:07.566 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+23:43:08.630 [INFO ] Robot connected: 192.168.1.241
+23:43:08.636 [INFO ] Processing reference image ...
+23:43:11.638 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+23:43:12.092 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:12.502 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:12.502 [INFO ] Ref image: no detection - using full image as crop
+23:43:12.582 [INFO ] Feature extractor (ResNet-18) loaded
+23:43:12.605 [INFO ] Ref features: 512-d vector (norm=1.000)
+23:43:12.605 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+23:43:15.830 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:16.033 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+23:43:16.033 [INFO ] === Calibration: waiting for camera frame ===
+23:43:16.034 [INFO ] Home: [205.3, 5.6, -52.9] mm
+23:43:16.265 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:16.265 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:16.334 [INFO ]   [Y] moving +8 mm at 30 mm/s...
+23:43:16.488 [INFO ] Video recording: overlay=runs/v2_proteinbar_servo/overlay.mp4  raw=runs/v2_proteinbar_servo/raw.mp4
+23:43:16.548 [INFO ] frame=0 state=FAR       c=- z=- tilt=-
+23:43:16.800 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:17.045 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:17.045 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:17.082 [INFO ] frame=1 state=FAR       c=- z=- tilt=-
+23:43:17.349 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:17.742 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:17.742 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:17.778 [INFO ] frame=2 state=FAR       c=- z=- tilt=-
+23:43:18.027 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:18.278 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:18.278 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:18.315 [INFO ] frame=3 state=FAR       c=- z=- tilt=-
+23:43:18.441 [INFO ]   [Y] returning home...
+23:43:18.561 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:18.895 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:18.895 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:18.947 [INFO ] frame=4 state=FAR       c=- z=- tilt=-
+23:43:19.054 [INFO ]   [Y] flow: (+13.2, -1.2) px / 8 mm  -> J[:,{col}]=[+1.6486, -0.1469]
+23:43:19.235 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:19.355 [INFO ]   [Z] moving +8 mm at 30 mm/s...
+23:43:19.481 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:19.481 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:19.523 [INFO ] frame=5 state=FAR       c=- z=- tilt=-
+23:43:19.771 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:20.005 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:20.005 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:20.047 [INFO ] frame=6 state=FAR       c=- z=- tilt=-
+23:43:20.461 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:20.704 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:20.704 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:20.742 [INFO ] frame=7 state=FAR       c=- z=- tilt=-
+23:43:20.989 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:21.231 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:21.231 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:21.271 [INFO ] frame=8 state=FAR       c=- z=- tilt=-
+23:43:21.462 [INFO ]   [Z] returning home...
+23:43:21.611 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:21.934 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:21.934 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:21.969 [INFO ] frame=9 state=FAR       c=- z=- tilt=-
+23:43:22.074 [INFO ]   [Z] flow: (-2.8, +13.2) px / 8 mm  -> J[:,{col}]=[-0.3476, +1.6479]
+23:43:22.074 [INFO ] J_yz (px/mm):
+[[ 1.64863586 -0.34758759]
+ [-0.14686966  1.64788628]]
+23:43:22.075 [INFO ] J_yz_inv (mm/px):
+[[0.61817812 0.13039191]
+ [0.0550958  0.61845931]]
+23:43:22.075 [INFO ] === Calibration complete [calibrated] ===
+23:43:22.220 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:22.466 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:22.466 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:22.505 [INFO ] frame=10 state=FAR       c=- z=- tilt=-
+23:43:22.753 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:23.177 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:23.177 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:23.213 [INFO ] frame=11 state=FAR       c=- z=- tilt=-
+23:43:23.466 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:23.706 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:23.707 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:23.742 [INFO ] frame=12 state=FAR       c=- z=- tilt=-
+23:43:23.991 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:24.328 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:24.328 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:24.369 [INFO ] frame=13 state=FAR       c=- z=- tilt=-
+23:43:24.677 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:24.916 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:24.917 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:24.953 [INFO ] frame=14 state=FAR       c=- z=- tilt=-
+23:43:25.199 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:25.438 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:25.438 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:25.475 [INFO ] frame=15 state=FAR       c=- z=- tilt=-
+23:43:25.909 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:26.152 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:26.153 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:26.187 [INFO ] frame=16 state=FAR       c=- z=- tilt=-
+23:43:26.434 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:26.676 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:26.676 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:26.712 [INFO ] frame=17 state=FAR       c=- z=- tilt=-
+23:43:27.048 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:27.380 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:27.380 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:27.417 [INFO ] frame=18 state=FAR       c=- z=- tilt=-
+23:43:27.658 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:27.908 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:27.909 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:27.944 [INFO ] frame=19 state=FAR       c=- z=- tilt=-
+23:43:28.192 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:28.584 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:28.584 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:28.639 [INFO ] frame=20 state=FAR       c=- z=- tilt=-
+23:43:28.898 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:29.148 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:29.148 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:29.183 [INFO ] frame=21 state=FAR       c=- z=- tilt=-
+23:43:29.432 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:29.720 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:29.720 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:29.774 [INFO ] frame=22 state=FAR       c=- z=- tilt=-
+23:43:30.121 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:30.366 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:30.366 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:30.401 [INFO ] frame=23 state=FAR       c=- z=- tilt=-
+23:43:30.652 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:30.887 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:30.887 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:30.923 [INFO ] frame=24 state=FAR       c=- z=- tilt=-
+23:43:31.340 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:31.604 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:31.604 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:31.639 [INFO ] frame=25 state=FAR       c=- z=- tilt=-
+23:43:31.889 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:32.128 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:32.129 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:32.165 [INFO ] frame=26 state=FAR       c=- z=- tilt=-
+23:43:32.485 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:32.831 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:32.831 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:32.867 [INFO ] frame=27 state=FAR       c=- z=- tilt=-
+23:43:33.117 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:33.357 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:33.357 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:33.392 [INFO ] frame=28 state=FAR       c=- z=- tilt=-
+23:43:33.638 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:34.034 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:34.034 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:34.087 [INFO ] frame=29 state=FAR       c=- z=- tilt=-
+23:43:34.339 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:34.579 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:34.580 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:34.668 [INFO ] frame=30 state=FAR       c=- z=- tilt=-
+23:43:34.919 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:35.259 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:35.259 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:35.302 [INFO ] frame=31 state=FAR       c=- z=- tilt=-
+23:43:35.608 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:35.869 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:35.869 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:35.904 [INFO ] frame=32 state=FAR       c=- z=- tilt=-
+23:43:36.164 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:36.406 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:36.406 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:36.447 [INFO ] frame=33 state=FAR       c=- z=- tilt=-
+23:43:36.904 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:37.157 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:37.157 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:37.195 [INFO ] frame=34 state=FAR       c=- z=- tilt=-
+23:43:37.456 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:37.695 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:37.695 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:37.733 [INFO ] frame=35 state=FAR       c=- z=- tilt=-
+23:43:38.065 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:38.398 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:38.398 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:38.437 [INFO ] frame=36 state=FAR       c=- z=- tilt=-
+23:43:38.687 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:38.926 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:38.926 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:38.963 [INFO ] frame=37 state=FAR       c=- z=- tilt=-
+23:43:39.206 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:39.587 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:39.587 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:39.644 [INFO ] frame=38 state=FAR       c=- z=- tilt=-
+23:43:39.899 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:40.136 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:40.136 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:40.173 [INFO ] frame=39 state=FAR       c=- z=- tilt=-
+23:43:40.419 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:40.664 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:40.664 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:40.715 [INFO ] frame=40 state=FAR       c=- z=- tilt=-
+23:43:41.091 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:41.343 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:41.343 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:41.379 [INFO ] frame=41 state=FAR       c=- z=- tilt=-
+23:43:41.630 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:41.866 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:41.866 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:41.904 [INFO ] frame=42 state=FAR       c=- z=- tilt=-
+23:43:42.261 [INFO ] SAM3: empty at 0.50/0.50, retrying at 0.30/0.40
+23:43:42.567 [WARNING] SAM3: no detections for prompt 'protein bar'
+23:43:42.568 [WARNING] SAM3 returned no usable instance. Try a more descriptive --prompt or lower SAM3_SCORE_THRESH.
+23:43:42.595 [INFO ] Quit requested via window key.
+23:43:42.600 [INFO ] frame=43 state=FAR       c=- z=- tilt=-
+23:43:42.901 [INFO ] Video saved: runs/v2_proteinbar_servo/overlay.mp4
+23:43:42.901 [INFO ] Video saved: runs/v2_proteinbar_servo/raw.mp4
+23:43:42.902 [INFO ] Robot stopped.

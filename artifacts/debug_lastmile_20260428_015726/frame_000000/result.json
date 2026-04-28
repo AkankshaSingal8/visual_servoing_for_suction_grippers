@@ -1,0 +1,56 @@
+{
+  "mask_np": null,
+  "depth_np": null,
+  "gdino_box": [
+    555.147705078125,
+    244.51309204101562,
+    734.2904663085938,
+    584.1558837890625
+  ],
+  "sam_score": 0.969112753868103,
+  "similarity": 0.9248037338256836,
+  "dets_all": [
+    [
+      [
+        555.147705078125,
+        244.51309204101562,
+        734.2904663085938,
+        584.1558837890625
+      ],
+      0.969112753868103,
+      "box"
+    ]
+  ],
+  "detector_used": "sam3",
+  "detection_was_skipped": false,
+  "state": "FAR",
+  "c_A": null,
+  "c_B": null,
+  "c_C": null,
+  "c_D": null,
+  "c_fused": null,
+  "weights": null,
+  "watchdog_alarm": false,
+  "plane_normal": null,
+  "z_mm": 578.0504760742188,
+  "in_frame_fraction": null,
+  "best_centroid": [
+    644.2659422809458,
+    413.069871349096
+  ],
+  "tilt_deg": null,
+  "roll_deg": null,
+  "pitch_deg": null,
+  "near_plane_normal": null,
+  "near_plane_n_inliers": null,
+  "ee_mask": null,
+  "ee_masking_applied": false,
+  "signal_a_is_6dof": false,
+  "c_E": null,
+  "sam_center_pt": [
+    644.7191162109375,
+    414.33447265625
+  ],
+  "bbox_at_border": false,
+  "source": "live"
+}

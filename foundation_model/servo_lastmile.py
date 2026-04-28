@@ -158,7 +158,7 @@ WATCHDOG_DISAGREE_FRAMES  = 5
 # DINOv2 best-buddy
 DINOV2_PATCH_SIZE         = 14
 DINOV2_SIM_THRESH         = 0.55
-DINOV2_MIN_MATCHES        = 8
+DINOV2_MIN_MATCHES        = 12
 
 # Camera intrinsics fallback (HD720 ZED). Real pipeline replaces these
 # with values loaded from ZED settings .conf file at startup.
@@ -293,6 +293,64 @@ def uniform_mask_samples(mask: np.ndarray, n: int,
     idx = rng.choice(xs.size, size=n, replace=replace)
     pts = np.stack([xs[idx], ys[idx]], axis=1).astype(np.float32)
     return pts
+
+
+def gaussian_mask_samples(mask: np.ndarray, n: int,
+                           sigma_frac: float = 0.30,
+                           rng: np.random.Generator | None = None
+                           ) -> np.ndarray:
+    """
+    Sample n points from a 2D Gaussian centred on the mask centroid, keeping
+    only points that fall inside the mask.
+
+    Concentrating points near the grasp target means:
+    - More CoTracker3 attention on the region that matters for grasping
+    - As the box exits the frame, edge points go off first; centre-biased
+      seeding keeps more points in frame longer → less extrapolation error
+    - The mean of tracked positions stays closer to the true grasp point
+
+    sigma_frac: Gaussian σ as a fraction of the mask's shorter bounding-box
+                half-dimension (0.30 = σ covers ~30% of the box half-width).
+                Larger value → more spread toward edges.
+    """
+    if rng is None:
+        rng = np.random.default_rng(0)
+    ys, xs = np.where(mask > 0)
+    if xs.size == 0:
+        return np.zeros((0, 2), dtype=np.float32)
+
+    cx = float(xs.mean())
+    cy = float(ys.mean())
+    # σ relative to the shorter half-dimension of the bounding box
+    bw = float(xs.max() - xs.min())
+    bh = float(ys.max() - ys.min())
+    sigma = sigma_frac * min(bw, bh) / 2.0
+    sigma = max(sigma, 5.0)  # never smaller than 5px
+
+    # Sample candidates from Gaussian, accept those inside mask
+    pts = []
+    h, w = mask.shape[:2]
+    attempts = 0
+    while len(pts) < n and attempts < n * 20:
+        rx = rng.normal(cx, sigma, size=n * 2)
+        ry = rng.normal(cy, sigma, size=n * 2)
+        for px, py in zip(rx, ry):
+            ix, iy = int(round(px)), int(round(py))
+            if 0 <= ix < w and 0 <= iy < h and mask[iy, ix] > 0:
+                pts.append([px, py])
+                if len(pts) >= n:
+                    break
+        attempts += n * 2
+
+    if len(pts) == 0:
+        return uniform_mask_samples(mask, n, rng)
+
+    pts_arr = np.array(pts[:n], dtype=np.float32)
+    # If we couldn't fill n points from Gaussian, pad with uniform samples
+    if len(pts_arr) < n:
+        extra = uniform_mask_samples(mask, n - len(pts_arr), rng)
+        pts_arr = np.concatenate([pts_arr, extra], axis=0)
+    return pts_arr
 
 
 def fit_plane_ransac(points_xyz: np.ndarray,
@@ -496,11 +554,38 @@ class SignalB:
         self._lk_prev_gray = None
         self._points = None     # (N, 2)
         self._visible = None    # (N,) bool
+        self._frozen_pts = None   # (N, 2) last known in-frame position per point
         self._mode = "uninit"
 
     def reset(self, lock: LockState, frame_bgr: np.ndarray):
-        self._points = lock.init_points.copy()
+        self._init_from_points(lock.init_points, frame_bgr)
+
+    def reset_from_mask(self, mask: np.ndarray, frame_bgr: np.ndarray,
+                        n_points: int = 128) -> None:
+        """Re-seed CoTracker3 from a fresh mask using Gaussian sampling
+        centred on the mask centroid.
+
+        128 points (vs original 80) with Gaussian concentration near the
+        grasp target gives CoTracker3 more context at the region that matters.
+        As the box exits frame, edge points go off first — centre-biased
+        seeding keeps more points in frame, reducing extrapolation error and
+        keeping the all-points mean closer to the true grasp centre.
+        """
+        rng = np.random.default_rng(42)
+        pts = gaussian_mask_samples(mask, n_points, sigma_frac=0.30, rng=rng)
+        if pts.shape[0] == 0:
+            log.warning("Signal B reset_from_mask: empty mask, keeping previous points")
+            return
+        self._init_from_points(pts, frame_bgr)
+        cx = float(pts[:, 0].mean())
+        cy = float(pts[:, 1].mean())
+        log.info("Signal B: re-seeded CoTracker3 with %d Gaussian pts "
+                 "(centre=%.0f,%.0f)", pts.shape[0], cx, cy)
+
+    def _init_from_points(self, points: np.ndarray, frame_bgr: np.ndarray):
+        self._points = points.copy()
         self._visible = np.ones(self._points.shape[0], dtype=bool)
+        self._frozen_pts = self._points.copy()
         self._lk_prev_gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         self._cot_state = None
 
@@ -508,8 +593,6 @@ class SignalB:
             try:
                 self._cotracker = self._lazy_load_cotracker()
                 self._mode = "cotracker"
-                # CoTracker3 expects torch tensors; we keep state externally
-                # and call its online predictor frame-by-frame.
                 log.info("Signal B: CoTracker3 online initialized with %d points",
                          self._points.shape[0])
                 return
@@ -566,23 +649,37 @@ class SignalB:
         h, w = gray.shape
         new_pts = next_pts.reshape(-1, 2)
         ok = status.reshape(-1).astype(bool)
-        # frame-bound check
         in_bounds = ((new_pts[:, 0] >= 0) & (new_pts[:, 0] < w)
                      & (new_pts[:, 1] >= 0) & (new_pts[:, 1] < h))
-        # error-bound check (LK reports per-point match error)
         err_flat = err.reshape(-1) if err is not None else np.zeros(len(new_pts))
         good_err = err_flat < 30.0
-        # visibility: AND of all three
         visible = self._visible & ok & in_bounds & good_err
+
+        # Update tracked positions; freeze off-frame points at last known position
+        # so the centroid estimator remains unbiased when the box partially exits frame.
+        # Only in-frame & tracked points update _frozen_pts.
+        in_frame_and_tracked = ok & in_bounds & good_err
         self._points = new_pts
         self._visible = visible
+        if self._frozen_pts is None:
+            self._frozen_pts = new_pts.copy()
+        self._frozen_pts[in_frame_and_tracked] = new_pts[in_frame_and_tracked]
         self._lk_prev_gray = gray
+
+        if int(visible.sum()) < 4 and self._frozen_pts is not None:
+            # Use all frozen positions for centroid even when few are visible
+            cx = float(self._frozen_pts[:, 0].mean())
+            cy = float(self._frozen_pts[:, 1].mean())
+            conf = float(visible.sum()) / float(len(visible))
+            return (cx, cy), conf, self._points, self._visible
 
         if int(visible.sum()) < 4:
             return None, 0.0, self._points, self._visible
 
-        vis_pts = self._points[visible]
-        cx, cy = float(vis_pts[:, 0].mean()), float(vis_pts[:, 1].mean())
+        # Use frozen positions for all points — unbiased centroid regardless of
+        # how many points are currently in frame.
+        cx = float(self._frozen_pts[:, 0].mean())
+        cy = float(self._frozen_pts[:, 1].mean())
         conf = float(visible.sum()) / float(len(visible))
         return (cx, cy), conf, self._points, self._visible
 
@@ -606,15 +703,23 @@ class SignalB:
                 self._points
             ], axis=1)).to(device).float().unsqueeze(0)
 
+            is_first = self._cot_state is None
             with torch.no_grad():
                 pred = model(video_chunk=frame_t, queries=queries,
-                             is_first_step=(self._cot_state is None))
-            self._cot_state = pred  # opaque per-implementation state
+                             is_first_step=is_first)
+            self._cot_state = pred
 
             # CoTracker3 returns tracks (B, T, N, 2) and visibility (B, T, N).
-            # Take the last timestep.
-            tracks = pred[0] if isinstance(pred, tuple) else pred.tracks
-            vis = pred[1] if isinstance(pred, tuple) else pred.visibility
+            # On the very first step the model initialises its window and may
+            # return None for tracks — in that case fall back to seed centroid.
+            tracks = pred[0] if isinstance(pred, tuple) else getattr(pred, 'tracks', None)
+            vis    = pred[1] if isinstance(pred, tuple) else getattr(pred, 'visibility', None)
+
+            if tracks is None or vis is None:
+                # First-step initialisation — return seed centroid as estimate
+                cx = float(self._points[:, 0].mean())
+                cy = float(self._points[:, 1].mean())
+                return (cx, cy), 0.5, self._points, self._visible
 
             tracks_np = tracks.detach().cpu().numpy()[0, -1]   # (N, 2)
             vis_np = vis.detach().cpu().numpy()[0, -1]         # (N,)
@@ -882,13 +987,18 @@ class SignalReading:
 
 def fuse_centroids(readings: list[SignalReading],
                    c_A: tuple[float, float] | None,
-                   override_px: float = FUSION_OVERRIDE_PX
+                   override_px: float = FUSION_OVERRIDE_PX,
+                   depth_mm: float | None = None,
                    ) -> tuple[tuple[float, float] | None, dict]:
     """
     Weighted geometric median fusion + Signal-A sanity override.
 
     Returns (fused_xy, info). info has 'override_applied' bool and
     'used_weights' dict for logging.
+
+    When depth_mm is provided the override threshold tightens linearly
+    from 80 px at 400 mm to 30 px at 80 mm, so geometry dominates more
+    as the box fills the frame and exits at close range.
     """
     pts = []
     weights = []
@@ -907,12 +1017,19 @@ def fuse_centroids(readings: list[SignalReading],
     if fused is None:
         return None, info
 
-    # Signal A sanity gate: trust geometry over perception in NEAR
+    # Signal A sanity gate: trust geometry over perception in NEAR.
+    # Threshold tightens with depth so geometry dominates at close range.
     if c_A is not None:
+        if depth_mm is not None:
+            t = float(np.clip((depth_mm - 80.0) / (400.0 - 80.0), 0.0, 1.0))
+            effective_override_px = 30.0 + (80.0 - 30.0) * t
+        else:
+            effective_override_px = override_px
         d = math.hypot(fused[0] - c_A[0], fused[1] - c_A[1])
-        if d > override_px:
+        if d > effective_override_px:
             info["override_applied"] = True
             info["override_distance_px"] = d
+            info["override_threshold_px"] = effective_override_px
             return c_A, info
 
     return fused, info
@@ -971,10 +1088,9 @@ class StateMachine:
             self._consec_lock_candidate = 0
             return False
 
-        if depth_at_centroid_mm is None:
-            self._consec_lock_candidate = 0
-            return False
-        if not (LOCK_DEPTH_MIN_MM <= depth_at_centroid_mm <= LOCK_DEPTH_MAX_MM):
+        # Depth only needs to be a valid finite reading for the 3D anchor.
+        # No range gate — area fraction already handles too-far and too-close.
+        if depth_at_centroid_mm is None or not (0 < depth_at_centroid_mm < 5000):
             self._consec_lock_candidate = 0
             return False
 

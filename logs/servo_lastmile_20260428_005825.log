@@ -1,0 +1,333 @@
+00:58:25.952 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260428_005825.log
+00:58:25.972 [INFO ] ======================================================================
+00:58:25.972 [INFO ] servo_lastmile_v2 starting
+00:58:25.972 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+00:58:25.972 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+00:58:25.972 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+00:58:25.972 [INFO ] ======================================================================
+00:58:25.987 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+00:58:27.053 [INFO ] Robot connected: 192.168.1.241
+00:58:27.054 [INFO ] Home position captured: [205.3, 5.6, -52.9] mm
+00:58:27.060 [INFO ] Processing reference image ...
+00:58:30.131 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+00:58:30.598 [INFO ] SAM3: 1 detection(s) for 'box'
+00:58:30.598 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+00:58:30.677 [INFO ] Feature extractor (ResNet-18) loaded
+00:58:30.700 [INFO ] Ref features: 512-d vector (norm=1.000)
+00:58:30.700 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+00:58:33.000 [INFO ] SAM3: 1 detection(s) for 'box'
+00:58:33.002 [DEBUG]   det conf=0.97 sim=0.927 pos=0.43 prox=0.00 -> 0.625
+00:58:33.003 [INFO ] SAM3: 'box' score=0.97 @ [555 243 734 583]  (top of 1)  sim=0.927
+00:58:33.003 [INFO ] SAM3: mask obtained (score=0.970, area=57434 px)
+00:58:33.192 [DEBUG] Grasp point: robust centroid (644, 413)
+00:58:33.194 [DEBUG] Servo: waiting [waiting for calibration...]
+00:58:33.200 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+00:58:33.200 [INFO ] === Calibration: waiting for camera frame ===
+00:58:33.201 [INFO ] Home: [205.3, 5.6, -52.9] mm
+00:58:33.201 [INFO ] Video recording: overlay=runs/v2_servo7/overlay.mp4  raw=runs/v2_servo7/raw.mp4
+00:58:33.263 [INFO ] frame=0 state=FAR       c=(644,413) z=577.2mm tilt=-
+00:58:33.501 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+00:58:33.704 [INFO ] SAM3: 1 detection(s) for 'box'
+00:58:33.707 [DEBUG]   det conf=0.97 sim=0.925 pos=0.43 prox=1.00 -> 0.872
+00:58:33.708 [INFO ] SAM3: 'box' score=0.97 @ [555 243 734 583]  (top of 1)  sim=0.925
+00:58:33.708 [INFO ] SAM3: mask obtained (score=0.966, area=57468 px)
+00:58:33.736 [DEBUG] Grasp point: robust centroid (644, 413)
+00:58:33.747 [INFO ] frame=1 state=FAR       c=(644,413) z=577.8mm tilt=-
+00:58:34.002 [INFO ] SAM3: 1 detection(s) for 'box'
+00:58:34.004 [DEBUG]   det conf=0.97 sim=0.930 pos=0.43 prox=0.99 -> 0.874
+00:58:34.006 [INFO ] SAM3: 'box' score=0.97 @ [555 243 735 583]  (top of 1)  sim=0.930
+00:58:34.006 [INFO ] SAM3: mask obtained (score=0.969, area=57446 px)
+00:58:34.034 [DEBUG] Grasp point: robust centroid (645, 413)
+00:58:36.160 [INFO ]   [Y] returning home...
+00:58:36.517 [INFO ] frame=2 state=NEAR      c=(645,412) z=577.2mm tilt=-
+00:58:36.524 [WARNING] Signal B: CoTracker3 step failed ('NoneType' object has no attribute 'detach'); downgrading to LK for the rest of approach.
+00:58:36.700 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:37.328 [WARNING]   [Y] flow too small (0.71 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+00:58:37.444 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:37.629 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+00:58:38.093 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:38.860 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:39.512 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:40.220 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:40.288 [INFO ]   [Z] returning home...
+00:58:40.870 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:41.454 [INFO ]   [Z] flow: (-2.8, +31.9) px / 25 mm  -> J[:,{col}]=[-0.1106, +1.2747]
+00:58:41.454 [INFO ] J_yz (px/mm):
+[[ 0.         -0.11055908]
+ [ 0.          1.27472534]]
+00:58:41.454 [INFO ] J_yz_inv (mm/px):
+[[ 0.          0.        ]
+ [-0.06753151  0.7786256 ]]
+00:58:41.455 [INFO ] === Calibration complete [partial cal (rank=1)] ===
+00:58:41.529 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:42.180 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:42.836 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:43.490 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:44.143 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:44.800 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:45.461 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:46.117 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:46.773 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:47.505 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:48.152 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:48.920 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:49.575 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:50.315 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:50.974 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:51.635 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:52.288 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:52.944 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:53.595 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:54.249 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:54.902 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:55.556 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:56.204 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment
+00:58:56.858 [ERROR] Pipeline step error: local variable 'fused' referenced before assignment
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile.py", line 1947, in _run_zed_loop
+    per_frame(frame)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 1055, in perception_loop_for_frame
+    res = pipeline.step(frame_bgr)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py", line 611, in step
+    depth_mm=self._depth_at_px(depth_map, fused or lock.centroid_px))
+UnboundLocalError: local variable 'fused' referenced before assignment

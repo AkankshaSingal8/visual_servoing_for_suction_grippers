@@ -1,0 +1,186 @@
+00:22:23.108 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260428_002223.log
+00:22:23.123 [INFO ] ======================================================================
+00:22:23.123 [INFO ] servo_lastmile_v2 starting
+00:22:23.123 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+00:22:23.123 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+00:22:23.123 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+00:22:23.124 [INFO ] ======================================================================
+00:22:23.139 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+00:22:24.205 [INFO ] Robot connected: 192.168.1.241
+00:22:24.206 [INFO ] Home position captured: [205.3, 5.6, -52.9] mm
+00:22:24.212 [INFO ] Processing reference image ...
+00:22:27.085 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+00:22:27.542 [INFO ] SAM3: 1 detection(s) for 'box'
+00:22:27.542 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+00:22:27.713 [INFO ] Feature extractor (ResNet-18) loaded
+00:22:27.748 [INFO ] Ref features: 512-d vector (norm=1.000)
+00:22:27.749 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+00:22:29.720 [INFO ] SAM3: 1 detection(s) for 'box'
+00:22:29.722 [DEBUG]   det conf=0.96 sim=0.932 pos=0.41 prox=0.00 -> 0.623
+00:22:29.724 [INFO ] SAM3: 'box' score=0.96 @ [553 209 781 645]  (top of 1)  sim=0.932
+00:22:29.724 [INFO ] SAM3: mask obtained (score=0.962, area=93699 px)
+00:22:29.911 [DEBUG] Grasp point: robust centroid (667, 427)
+00:22:29.912 [DEBUG] Servo: waiting [waiting for calibration...]
+00:22:29.919 [INFO ] Video recording: overlay=runs/v2_servo4/overlay.mp4  raw=runs/v2_servo4/raw.mp4
+00:22:29.938 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+00:22:29.939 [INFO ] === Calibration: waiting for camera frame ===
+00:22:29.939 [INFO ] Home: [205.3, 5.6, -52.9] mm
+00:22:29.981 [INFO ] frame=0 state=FAR       c=(667,426) z=451.1mm tilt=-
+00:22:30.240 [INFO ]   [Y] moving +8 mm at 30 mm/s...
+00:22:30.407 [INFO ] SAM3: 1 detection(s) for 'box'
+00:22:30.410 [DEBUG]   det conf=0.96 sim=0.931 pos=0.41 prox=1.00 -> 0.872
+00:22:30.411 [INFO ] SAM3: 'box' score=0.96 @ [553 209 781 645]  (top of 1)  sim=0.931
+00:22:30.412 [INFO ] SAM3: mask obtained (score=0.960, area=93679 px)
+00:22:30.437 [DEBUG] Grasp point: robust centroid (667, 427)
+00:22:30.449 [INFO ] frame=1 state=FAR       c=(667,426) z=451.0mm tilt=-
+00:22:30.696 [INFO ] SAM3: 1 detection(s) for 'box'
+00:22:30.698 [DEBUG]   det conf=0.96 sim=0.933 pos=0.41 prox=1.00 -> 0.873
+00:22:30.700 [INFO ] SAM3: 'box' score=0.96 @ [553 209 781 645]  (top of 1)  sim=0.933
+00:22:30.700 [INFO ] SAM3: mask obtained (score=0.964, area=93684 px)
+00:22:30.727 [DEBUG] Grasp point: robust centroid (667, 427)
+00:22:32.346 [INFO ]   [Y] returning home...
+00:22:32.976 [INFO ]   [Y] flow: (+0.2, -0.2) px / 8 mm  -> J[:,{col}]=[+0.0188, -0.0273]
+00:22:33.101 [INFO ] frame=2 state=NEAR      c=(667,426) z=450.9mm tilt=-
+00:22:33.109 [WARNING] Signal B: CoTracker3 step failed ('NoneType' object has no attribute 'detach'); downgrading to LK for the rest of approach.
+00:22:33.277 [INFO ]   [Z] moving +8 mm at 30 mm/s...
+00:22:33.296 [DEBUG] NEAR plane: tilt=1.7° roll=0.4° pitch=1.7° inliers=25600
+00:22:33.319 [INFO ] frame=3 state=NEAR      c=(655,433) z=449.4mm tilt=1.7°
+00:22:33.480 [DEBUG] NEAR plane: tilt=2.2° roll=1.7° pitch=1.5° inliers=25597
+00:22:33.501 [INFO ] frame=4 state=NEAR      c=(656,433) z=449.4mm tilt=2.2°
+00:22:33.676 [DEBUG] NEAR plane: tilt=2.1° roll=-0.4° pitch=2.1° inliers=25600
+00:22:33.696 [INFO ] frame=5 state=NEAR      c=(655,435) z=449.4mm tilt=2.1°
+00:22:33.869 [DEBUG] NEAR plane: tilt=1.2° roll=0.6° pitch=1.1° inliers=25593
+00:22:33.887 [INFO ] frame=6 state=NEAR      c=(656,438) z=449.3mm tilt=1.2°
+00:22:34.147 [DEBUG] NEAR plane: tilt=2.6° roll=0.2° pitch=2.6° inliers=25598
+00:22:34.166 [INFO ] frame=7 state=NEAR      c=(656,445) z=449.3mm tilt=2.6°
+00:22:34.384 [DEBUG] NEAR plane: tilt=1.6° roll=0.4° pitch=1.6° inliers=25595
+00:22:34.408 [INFO ] frame=8 state=NEAR      c=(656,445) z=449.2mm tilt=1.6°
+00:22:34.571 [DEBUG] NEAR plane: tilt=1.0° roll=-0.1° pitch=1.0° inliers=25588
+00:22:34.596 [INFO ] frame=9 state=NEAR      c=(656,446) z=449.2mm tilt=1.0°
+00:22:34.763 [DEBUG] NEAR plane: tilt=1.7° roll=-0.5° pitch=1.6° inliers=25592
+00:22:34.788 [INFO ] frame=10 state=NEAR      c=(656,446) z=449.2mm tilt=1.7°
+00:22:34.959 [DEBUG] NEAR plane: tilt=1.2° roll=-0.2° pitch=1.1° inliers=25599
+00:22:34.959 [DEBUG] Servo: waiting [calibrating Z...]
+00:22:34.987 [INFO ] frame=11 state=NEAR      c=(655,446) z=449.2mm tilt=1.2°
+00:22:35.143 [DEBUG] NEAR plane: tilt=1.1° roll=-1.1° pitch=0.4° inliers=25590
+00:22:35.160 [INFO ] frame=12 state=NEAR      c=(656,446) z=449.3mm tilt=1.1°
+00:22:35.337 [DEBUG] NEAR plane: tilt=2.0° roll=1.2° pitch=1.6° inliers=25599
+00:22:35.356 [INFO ] frame=13 state=NEAR      c=(657,446) z=449.2mm tilt=2.0°
+00:22:35.389 [INFO ]   [Z] returning home...
+00:22:35.588 [DEBUG] NEAR plane: tilt=2.1° roll=1.7° pitch=1.2° inliers=25591
+00:22:35.608 [INFO ] frame=14 state=NEAR      c=(656,446) z=449.2mm tilt=2.1°
+00:22:35.840 [DEBUG] NEAR plane: tilt=1.6° roll=-0.9° pitch=1.3° inliers=25598
+00:22:35.861 [INFO ] frame=15 state=NEAR      c=(655,444) z=449.3mm tilt=1.6°
+00:22:36.002 [INFO ]   [Z] flow: (+0.1, +12.9) px / 8 mm  -> J[:,{col}]=[+0.0138, +1.6143]
+00:22:36.002 [INFO ] J_yz (px/mm):
+[[ 0.01878738  0.01382065]
+ [-0.02733612  1.61434746]]
+00:22:36.003 [INFO ] J_yz_inv (mm/px):
+[[52.57233192 -0.45007889]
+ [ 0.89021951  0.61182404]]
+00:22:36.003 [INFO ] === Calibration complete [calibrated] ===
+00:22:36.039 [DEBUG] NEAR plane: tilt=0.0° roll=-0.0° pitch=0.0° inliers=25592
+00:22:36.040 [WARNING] Servo: clamping Z -64.9 -> 0.0 mm (base limit)
+00:22:37.552 [INFO ] Servo: err=(+16,+78)px r=80  Δ=(+3.0,-12.0,-12.0)mm  pos=(208,-6,0)  [calibrated]
+00:22:37.563 [INFO ] frame=16 state=NEAR      c=(656,438) z=449.4mm tilt=0.0°
+00:22:37.727 [DEBUG] NEAR plane: tilt=5.8° roll=-5.1° pitch=2.8° inliers=25480
+00:22:37.731 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:38.487 [INFO ] Servo: err=(+20,+39)px r=44  Δ=(+3.0,-12.0,-12.0)mm  pos=(211,-18,0)  [calibrated]
+00:22:38.499 [INFO ] frame=17 state=NEAR      c=(660,399) z=446.4mm tilt=5.8°
+00:22:38.649 [DEBUG] NEAR plane: tilt=3.7° roll=-1.6° pitch=3.3° inliers=24641
+00:22:38.653 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:39.408 [INFO ] Servo: err=(+16,+22)px r=28  Δ=(+3.0,-12.0,-12.0)mm  pos=(214,-30,0)  [calibrated]
+00:22:39.419 [INFO ] frame=18 state=NEAR      c=(656,382) z=446.2mm tilt=3.7°
+00:22:39.572 [DEBUG] NEAR plane: tilt=5.7° roll=-2.0° pitch=5.4° inliers=20297
+00:22:39.979 [INFO ] Servo: err=(+12,+6)px r=13  Δ=(+3.0,+0.0,+0.0)mm  pos=(217,-30,0)  [calibrated]
+00:22:39.990 [INFO ] frame=19 state=NEAR      c=(652,366) z=443.2mm tilt=5.7°
+00:22:40.138 [DEBUG] NEAR plane: tilt=5.8° roll=-3.3° pitch=4.8° inliers=21373
+00:22:40.546 [INFO ] Servo: err=(+8,+6)px r=10  Δ=(+3.0,+0.0,+0.0)mm  pos=(220,-30,0)  [calibrated]
+00:22:40.557 [INFO ] frame=20 state=NEAR      c=(648,366) z=439.4mm tilt=5.8°
+00:22:40.784 [ERROR] WATCHDOG: SAM2 disagreement sustained for 5 frames; flagging hold.
+00:22:40.796 [DEBUG] NEAR plane: tilt=4.4° roll=-3.1° pitch=3.2° inliers=22646
+00:22:40.797 [WARNING] Servo: clamping Z -0.0 -> 0.0 mm (base limit)
+00:22:41.200 [INFO ] Servo: err=(+4,+6)px r=7  Δ=(+3.0,+0.0,+0.0)mm  pos=(223,-30,0)  [calibrated]
+00:22:41.211 [INFO ] frame=21 state=NEAR      c=(644,366) z=436.9mm tilt=4.4°
+00:22:41.354 [ERROR] WATCHDOG: SAM2 disagreement sustained for 6 frames; flagging hold.
+00:22:41.361 [DEBUG] NEAR plane: tilt=3.2° roll=-2.4° pitch=2.1° inliers=22389
+00:22:41.364 [WARNING] Servo: clamping Z -0.0 -> 0.0 mm (base limit)
+00:22:41.767 [INFO ] Servo: err=(-1,+6)px r=6  Δ=(+3.0,+0.0,+0.0)mm  pos=(226,-30,0)  [calibrated]
+00:22:41.779 [INFO ] frame=22 state=NEAR      c=(639,366) z=434.3mm tilt=3.2°
+00:22:42.046 [ERROR] WATCHDOG: SAM2 disagreement sustained for 7 frames; flagging hold.
+00:22:42.053 [DEBUG] NEAR plane: tilt=3.6° roll=-3.6° pitch=-0.2° inliers=23056
+00:22:42.054 [WARNING] Servo: clamping Z -0.0 -> 0.0 mm (base limit)
+00:22:42.457 [INFO ] Servo: err=(-5,+6)px r=7  Δ=(+3.0,+0.0,+0.0)mm  pos=(229,-30,0)  [calibrated]
+00:22:42.469 [INFO ] frame=23 state=NEAR      c=(635,366) z=431.6mm tilt=3.6°
+00:22:42.617 [ERROR] WATCHDOG: SAM2 disagreement sustained for 8 frames; flagging hold.
+00:22:42.625 [DEBUG] NEAR plane: tilt=4.8° roll=-4.0° pitch=2.6° inliers=22755
+00:22:42.627 [WARNING] Servo: clamping Z -0.0 -> 0.0 mm (base limit)
+00:22:43.030 [INFO ] Servo: err=(-9,+6)px r=10  Δ=(+3.0,+0.0,+0.0)mm  pos=(232,-30,0)  [calibrated]
+00:22:43.040 [INFO ] frame=24 state=NEAR      c=(631,366) z=428.6mm tilt=4.8°
+00:22:43.222 [ERROR] WATCHDOG: SAM2 disagreement sustained for 9 frames; flagging hold.
+00:22:43.230 [DEBUG] NEAR plane: tilt=3.6° roll=-3.6° pitch=-0.6° inliers=23633
+00:22:43.234 [WARNING] Servo: clamping Z -0.0 -> 0.0 mm (base limit)
+00:22:43.637 [INFO ] Servo: err=(-13,+6)px r=14  Δ=(+3.0,+0.0,+0.0)mm  pos=(235,-30,0)  [calibrated]
+00:22:43.651 [INFO ] frame=25 state=NEAR      c=(627,366) z=426.4mm tilt=3.6°
+00:22:43.798 [ERROR] WATCHDOG: SAM2 disagreement sustained for 10 frames; flagging hold.
+00:22:43.809 [DEBUG] NEAR plane: tilt=3.8° roll=-2.3° pitch=3.1° inliers=22723
+00:22:44.568 [INFO ] Servo: err=(-17,+6)px r=18  Δ=(+3.0,+12.0,+5.9)mm  pos=(238,-18,6)  [calibrated]
+00:22:44.579 [INFO ] frame=26 state=NEAR      c=(623,366) z=424.0mm tilt=3.8°
+00:22:44.732 [ERROR] WATCHDOG: SAM2 disagreement sustained for 11 frames; flagging hold.
+00:22:44.746 [DEBUG] NEAR plane: tilt=5.3° roll=-5.3° pitch=-0.7° inliers=22692
+00:22:45.502 [INFO ] Servo: err=(-21,+22)px r=31  Δ=(+3.0,+12.0,+2.7)mm  pos=(241,-6,9)  [calibrated]
+00:22:45.513 [INFO ] frame=27 state=NEAR      c=(619,382) z=419.7mm tilt=5.3°
+00:22:45.708 [ERROR] WATCHDOG: SAM2 disagreement sustained for 12 frames; flagging hold.
+00:22:45.715 [DEBUG] NEAR plane: tilt=2.0° roll=-1.9° pitch=-0.3° inliers=25537
+00:22:46.472 [INFO ] Servo: err=(-25,+38)px r=46  Δ=(+3.0,+12.0,-0.5)mm  pos=(244,6,8)  [calibrated]
+00:22:46.484 [INFO ] frame=28 state=NEAR      c=(615,398) z=414.8mm tilt=2.0°
+00:22:46.635 [ERROR] WATCHDOG: SAM2 disagreement sustained for 13 frames; flagging hold.
+00:22:46.644 [DEBUG] NEAR plane: tilt=3.3° roll=0.1° pitch=-3.3° inliers=23312
+00:22:47.403 [INFO ] Servo: err=(-29,+55)px r=62  Δ=(+3.0,+12.0,-3.7)mm  pos=(247,18,4)  [calibrated]
+00:22:47.415 [INFO ] frame=29 state=NEAR      c=(611,415) z=411.5mm tilt=3.3°
+00:22:47.566 [ERROR] WATCHDOG: SAM2 disagreement sustained for 14 frames; flagging hold.
+00:22:47.580 [DEBUG] NEAR plane: tilt=5.8° roll=3.7° pitch=-4.4° inliers=19638
+00:22:47.581 [WARNING] Servo: clamping Z -2.6 -> 0.0 mm (base limit)
+00:22:48.337 [INFO ] Servo: err=(-34,+72)px r=79  Δ=(+3.0,+12.0,-7.0)mm  pos=(250,30,0)  [calibrated]
+00:22:48.402 [INFO ] frame=30 state=NEAR      c=(606,432) z=410.6mm tilt=5.8°
+00:22:48.549 [ERROR] WATCHDOG: SAM2 disagreement sustained for 15 frames; flagging hold.
+00:22:48.557 [DEBUG] NEAR plane: tilt=6.2° roll=-1.3° pitch=-6.0° inliers=13518
+00:22:48.558 [WARNING] Servo: clamping Z -10.2 -> 0.0 mm (base limit)
+00:22:49.313 [INFO ] Servo: err=(-38,+89)px r=97  Δ=(+3.0,+12.0,-10.2)mm  pos=(253,42,0)  [calibrated]
+00:22:49.325 [INFO ] frame=31 state=NEAR      c=(602,449) z=409.0mm tilt=6.2°
+00:22:49.558 [ERROR] WATCHDOG: SAM2 disagreement sustained for 16 frames; flagging hold.
+00:22:49.563 [DEBUG] NEAR plane: tilt=12.1° roll=1.8° pitch=-11.9° inliers=9491
+00:22:49.567 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:50.322 [INFO ] Servo: err=(-42,+106)px r=114  Δ=(+3.0,+12.0,-12.0)mm  pos=(256,54,0)  [calibrated]
+00:22:50.333 [INFO ] frame=32 state=NEAR      c=(598,466) z=- tilt=12.1°
+00:22:50.476 [ERROR] WATCHDOG: SAM2 disagreement sustained for 17 frames; flagging hold.
+00:22:50.482 [DEBUG] NEAR plane: tilt=29.4° roll=-29.0° pitch=-5.7° inliers=10360
+00:22:50.484 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:51.239 [INFO ] Servo: err=(-46,+122)px r=131  Δ=(+3.0,+12.0,-12.0)mm  pos=(259,66,0)  [calibrated]
+00:22:51.251 [INFO ] frame=33 state=NEAR      c=(594,482) z=- tilt=29.4°
+00:22:51.399 [ERROR] WATCHDOG: SAM2 disagreement sustained for 18 frames; flagging hold.
+00:22:51.408 [DEBUG] NEAR plane: tilt=29.6° roll=-27.9° pitch=-11.4° inliers=9971
+00:22:51.410 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:52.165 [INFO ] Servo: err=(-51,+139)px r=148  Δ=(+3.0,+12.0,-12.0)mm  pos=(262,78,0)  [calibrated]
+00:22:52.177 [INFO ] frame=34 state=NEAR      c=(589,499) z=840.4mm tilt=29.6°
+00:22:52.321 [ERROR] WATCHDOG: SAM2 disagreement sustained for 19 frames; flagging hold.
+00:22:52.328 [DEBUG] NEAR plane: tilt=30.4° roll=-30.4° pitch=-0.4° inliers=11825
+00:22:52.328 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:53.085 [INFO ] Servo: err=(-55,+156)px r=165  Δ=(+3.0,+12.0,-12.0)mm  pos=(265,90,0)  [calibrated]
+00:22:53.099 [INFO ] frame=35 state=NEAR      c=(585,516) z=845.5mm tilt=30.4°
+00:22:53.358 [ERROR] WATCHDOG: SAM2 disagreement sustained for 20 frames; flagging hold.
+00:22:53.365 [DEBUG] NEAR plane: tilt=27.6° roll=-27.6° pitch=0.7° inliers=12149
+00:22:53.369 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:54.124 [INFO ] Servo: err=(-59,+172)px r=182  Δ=(+3.0,+12.0,-12.0)mm  pos=(268,102,0)  [calibrated]
+00:22:54.135 [INFO ] frame=36 state=NEAR      c=(581,532) z=835.5mm tilt=27.6°
+00:22:54.280 [ERROR] WATCHDOG: SAM2 disagreement sustained for 21 frames; flagging hold.
+00:22:54.288 [DEBUG] NEAR plane: tilt=29.3° roll=-29.3° pitch=1.2° inliers=10827
+00:22:54.289 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:22:55.044 [INFO ] Servo: err=(-63,+189)px r=199  Δ=(+3.0,+12.0,-12.0)mm  pos=(271,114,0)  [calibrated]
+00:22:55.048 [INFO ] Quit requested via window key.
+00:22:55.054 [INFO ] frame=37 state=NEAR      c=(577,549) z=827.6mm tilt=29.3°
+00:22:55.634 [INFO ] Video saved: runs/v2_servo4/overlay.mp4
+00:22:55.634 [INFO ] Video saved: runs/v2_servo4/raw.mp4
+00:22:55.634 [INFO ] Returning to home position [205.3, 5.6, -52.9] mm …
+00:22:58.904 [INFO ] Home position reached.
+00:22:58.905 [INFO ] Robot stopped.

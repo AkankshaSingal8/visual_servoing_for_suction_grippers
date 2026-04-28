@@ -1,0 +1,42 @@
+{
+  "timestamp": "20260428_021311",
+  "argv": [
+    "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_lastmile_v2.py",
+    "--ref-image",
+    "masked_objects/protein_bar.png",
+    "--prompt",
+    "box",
+    "--ee-body-radius",
+    "0",
+    "--output-dir",
+    "runs/v2_proteinbar_servo11",
+    "--debug"
+  ],
+  "args": {
+    "cam_index": 0,
+    "ref_image": "masked_objects/protein_bar.png",
+    "no_pyzed": false,
+    "no_robot": false,
+    "dry_run": false,
+    "input_image": null,
+    "input_dir": null,
+    "input_video": null,
+    "output_dir": "runs/v2_proteinbar_servo11",
+    "max_frames": null,
+    "no_overlays": false,
+    "fps": 15.0,
+    "prompt": "box",
+    "hand_eye": null,
+    "log_dir": "logs",
+    "debug": true,
+    "no_window": false,
+    "sixdof": false,
+    "ee_tip_offset": 160.0,
+    "ee_body_radius": 0.0,
+    "debug_dir": "artifacts",
+    "debug_every": 30
+  },
+  "ref_image": "masked_objects/protein_bar.png",
+  "prompt": "box",
+  "hand_eye": null
+}

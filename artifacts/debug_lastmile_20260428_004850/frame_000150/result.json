@@ -1,0 +1,59 @@
+{
+  "mask_np": null,
+  "depth_np": null,
+  "gdino_box": null,
+  "sam_score": null,
+  "similarity": null,
+  "dets_all": null,
+  "detector_used": null,
+  "detection_was_skipped": false,
+  "state": "NEAR",
+  "c_A": [
+    644.5766767785702,
+    414.2934510831299
+  ],
+  "c_B": [
+    631.9782104492188,
+    366.62896728515625
+  ],
+  "c_C": [
+    644.758120619538,
+    354.5595569784546
+  ],
+  "c_D": [
+    648.7169632500008,
+    361.6632593315596
+  ],
+  "c_fused": [
+    633.094244669004,
+    366.29788527040705
+  ],
+  "weights": {
+    "A": 0.0,
+    "B": 0.9875,
+    "D": 0.8060781955718994
+  },
+  "watchdog_alarm": false,
+  "plane_normal": null,
+  "z_mm": 576.4901733398438,
+  "in_frame_fraction": 0.9875,
+  "best_centroid": [
+    633.0666913280911,
+    366.4948218716838
+  ],
+  "tilt_deg": 2.371986106794169,
+  "roll_deg": -0.8003121400038148,
+  "pitch_deg": -2.233184913634412,
+  "near_plane_normal": [
+    -0.038962766215087,
+    -0.013957021543987081,
+    -0.9991431851333867
+  ],
+  "near_plane_n_inliers": 23351,
+  "ee_mask": null,
+  "ee_masking_applied": false,
+  "signal_a_is_6dof": false,
+  "c_E": null,
+  "_tilt": "TiltEstimate(normal=array([-0.03896277, -0.01395702, -0.99914319]), centroid_cam=array([-4.23585340e-01,  3.94064540e+00,  5.79387872e+02]), tilt_deg=2.371986106794169, roll_deg=-0.8003121400038148, pitch_deg=-2.233184913634412, n_inliers=23351)",
+  "source": "live"
+}

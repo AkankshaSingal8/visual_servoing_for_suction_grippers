@@ -46,6 +46,7 @@ Usage:
     python foundation_model/servo_pipeline_sam3.py --ref-image REF --dry-run
     python foundation_model/servo_pipeline_sam3.py --ref-image REF
 """
+import math
 import time
 import sys
 import threading
@@ -126,8 +127,10 @@ DA_ENCODER    = "vits"
 
 ROBOT_IP     = "192.168.1.241"
 VS_GAIN      = 0.08
-VS_APPROACH  = 3.0
-VS_DEAD_ZONE = 15
+VS_APPROACH  = 5.0   # +X is toward the box (confirmed from uFactory Studio visualisation)
+VS_DEAD_ZONE = 8
+VS_DESCENT   = -1.0  # mm/step Z correction in dead zone (small to avoid oscillation)
+VS_DESCENT_Y = 0.0   # disabled — Y movement causes B/D tracking drift
 MAX_YZ_STEP  = 12.0
 MAX_JUMP_PX  = 80
 VS_SPEED     = 150
@@ -135,7 +138,7 @@ VS_MVACC     = 500
 VS_RATE      = 0.3
 CTRL_GAIN    = 0.5
 
-CAL_DELTA    = 8.0
+CAL_DELTA    = 25.0   # was 8mm — increased so probe move generates >1px optical flow
 CAL_WAIT     = 1.5
 # Calibration moves at a much slower speed than servoing so the operator
 # can clearly see the small Y/Z probe sweeps and the optical flow remains
@@ -144,7 +147,12 @@ CAL_WAIT     = 1.5
 CAL_SPEED    = 30
 CAL_MVACC    = 100
 
-MIN_Z_MM     = 0.0
+# Minimum optical flow magnitude (px) for a calibration axis to be trusted.
+# If the probe move produces less than this, the Jacobian column is near-zero
+# (noise-dominated) and will cause runaway via its enormous inverse. Zero it.
+CAL_MIN_FLOW_PX = 1.0
+
+MIN_Z_MM     = -300.0  # robot home is Z=-52.9mm; descent goes negative — allow down to -300mm
 
 # Mask propagation / tracking parameters
 TRACKER_WARMUP_FRAMES = 10
@@ -1271,6 +1279,14 @@ class RobotController:
                 continue
 
             dpx, dpy = flow
+            flow_mag = math.hypot(dpx, dpy)
+            if flow_mag < CAL_MIN_FLOW_PX:
+                log.warning("  [%s] flow too small (%.2f px < %.1f px threshold) "
+                            "— axis ignored to prevent runaway. "
+                            "Try moving the robot closer or increasing CAL_DELTA.",
+                            ax, flow_mag, CAL_MIN_FLOW_PX)
+                # Leave J_yz[:, col] = 0 so this axis gets zero weight in servo
+                continue
             J_yz[0, col] = dpx / CAL_DELTA
             J_yz[1, col] = dpy / CAL_DELTA
             log.info("  [%s] flow: (%+.1f, %+.1f) px / %.0f mm  "
@@ -1339,14 +1355,23 @@ class RobotController:
         dx_mm = VS_APPROACH
 
         if err_r <= VS_DEAD_ZONE:
-            dy_mm, dz_mm = 0.0, 0.0
+            # Box centred — no lateral Z correction needed.
+            # Small Z nudge (VS_DESCENT) avoids oscillation from overshoot.
+            dy_mm = 0.0
+            dz_mm = VS_DESCENT
         elif self._jac_yz_inv is not None:
             err   = np.array([ex, ey], dtype=np.float64)
             yz    = -CTRL_GAIN * (self._jac_yz_inv @ err)
             dy_mm = float(np.clip(yz[0], -MAX_YZ_STEP, MAX_YZ_STEP))
             dz_mm = float(np.clip(yz[1], -MAX_YZ_STEP, MAX_YZ_STEP))
         else:
-            dy_mm, dz_mm = 0.0, 0.0
+            dy_mm = 0.0
+            dz_mm = VS_DESCENT
+
+        # Y is the true approach axis (camera optical axis ≈ robot −Y direction).
+        # Apply a constant descent in Y every step regardless of centroid error,
+        # so the robot actually closes the distance to the box.
+        dy_mm += VS_DESCENT_Y
 
         with self._lock:
             try:

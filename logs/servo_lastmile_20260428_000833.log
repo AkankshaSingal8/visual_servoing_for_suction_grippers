@@ -1,0 +1,153 @@
+00:08:33.890 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260428_000833.log
+00:08:33.905 [INFO ] ======================================================================
+00:08:33.905 [INFO ] servo_lastmile_v2 starting
+00:08:33.905 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+00:08:33.905 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+00:08:33.905 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+00:08:33.905 [INFO ] ======================================================================
+00:08:33.920 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+00:08:34.985 [INFO ] Robot connected: 192.168.1.241
+00:08:34.986 [INFO ] Home position captured: [205.3, 5.6, -52.9] mm
+00:08:34.992 [INFO ] Processing reference image ...
+00:08:37.997 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+00:08:38.457 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:38.458 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+00:08:38.535 [INFO ] Feature extractor (ResNet-18) loaded
+00:08:38.557 [INFO ] Ref features: 512-d vector (norm=1.000)
+00:08:38.558 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+00:08:40.707 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:40.709 [DEBUG]   det conf=0.97 sim=0.931 pos=0.41 prox=0.00 -> 0.623
+00:08:40.711 [INFO ] SAM3: 'box' score=0.97 @ [554 209 781 645]  (top of 1)  sim=0.931
+00:08:40.711 [INFO ] SAM3: mask obtained (score=0.966, area=93762 px)
+00:08:40.923 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+00:08:40.923 [INFO ] === Calibration: waiting for camera frame ===
+00:08:40.924 [INFO ] Home: [205.3, 5.6, -52.9] mm
+00:08:40.926 [DEBUG] Grasp point: robust centroid (668, 426)
+00:08:40.928 [DEBUG] Servo: waiting [calibrating Y...]
+00:08:40.934 [INFO ] Video recording: overlay=runs/v2_servo3/overlay.mp4  raw=runs/v2_servo3/raw.mp4
+00:08:40.994 [INFO ] frame=0 state=FAR       c=(668,425) z=449.9mm tilt=-
+00:08:41.225 [INFO ]   [Y] moving +8 mm at 30 mm/s...
+00:08:41.336 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:41.338 [DEBUG]   det conf=0.97 sim=0.930 pos=0.41 prox=1.00 -> 0.872
+00:08:41.341 [INFO ] SAM3: 'box' score=0.97 @ [554 209 781 645]  (top of 1)  sim=0.930
+00:08:41.341 [INFO ] SAM3: mask obtained (score=0.969, area=93785 px)
+00:08:41.385 [DEBUG] Grasp point: robust centroid (668, 427)
+00:08:41.397 [INFO ] frame=1 state=FAR       c=(668,425) z=449.7mm tilt=-
+00:08:41.671 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:41.674 [DEBUG]   det conf=0.96 sim=0.932 pos=0.41 prox=1.00 -> 0.873
+00:08:41.675 [INFO ] SAM3: 'box' score=0.96 @ [554 209 781 645]  (top of 1)  sim=0.932
+00:08:41.675 [INFO ] SAM3: mask obtained (score=0.965, area=93724 px)
+00:08:41.702 [DEBUG] Grasp point: robust centroid (667, 426)
+00:08:43.331 [INFO ]   [Y] returning home...
+00:08:43.962 [INFO ]   [Y] flow: (-0.3, -0.0) px / 8 mm  -> J[:,{col}]=[-0.0383, -0.0056]
+00:08:44.263 [INFO ]   [Z] moving +8 mm at 30 mm/s...
+00:08:44.642 [INFO ] frame=2 state=NEAR      c=(667,425) z=449.9mm tilt=-
+00:08:44.650 [WARNING] Signal B: CoTracker3 step failed ('NoneType' object has no attribute 'detach'); downgrading to LK for the rest of approach.
+00:08:44.833 [DEBUG] NEAR plane: tilt=2.4° roll=0.5° pitch=2.4° inliers=25347
+00:08:44.846 [INFO ] frame=3 state=NEAR      c=(663,439) z=449.7mm tilt=2.4°
+00:08:45.061 [DEBUG] NEAR plane: tilt=2.8° roll=2.6° pitch=1.1° inliers=25583
+00:08:45.074 [INFO ] frame=4 state=NEAR      c=(662,445) z=449.7mm tilt=2.8°
+00:08:45.338 [DEBUG] NEAR plane: tilt=1.9° roll=1.7° pitch=0.8° inliers=25565
+00:08:45.360 [INFO ] frame=5 state=NEAR      c=(662,447) z=449.7mm tilt=1.9°
+00:08:45.523 [DEBUG] NEAR plane: tilt=1.9° roll=0.4° pitch=1.9° inliers=25563
+00:08:45.541 [INFO ] frame=6 state=NEAR      c=(662,446) z=449.7mm tilt=1.9°
+00:08:46.001 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:46.003 [DEBUG]   det conf=0.96 sim=0.932 pos=0.39 prox=0.95 -> 0.858
+00:08:46.005 [INFO ] SAM3: 'box' score=0.96 @ [554 222 780 658]  (top of 1)  sim=0.932
+00:08:46.005 [INFO ] SAM3: mask obtained (score=0.955, area=93755 px)
+00:08:46.033 [DEBUG] Grasp point: robust centroid (667, 440)
+00:08:46.034 [DEBUG] Signal E (SAM3 re-anchor): c=(667.3539864540558, 438.899056050344) score=0.96
+00:08:46.040 [DEBUG] NEAR plane: tilt=1.7° roll=-0.2° pitch=1.7° inliers=25572
+00:08:46.040 [DEBUG] Servo: waiting [calibrating Z...]
+00:08:46.050 [INFO ] frame=7 state=NEAR      c=(667,439) z=449.9mm tilt=1.7°
+00:08:46.198 [DEBUG] NEAR plane: tilt=1.2° roll=0.6° pitch=1.1° inliers=25563
+00:08:46.217 [INFO ] frame=8 state=NEAR      c=(667,439) z=450.1mm tilt=1.2°
+00:08:46.376 [INFO ]   [Z] returning home...
+00:08:46.396 [DEBUG] NEAR plane: tilt=1.1° roll=0.9° pitch=0.7° inliers=25551
+00:08:46.414 [INFO ] frame=9 state=NEAR      c=(667,439) z=450.2mm tilt=1.1°
+00:08:46.693 [DEBUG] NEAR plane: tilt=2.6° roll=1.1° pitch=2.3° inliers=25564
+00:08:46.718 [INFO ] frame=10 state=NEAR      c=(666,439) z=450.2mm tilt=2.6°
+00:08:46.880 [DEBUG] NEAR plane: tilt=2.4° roll=1.0° pitch=2.2° inliers=25574
+00:08:46.901 [INFO ] frame=11 state=NEAR      c=(667,439) z=450.2mm tilt=2.4°
+00:08:46.991 [INFO ]   [Z] flow: (-0.1, +13.5) px / 8 mm  -> J[:,{col}]=[-0.0131, +1.6819]
+00:08:46.991 [INFO ] J_yz (px/mm):
+[[-0.03832626 -0.01306534]
+ [-0.00563049  1.68192196]]
+00:08:46.992 [INFO ] J_yz_inv (mm/px):
+[[-26.0620265   -0.20245243]
+ [ -0.08724665   0.59388017]]
+00:08:46.992 [INFO ] === Calibration complete [calibrated] ===
+00:08:47.307 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:47.309 [DEBUG]   det conf=0.96 sim=0.933 pos=0.40 prox=0.97 -> 0.866
+00:08:47.310 [INFO ] SAM3: 'box' score=0.96 @ [554 213 780 648]  (top of 1)  sim=0.933
+00:08:47.310 [INFO ] SAM3: mask obtained (score=0.964, area=93619 px)
+00:08:47.339 [DEBUG] Grasp point: robust centroid (667, 430)
+00:08:47.340 [DEBUG] Signal E (SAM3 re-anchor): c=(667.1128723870155, 429.3624691569019) score=0.96
+00:08:47.347 [DEBUG] NEAR plane: tilt=1.3° roll=0.7° pitch=1.1° inliers=25590
+00:08:47.347 [WARNING] Servo: clamping Z -64.9 -> 0.0 mm (base limit)
+00:08:48.857 [INFO ] Servo: err=(+27,+69)px r=74  Δ=(+3.0,+12.0,-12.0)mm  pos=(208,18,0)  [calibrated]
+00:08:48.868 [INFO ] frame=12 state=NEAR      c=(667,429) z=449.9mm tilt=1.3°
+00:08:49.073 [DEBUG] NEAR plane: tilt=1.6° roll=-0.7° pitch=1.5° inliers=25600
+00:08:49.077 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:49.831 [INFO ] Servo: err=(+34,+105)px r=110  Δ=(+3.0,+12.0,-12.0)mm  pos=(211,30,0)  [calibrated]
+00:08:49.844 [INFO ] frame=13 state=NEAR      c=(674,465) z=446.7mm tilt=1.6°
+00:08:49.996 [DEBUG] NEAR plane: tilt=2.3° roll=-1.6° pitch=1.7° inliers=25591
+00:08:49.999 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:50.754 [INFO ] Servo: err=(+47,+104)px r=114  Δ=(+3.0,+12.0,-12.0)mm  pos=(214,42,0)  [calibrated]
+00:08:50.765 [INFO ] frame=14 state=NEAR      c=(687,464) z=444.8mm tilt=2.3°
+00:08:50.914 [DEBUG] NEAR plane: tilt=1.3° roll=0.4° pitch=1.2° inliers=25111
+00:08:50.918 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:51.673 [INFO ] Servo: err=(+60,+118)px r=132  Δ=(+3.0,+12.0,-12.0)mm  pos=(217,54,0)  [calibrated]
+00:08:51.684 [INFO ] frame=15 state=NEAR      c=(700,478) z=443.8mm tilt=1.3°
+00:08:51.836 [DEBUG] NEAR plane: tilt=2.7° roll=0.1° pitch=-2.7° inliers=25001
+00:08:51.840 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:52.595 [INFO ] Servo: err=(+79,+120)px r=143  Δ=(+3.0,+12.0,-12.0)mm  pos=(220,66,0)  [calibrated]
+00:08:52.607 [INFO ] frame=16 state=NEAR      c=(719,480) z=439.4mm tilt=2.7°
+00:08:53.169 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:53.171 [DEBUG]   det conf=0.97 sim=0.930 pos=0.30 prox=0.63 -> 0.763
+00:08:53.173 [INFO ] SAM3: 'box' score=0.97 @ [637 286 883 721]  (top of 1)  sim=0.930
+00:08:53.173 [INFO ] SAM3: mask obtained (score=0.967, area=102448 px)
+00:08:53.201 [DEBUG] Grasp point: robust centroid (760, 504)
+00:08:53.205 [DEBUG] NEAR plane: tilt=9.2° roll=0.8° pitch=-9.2° inliers=9614
+00:08:53.206 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:53.960 [INFO ] Servo: err=(+4,+140)px r=140  Δ=(+3.0,+12.0,-12.0)mm  pos=(223,78,0)  [calibrated]
+00:08:53.972 [INFO ] frame=17 state=NEAR      c=(644,500) z=- tilt=9.2°
+00:08:54.235 [DEBUG] NEAR plane: tilt=29.1° roll=-29.0° pitch=3.1° inliers=6103
+00:08:54.236 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:54.840 [INFO ] Servo: err=(-1,+156)px r=156  Δ=(+3.0,+8.3,-12.0)mm  pos=(226,86,0)  [calibrated]
+00:08:54.851 [INFO ] frame=18 state=NEAR      c=(639,516) z=- tilt=29.1°
+00:08:55.006 [DEBUG] NEAR plane: tilt=42.1° roll=-39.2° pitch=-21.2° inliers=6072
+00:08:55.010 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:55.765 [INFO ] Servo: err=(-5,+168)px r=168  Δ=(+3.0,-12.0,-12.0)mm  pos=(229,74,0)  [calibrated]
+00:08:55.776 [INFO ] frame=19 state=NEAR      c=(635,528) z=829.6mm tilt=42.1°
+00:08:55.933 [DEBUG] NEAR plane: tilt=32.7° roll=-32.4° pitch=-5.7° inliers=7280
+00:08:55.934 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:56.692 [INFO ] Servo: err=(-9,+151)px r=151  Δ=(+3.0,-12.0,-12.0)mm  pos=(232,62,0)  [calibrated]
+00:08:56.703 [INFO ] frame=20 state=NEAR      c=(631,511) z=- tilt=32.7°
+00:08:56.856 [ERROR] WATCHDOG: SAM2 disagreement sustained for 5 frames; flagging hold.
+00:08:56.861 [DEBUG] NEAR plane: tilt=9.7° roll=-2.1° pitch=-9.5° inliers=7521
+00:08:56.864 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:57.619 [INFO ] Servo: err=(-13,+135)px r=135  Δ=(+3.0,-12.0,-12.0)mm  pos=(235,50,0)  [calibrated]
+00:08:57.635 [INFO ] frame=21 state=NEAR      c=(627,495) z=- tilt=9.7°
+00:08:58.174 [INFO ] SAM3: 1 detection(s) for 'box'
+00:08:58.177 [DEBUG]   det conf=0.97 sim=0.930 pos=0.30 prox=0.95 -> 0.843
+00:08:58.178 [INFO ] SAM3: 'box' score=0.97 @ [617 284 867 721]  (top of 1)  sim=0.930
+00:08:58.179 [INFO ] SAM3: mask obtained (score=0.965, area=104118 px)
+00:08:58.206 [DEBUG] Grasp point: robust centroid (742, 503)
+00:08:58.206 [ERROR] WATCHDOG: SAM2 disagreement sustained for 6 frames; flagging hold.
+00:08:58.210 [DEBUG] NEAR plane: tilt=9.8° roll=0.4° pitch=-9.7° inliers=10274
+00:08:58.211 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:08:58.966 [INFO ] Servo: err=(-17,+118)px r=119  Δ=(+3.0,-12.0,-12.0)mm  pos=(238,38,0)  [calibrated]
+00:08:58.979 [INFO ] frame=22 state=NEAR      c=(623,478) z=- tilt=9.8°
+00:08:59.236 [ERROR] WATCHDOG: SAM2 disagreement sustained for 7 frames; flagging hold.
+00:08:59.241 [DEBUG] NEAR plane: tilt=6.2° roll=1.3° pitch=-6.1° inliers=12879
+00:08:59.245 [WARNING] Servo: clamping Z -12.0 -> 0.0 mm (base limit)
+00:09:00.000 [INFO ] Servo: err=(-21,+101)px r=103  Δ=(+3.0,-12.0,-12.0)mm  pos=(241,26,0)  [calibrated]
+00:09:00.004 [INFO ] Quit requested via window key.
+00:09:00.010 [INFO ] frame=23 state=NEAR      c=(619,461) z=422.1mm tilt=6.2°
+00:09:00.055 [INFO ] Video saved: runs/v2_servo3/overlay.mp4
+00:09:00.056 [INFO ] Video saved: runs/v2_servo3/raw.mp4
+00:09:00.056 [INFO ] Returning to home position [205.3, 5.6, -52.9] mm …
+00:09:01.916 [INFO ] Home position reached.
+00:09:01.916 [INFO ] Robot stopped.
+00:09:01.920 [INFO ] Done.

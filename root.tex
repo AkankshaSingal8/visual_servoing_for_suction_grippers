@@ -1,0 +1,710 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{booktabs}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+
+\begin{document}
+
+\title{Precise Visual Servoing for Suction Cup Grippers Using Foundation Model Segmentation}
+
+\author{Akanksha Singal,~\IEEEmembership{Robotics Institute,~CMU}
+\thanks{This work was carried out as part of an independent study in the Master of Science
+in Computer Vision program at Carnegie Mellon University's Robotics Institute under the
+supervision of Prof.\ Jeffrey Ichnowski, Momentum Robotics Lab.}}
+
+\markboth{IEEE Robotics and Automation Letters}%
+{Singal: Precise Visual Servoing for Suction Cup Grippers}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+TODO: Write abstract after experiments are complete.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Visual servoing, suction grasping, image-based visual servoing, foundation models,
+SAM3, object segmentation, xArm, ZED Mini.
+\end{IEEEkeywords}
+
+
+% =========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+TODO: Write introduction after results are available.
+
+
+% =========================================================================
+\section{Related Work}
+\label{sec:related}
+
+TODO: Write related work section.
+
+
+% =========================================================================
+\section{System Overview}
+\label{sec:system}
+
+The proposed system performs image-based visual servoing (IBVS) using a
+6-DOF xArm manipulator equipped with a ZED Mini stereo camera mounted
+rigidly on the tool flange in an eye-in-hand configuration. The camera
+captures frames at HD720 resolution ($1280 \times 720$ pixels). The system
+operates in two sequential phases: (i) a far-range approach phase driven by
+SAM3 open-vocabulary segmentation, and (ii) a close-range last-mile phase that
+switches to a multi-signal fusion estimator when the target occupies a
+sufficiently large portion of the image and is within the reliable stereo
+depth range.
+
+Robot motion commands are issued via the xArm Python SDK at a maximum
+rate of one command every $0.3$\,s, with a TCP speed limit of
+$150$\,mm\,s$^{-1}$ and an acceleration limit of $500$\,mm\,s$^{-2}$.
+
+
+% =========================================================================
+\section{Methodology}
+\label{sec:method}
+
+% -------------------------------------------------------------------------
+\subsection{Image-Based Visual Servo Control Law}
+\label{sec:ibvs}
+
+The system employs a decoupled image-based proportional controller.
+Let $(u_c, v_c)$ denote the pixel coordinates of the estimated target
+centroid and $(W/2,\,H/2)$ the image center, where $W=1280$ and $H=720$.
+The image-plane error is
+\begin{equation}
+  e_x = u_c - W/2, \qquad e_y = v_c - H/2.
+  \label{eq:pixerr}
+\end{equation}
+The robot end-effector (EE) displacement commanded at each servo step is:
+\begin{align}
+  \Delta x &= 3.0\ \text{mm} \quad \text{(constant forward approach)},
+  \label{eq:dx}\\
+  \begin{bmatrix}\Delta y \\ \Delta z\end{bmatrix}
+  &= -\alpha\,\hat{\mathbf{J}}^{+}_{yz}
+     \begin{bmatrix}e_x \\ e_y\end{bmatrix},
+  \label{eq:dyz}
+\end{align}
+where $\alpha = 0.5$ is a fixed control gain and $\hat{\mathbf{J}}^{+}_{yz}$
+is the Moore--Penrose pseudoinverse of the estimated $2\times2$ image Jacobian
+(Section~\ref{sec:jacobian}). The lateral commands are saturated to
+$|\Delta y|, |\Delta z| \leq 12.0$\,mm per step.
+The lateral correction in~\eqref{eq:dyz} is applied only when the radial
+pixel error $\lVert\mathbf{e}\rVert_2 > 15$\,px (the dead zone); within this
+dead zone, $\Delta y = \Delta z = 0$ while the forward approach~\eqref{eq:dx}
+continues.  A safety floor clamps the Z coordinate of the EE to
+$z_{\text{EE}} \geq 0$\,mm in the robot base frame.
+
+% -------------------------------------------------------------------------
+\subsection{Online Jacobian Calibration}
+\label{sec:jacobian}
+
+The image Jacobian $\hat{\mathbf{J}}_{yz}$ relates a millimetre-scale robot
+translation in the lateral plane to the resulting pixel displacement in the
+image, and is calibrated once at the start of each trial via small
+perturbations. For each lateral axis $k \in \{Y, Z\}$:
+\begin{enumerate}
+  \item Capture frame $\mathbf{I}_{\text{before}}$ at the current EE pose.
+  \item Translate the EE by $\delta = 8.0$\,mm along axis $k$ at
+        $30$\,mm\,s$^{-1}$ and $100$\,mm\,s$^{-2}$.
+  \item Wait $1.5$\,s for vibration to settle.
+  \item Capture frame $\mathbf{I}_{\text{after}}$.
+  \item Return the EE to the original pose.
+  \item Compute the median optical flow displacement $(dp_x, dp_y)$ between
+        $\mathbf{I}_{\text{before}}$ and $\mathbf{I}_{\text{after}}$ using
+        pyramidal Lucas--Kanade tracking on up to 300 Shi--Tomasi corner
+        features (minimum distance 8\,px, quality level 0.01).
+  \item Set the $k$-th column of $\hat{\mathbf{J}}_{yz}$ to
+        $[dp_x/\delta,\ dp_y/\delta]^T$.
+\end{enumerate}
+If the resulting Jacobian has rank zero (optical flow failure), the system
+falls back to approach-only mode ($\Delta y = \Delta z = 0$). If rank is 1,
+partial lateral control is available via the pseudoinverse.
+
+% -------------------------------------------------------------------------
+\subsection{Far-Range Phase: SAM3 Segmentation and Target Tracking}
+\label{sec:sam3}
+
+During the far-range approach, the target is detected and segmented on every
+camera frame using SAM3 (Segment Anything Model~3), loaded from the
+\texttt{facebook/sam3} checkpoint via the HuggingFace Transformers library.
+SAM3 performs Promptable Concept Segmentation (PCS), jointly detecting and
+segmenting all instances of a concept in a single forward pass from the text
+prompt ``\texttt{box}''.
+
+An instance is accepted if its score exceeds $\tau_s = 0.50$ and its mask
+probability exceeds $\tau_m = 0.50$. If no detection passes these thresholds,
+a permissive retry is executed with $\tau_s = 0.30$ and $\tau_m = 0.40$.
+Non-maximum suppression (IoU threshold 0.45) is applied to the resulting set
+of candidate bounding boxes, after which instances with bounding-box area
+below $0.3\%$ or above $75\%$ of the image area, or with aspect ratio
+exceeding 8:1, are discarded.
+
+\subsubsection{Reference-Guided Disambiguation}
+\label{sec:disambiguation}
+
+When SAM3 returns multiple instances, the target box is selected by a
+composite score that combines visual similarity to a pre-captured reference
+image, positional preference for boxes appearing near the top of the image
+(which corresponds to the top of a stack), SAM3 detection confidence, and
+temporal proximity to the prior centroid:
+\begin{equation}
+  s = 0.50\,s_{\text{sim}} + 0.15\,s_{\text{pos}} + 0.10\,s_{\text{conf}}
+      + 0.25\,s_{\text{prox}},
+  \label{eq:disambig}
+\end{equation}
+where:
+\begin{itemize}
+  \item $s_{\text{sim}}$ is the cosine similarity between the L2-normalised
+        512-dimensional ResNet-18 feature vector (penultimate
+        average-pooling layer, ImageNet pretrained) extracted from the
+        candidate crop and a reference feature vector computed offline from
+        a single reference image of the target box type;
+  \item $s_{\text{pos}} = 1 - v_c / H$ favours instances whose vertical
+        centre is higher in the image (i.e., closer to the top face of a
+        stacked box);
+  \item $s_{\text{conf}}$ is the raw SAM3 instance confidence score;
+  \item $s_{\text{prox}} = \max(0,\, 1 - d\,/\,(0.25\max(H,W)))$ is the
+        normalised proximity of the candidate centre to the centroid
+        detected in the previous frame, providing temporal continuity.
+\end{itemize}
+When no reference image is provided, the weights collapse to
+$s_{\text{pos}}:s_{\text{conf}}:s_{\text{prox}} = 0.50:0.25:0.25$.
+
+\subsubsection{Grasp-Point Estimation}
+\label{sec:centroid}
+
+The target centroid --- used as the error signal $\mathbf{e}$ in
+\eqref{eq:pixerr} --- is the rotated-rectangle centre of the largest
+contour of the morphologically closed binary mask (structuring element:
+$15\times15$ rectangle, 2 iterations). If the rectangle centre falls outside
+the mask, the convex hull centroid is used as a fallback; if that also fails,
+the standard image-moment centroid is used.
+
+\subsubsection{Mask Stability and IoU-Drift Detection}
+\label{sec:tracker}
+
+Frame-to-frame mask stability is tracked via the intersection-over-union (IoU)
+between consecutive masks. An IoU below 0.35 on a frame that used the
+prior bounding box as a SAM3 prompt forces a full open-vocabulary redetection
+on the next frame. An anchor mask is locked when IoU $\geq 0.82$ is sustained
+for five consecutive frames; the anchor is used as a stable spatial reference
+for redetection after tracking loss.
+
+A centroid jump exceeding 80\,px between consecutive servo frames is treated
+as a spurious detection and the step is skipped without issuing a robot command.
+
+% -------------------------------------------------------------------------
+\subsection{Last-Mile Phase: Multi-Signal Fusion}
+\label{sec:lastmile}
+
+As the camera approaches the target, the bounding box eventually exceeds the
+image border, causing the mask centroid to drift toward whichever side of the
+object remains visible. To maintain accurate target tracking under this
+partial-framing condition, the system switches to a multi-signal fusion
+estimator implemented in \texttt{servo\_lastmile.py}. The estimator operates
+as a discrete state machine with four states: \textsc{far}, \textsc{lock},
+\textsc{near}, and \textsc{terminal}.
+
+\subsubsection{FAR State}
+
+In the \textsc{far} state, the system runs the same SAM3 pipeline described
+in Section~\ref{sec:sam3} on every frame and evaluates the lock-transition
+criterion on each detection.
+
+\subsubsection{Lock Transition}
+
+A transition from \textsc{far} to \textsc{lock} is triggered when all of the
+following conditions hold for three consecutive frames:
+\begin{itemize}
+  \item The bounding box does not touch the image border (margin: 8\,px, and
+        5\% of the corresponding image dimension);
+  \item The bounding box occupies between $5\%$ and $25\%$ of the total image
+        area;
+  \item The depth at the mask centroid, $z_{\text{lock}}$, satisfies
+        $150 \leq z_{\text{lock}} \leq 400$\,mm.
+\end{itemize}
+Upon lock, a \texttt{LockState} object is captured containing: the binary
+mask, the 2-D centroid, the bounding box, an image crop (bounding box padded
+by $10\%$ on each side), the depth $z_{\text{lock}}$, the 4$\times$4
+homogeneous EE pose $\mathbf{T}_{\text{base,ee}}$, and the 3-D centroid
+in the robot base frame $\mathbf{p}_{\text{base}}$.
+
+The locked 3-D centroid is computed from the camera-frame coordinates:
+\begin{equation}
+  \mathbf{p}_{\text{cam}} =
+    \begin{bmatrix}
+      (u_c - c_x)\,z_{\text{lock}} / f_x \\
+      (v_c - c_y)\,z_{\text{lock}} / f_y \\
+      z_{\text{lock}}
+    \end{bmatrix},
+  \label{eq:backproject}
+\end{equation}
+\begin{equation}
+  \mathbf{p}_{\text{base}} =
+    \mathbf{T}_{\text{base,ee}}\,\mathbf{T}_{\text{ee,cam}}\,
+    \tilde{\mathbf{p}}_{\text{cam}},
+  \label{eq:transform}
+\end{equation}
+where $(f_x, f_y, c_x, c_y)$ are the ZED Mini camera intrinsics,
+$\mathbf{T}_{\text{ee,cam}}$ is the hand-eye calibration matrix (camera pose
+in the EE frame), and $\tilde{\mathbf{p}}_{\text{cam}}$ denotes the
+homogeneous coordinate of $\mathbf{p}_{\text{cam}}$.
+
+CoTracker3 is also initialised at lock with 80 uniformly sampled points
+inside the lock mask, using a fixed random seed.
+
+\subsubsection{NEAR State: Four-Signal Fusion}
+
+In the \textsc{near} state, four parallel signals produce candidate centroid
+estimates that are fused via a weighted geometric median:
+
+\textbf{Signal A --- Locked-3D Projection.}
+The frozen base-frame centroid $\mathbf{p}_{\text{base}}$ is re-projected
+into the current image frame using the live EE pose:
+\begin{equation}
+  \tilde{\mathbf{p}}_{\text{cam}}^{\text{now}}
+  = \bigl(\mathbf{T}_{\text{base,ee}}^{\text{now}}\,
+           \mathbf{T}_{\text{ee,cam}}\bigr)^{-1}
+    \tilde{\mathbf{p}}_{\text{base}},
+\end{equation}
+followed by pinhole projection. Signal~A is assigned weight $w_A = 1.0$
+when a hand-eye calibration is available, and $w_A = 0.0$ otherwise.
+
+\textbf{Signal B --- CoTracker3 with LK Fallback.}
+CoTracker3~Online (loaded from \texttt{facebookresearch/co-tracker} via
+\texttt{torch.hub}) propagates the 80 initialisation points forward in time.
+Points with predicted visibility below 0.5 are excluded; the signal centroid
+is the unweighted mean of all predicted positions (including off-frame
+extrapolations), and its weight equals the mean per-point visibility.
+When CoTracker3 is unavailable, Pyramidal Lucas--Kanade optical flow
+(21$\times$21 window, 3 pyramid levels, 30 iterations, $\varepsilon = 0.01$)
+is used as a fallback; a tracked point is considered visible if its LK
+status is~1, it lies within the image boundary, and its tracking residual
+is below 30\,px.
+
+\textbf{Signal C --- SAM2 Watchdog.}
+SAM2 (\texttt{sam2.1\_hiera\_large}) is initialised with the lock logit and
+the padded lock bounding box. On each subsequent frame, it predicts a mask
+and centroid; its weight is
+$w_C = \max\bigl(0,\,\min(0.4,\,s_{\text{SAM2}}\,(1 - r_{\text{border}}))
+\bigr)$,
+where $s_{\text{SAM2}}$ is the prediction score and $r_{\text{border}}$
+penalises masks that touch the image border. Signal~C acts primarily as a
+watchdog: if it disagrees with the fused estimate by more than 60\,px for
+five consecutive frames, an alarm is raised.
+
+\textbf{Signal D --- DINOv2 Best-Buddy Matching.}
+DINOv2 (\texttt{dinov2\_vits14}, ViT-S/14, patch size 14) embeds both the
+lock crop and the current frame into patch-level feature maps
+(L2-normalised). Bidirectional best-buddy matching retains a patch pair
+$(i,j)$ only if $j = \arg\max_k \langle f_i^{\text{ref}}, f_k^{\text{cur}}\rangle$
+and $i = \arg\max_k \langle f_j^{\text{cur}}, f_k^{\text{ref}}\rangle$
+simultaneously. Pairs with cosine similarity below 0.55 or when fewer than 8
+bidirectional matches survive are discarded. The signal centroid is the
+similarity-weighted mean of the matched patch centres in the current frame,
+and $w_D = \bar{s}_D \cdot \min(1,\,n/30)$, where $\bar{s}_D$ is the mean
+matched similarity and $n$ the number of valid matches.
+
+\textbf{Fusion.}
+The four signal estimates and weights are combined via the Weiszfeld weighted
+geometric median (12 Weiszfeld iterations, convergence threshold
+$\varepsilon = 10^{-3}$). If Signal~A is available and the fused result
+deviates from Signal~A by more than 80\,px, the fused estimate is overridden
+by Signal~A.
+
+\subsubsection{TERMINAL State}
+\label{sec:terminal}
+
+A transition to the \textsc{terminal} state is triggered when either the
+depth at the fused centroid drops below $30$\,mm or the fused pixel error
+$\lVert\mathbf{e}\rVert_2 < 8$\,px. In the terminal state, a RANSAC plane
+fit is applied to a $100\times100$\,px depth patch centred on the fused
+centroid (100 iterations, 4\,mm inlier threshold). The fitted plane normal
+provides the final approach direction for contact.
+
+
+% =========================================================================
+\section{Baseline Methods for Ablation}
+\label{sec:baselines}
+
+To evaluate the contribution of each component, the following baseline
+variants are compared against the proposed SAM3 pipeline.
+
+\subsection{GroundingDINO + SAM2}
+\label{sec:gdino}
+
+This baseline, implemented in \texttt{servo\_pipeline.py} with
+\texttt{DETECTOR=gdino}, uses GroundingDINO for open-vocabulary bounding-box
+detection followed by SAM2 for instance segmentation. The text prompt
+``\texttt{box}'' is expanded to ``\texttt{box. object. thing.}'' to
+improve recall. Detection thresholds are $\tau_{\text{box}} = 0.25$ and
+$\tau_{\text{text}} = 0.25$; a permissive retry at $0.15$ is executed when
+the first pass returns no detections.
+
+SAM2 (\texttt{sam2.1\_hiera\_large}) is conditioned on the selected bounding
+box and its geometric centre as a positive point prompt, with
+\texttt{multimask\_output=False}. Full GroundingDINO redetection runs every
+30 frames; between redetections, the prior bounding box is forwarded as a
+SAM2 input without re-querying GroundingDINO.
+
+\subsection{OWLv2 + SAM2}
+\label{sec:owlv2}
+
+A second variant in \texttt{servo\_pipeline.py} replaces GroundingDINO with
+OWLv2 (\texttt{DETECTOR=owlv2}), which supports an optional image-guided
+detection mode: the reference crop is passed alongside the text prompt to
+bias detection toward instances visually similar to the reference.
+The SAM2 segmentation stage and servo control law are identical to the
+GroundingDINO baseline.
+
+\subsection{DINOv2 with Color Similarity}
+\label{sec:dinov2color}
+
+Implemented in \texttt{variants/dinov2\_servo\_color.py}, this variant
+replaces the text-prompted detector with DINOv2 patch-feature matching
+augmented by colour similarity. Candidate patches are ranked by a combined
+score of DINOv2 cosine similarity and colour histogram overlap
+($w_{\text{color}} = 0.7$ for colour). The 93rd-percentile similarity
+threshold is used for acceptance. SAM2 segmentation and the same servo
+control law are retained.
+
+\subsection{DINOv2 with SAM2 Logit Propagation}
+\label{sec:dinov2sam2track}
+
+Implemented in \texttt{variants/sam2\_tracking\_opencv.py}, this variant
+separates a \textsc{detect} phase (DINOv2 ViT-B/14 + SAM2 single-frame
+prediction) from a \textsc{track} phase (SAM2 logit propagation across
+consecutive frames without re-running DINOv2). Redetection is triggered
+when the SAM2 score drops below a threshold, the mask area changes by more
+than a factor of three, or a fixed number of frames have elapsed. The servo
+control law is unchanged.
+
+
+% =========================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Hardware Setup}
+\label{sec:hardware}
+
+All experiments are conducted on a UFacory xArm (6-DOF) mounted to a
+fixed tabletop, connected at IP \texttt{192.168.1.241}.  A ZED Mini stereo
+camera is mounted rigidly on the tool flange in an eye-in-hand configuration.
+Images are captured at HD720 resolution ($1280\times720$ pixels, 30\,fps).
+When the ZED SDK (PyZED) is available, camera frames are obtained via the
+native PyZED interface and raw SVO2 recordings are saved automatically.
+When PyZED is unavailable, the left half of the $2560\times720$
+OpenCV stereo frame is used and lens distortion is corrected using the ZED
+factory calibration parameters loaded from the on-disk serial-number
+configuration file.
+
+\subsection{Ground Truth Measurement Protocol}
+\label{sec:gt}
+
+Alignment error is measured using an ArUco marker~\cite{} placed at the
+geometric centre of the target box's top face. The marker dictionary is
+\texttt{DICT\_4X4\_50} with marker side length 30\,mm. The ground-truth
+procedure is as follows.
+
+\subsubsection{Phase 1: Ground Truth Capture}
+
+The \emph{marked} box (with the ArUco marker affixed) is placed at the
+target location. The xArm is moved to the trial starting pose. A burst of
+five consecutive ZED frames is captured; ArUco corners are detected in each
+frame using \texttt{cv2.aruco.ArucoDetector} and the 3-D marker pose is
+estimated via \texttt{cv2.aruco.estimatePoseSingleMarkers} with the ZED
+factory intrinsics $(f_x, f_y, c_x, c_y)$. The marker translation vectors
+are averaged across detected frames to reduce single-frame noise, then
+transformed to the robot base frame:
+\begin{equation}
+  \mathbf{p}^{\text{gt}}_{\text{base}}
+  = \mathbf{T}_{\text{base,ee}}\,\mathbf{T}_{\text{ee,cam}}\,
+    \tilde{\mathbf{p}}^{\text{gt}}_{\text{cam}},
+  \label{eq:gt_transform}
+\end{equation}
+where $\mathbf{T}_{\text{base,ee}}$ is the live forward-kinematics pose at
+the moment of capture.
+
+\subsubsection{Phase 2: Servoing Trial}
+
+The marked box is replaced by a physically identical \emph{unmarked} box
+placed in the same footprint. The xArm is returned to the trial starting pose.
+The SAM3 servo pipeline (\texttt{servo\_pipeline\_sam3\_exp1.py}) is launched
+with \texttt{--convergence-output} set to the trial output directory.
+The operator enables servoing by pressing \textbf{v} in the OpenCV display
+window. The pipeline runs until convergence is detected: the radial pixel
+error $\lVert\mathbf{e}\rVert_2 \leq 15$\,px (the dead zone) for five
+consecutive servo steps. Upon convergence, the final EE pose is read from
+the xArm SDK (\texttt{arm.get\_position()}) and written atomically to
+\texttt{final\_position.json}; the pipeline then exits automatically.
+
+\subsection{Evaluation Metrics}
+\label{sec:metrics}
+
+From the pair $(\mathbf{p}^{\text{gt}}_{\text{base}},
+\mathbf{p}^{\text{final}}_{\text{base}})$, three alignment error components
+are computed:
+\begin{align}
+  \varepsilon_{3D} &= \lVert \mathbf{p}^{\text{final}} -
+                             \mathbf{p}^{\text{gt}} \rVert_2, \\
+  \varepsilon_{\text{lat}} &= \sqrt{(\Delta y)^2 + (\Delta z)^2}, \\
+  \varepsilon_{\text{depth}} &= |\Delta x|,
+\end{align}
+where $x$ is the forward axis (toward the box), $y$ and $z$ are the lateral
+axes in the xArm base frame. Lateral error $\varepsilon_{\text{lat}}$
+quantifies planar alignment of the EE above the box centre.
+
+Convergence time $t_{\text{conv}}$ is the wall-clock duration from the first
+enabled servo step to the fifth consecutive in-zone frame. Path length
+$\ell$ is the cumulative Euclidean distance of the EE trajectory
+$\sum_{i=1}^{N-1} \lVert \mathbf{p}_i - \mathbf{p}_{i-1} \rVert_2$.
+
+\subsection{Trial Design}
+\label{sec:trial_design}
+
+The experiment follows a full factorial design:
+\begin{center}
+\begin{tabular}{ll}
+  Box types ($\mathcal{B}$):    & B1--B5 \quad (5 types)  \\
+  Configurations ($\mathcal{C}$): & C1--C4 \quad (4 configs) \\
+  Starting poses ($\mathcal{P}$): & P1--P3 \quad (3 poses)  \\
+  Trials per cell:              & 10                        \\
+  \midrule
+  Total trials:                 & $5\times4\times3\times10 = 600$
+\end{tabular}
+\end{center}
+
+Box types are summarised in Table~\ref{tab:boxes};
+configurations in Table~\ref{tab:configs};
+starting poses in Table~\ref{tab:poses}.
+
+\begin{table}[h]
+  \centering
+  \caption{Box Types}
+  \label{tab:boxes}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    ID & Description & Test purpose \\
+    \midrule
+    B1 & Plain brown cardboard             & Baseline, minimal texture \\
+    B2 & Printed graphics on all faces     & Confusion with surface print \\
+    B3 & Glossy / laminated surface        & Specular reflection \\
+    B4 & Dark (black or dark blue)         & Low-contrast segmentation \\
+    B5 & Small form factor (phone-sized)   & Small-target precision \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Stack Configurations}
+  \label{tab:configs}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    ID & Description         & Stack height \\
+    \midrule
+    C1 & Single box on table & 1 \\
+    C2 & Two identical boxes & 2 \\
+    C3 & Three identical boxes & 3 \\
+    C4 & Two different boxes (target on top) & 2 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Starting Poses}
+  \label{tab:poses}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    ID & Description                            & Approx.\ standoff \\
+    \midrule
+    P1 & Centred above, large standoff          & $\sim$400\,mm \\
+    P2 & Left-offset, medium standoff           & $\sim$200\,mm \\
+    P3 & Right-offset, close standoff           & $\sim$150\,mm \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Results}
+\label{sec:results}
+
+Table~\ref{tab:main_results} reports the primary alignment and timing metrics
+aggregated over 10 trials per cell (starting poses pooled). Values will be
+filled after data collection.
+
+\begin{table*}[t]
+  \centering
+  \caption{Table~I: Servoing Precision Across Box Types and Configurations
+           (mean $\pm$ std, $N=10$ per cell, starting poses pooled).
+           $\varepsilon_{\text{lat}}$: lateral error (mm);
+           $\varepsilon_{\text{depth}}$: depth error (mm);
+           $\varepsilon_{3D}$: 3-D Euclidean error (mm);
+           $t_{\text{conv}}$: convergence time (s).}
+  \label{tab:main_results}
+  \begin{tabular}{@{}llcccc@{}}
+    \toprule
+    Box & Config
+      & $\varepsilon_{\text{lat}}$\,(mm)
+      & $\varepsilon_{\text{depth}}$\,(mm)
+      & $\varepsilon_{3D}$\,(mm)
+      & $t_{\text{conv}}$\,(s) \\
+    \midrule
+    B1 & C1 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B1 & C2 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B1 & C3 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B1 & C4 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B2 & C1 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B2 & C2 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B2 & C3 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B2 & C4 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B3 & C1 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B3 & C2 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B3 & C3 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B3 & C4 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B4 & C1 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B4 & C2 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B4 & C3 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B4 & C4 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B5 & C1 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B5 & C2 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B5 & C3 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    B5 & C4 & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    \midrule
+    ALL & ALL & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- & ---\,$\pm$\,--- \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+Table~\ref{tab:perception_results} reports per-condition perception quality
+metrics averaged over all trials.
+
+\begin{table*}[t]
+  \centering
+  \caption{Table~II: Perception Metrics Per Condition
+           (mean over all trials per cell).
+           Det.\ Recall: fraction of servo frames with at least one valid
+           SAM3 detection;
+           Sim.: mean ResNet-18 cosine similarity between chosen crop and
+           reference image.}
+  \label{tab:perception_results}
+  \begin{tabular}{@{}llcc@{}}
+    \toprule
+    Box & Config & Det.\ Recall\,(\%) & Similarity \\
+    \midrule
+    B1 & C1 & --- & --- \\
+    B1 & C2 & --- & --- \\
+    B2 & C1 & --- & --- \\
+    B2 & C2 & --- & --- \\
+    B3 & C1 & --- & --- \\
+    B3 & C2 & --- & --- \\
+    B4 & C1 & --- & --- \\
+    B4 & C2 & --- & --- \\
+    B5 & C1 & --- & --- \\
+    B5 & C2 & --- & --- \\
+    \midrule
+    ALL & ALL & --- & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+
+% =========================================================================
+\section{Open Questions and Assumptions}
+\label{sec:assumptions}
+
+The following assumptions and unresolved technical points are identified in
+the current implementation.
+
+\subsection{Hand-Eye Calibration}
+
+Equations~\eqref{eq:transform} and~\eqref{eq:gt_transform} require the
+hand-eye matrix $\mathbf{T}_{\text{ee,cam}}$ relating the ZED Mini optical
+frame to the xArm tool-centre-point frame. This calibration has not yet been
+performed. In the current implementation, $\mathbf{T}_{\text{ee,cam}}$ defaults
+to the $4\times4$ identity matrix, which is valid only if the camera frame
+and tool frame are co-located and co-aligned. Any physical offset or rotation
+of the camera mount introduces a systematic bias in ground-truth
+measurements~\eqref{eq:gt_transform} and disables Signal~A in the last-mile
+fusion (Section~\ref{sec:lastmile}). Hand-eye calibration must be performed
+before quantitative 3-D alignment results can be reported.
+
+\subsection{Depth Source for the Last-Mile Phase}
+
+The last-mile pipeline (\texttt{servo\_lastmile.py}) relies on metric
+depth values in millimetres to evaluate the lock-transition depth criterion
+($150 \leq z \leq 400$\,mm) and the terminal condition ($z < 30$\,mm), as
+well as to back-project the centroid to 3-D via~\eqref{eq:backproject}.
+When PyZED is available, metric stereo depth is provided directly by the
+ZED SDK. The far-range SAM3 pipeline also uses Depth-Anything-V2
+(ViT-Small encoder) for depth inference; however, Depth-Anything-V2
+produces relative, non-metric depth values that cannot be used directly
+for the millimetre-scale thresholds in the last-mile state machine
+without additional scale calibration.
+
+\subsection{xArm Base Frame Axis Convention}
+
+The alignment error decomposition in Section~\ref{sec:metrics} assigns the
+$x$-axis to the forward direction (toward the box), and $y$, $z$ to the
+lateral plane. The xArm SDK reports EE positions in its own base frame whose
+axis convention must be verified empirically for the specific table mounting
+used in experiments.
+
+\subsection{Two-Box Swap Ground Truth Error Floor}
+
+The ground truth protocol (Section~\ref{sec:gt}) replaces the marked box
+with a physically identical unmarked box. Any positional error in placing the
+unmarked box in the same footprint as the marked box contributes a systematic
+offset to the measured alignment error. This placement repeatability error
+constitutes the ground-truth error floor and should be characterised
+independently before reporting results.
+
+\subsection{Integration of Far-Range and Last-Mile Phases}
+
+In the current codebase, the SAM3 far-range pipeline
+(\texttt{servo\_pipeline\_sam3.py}) and the last-mile multi-signal fusion
+pipeline (\texttt{servo\_lastmile.py}) are implemented as separate scripts.
+The experiment in Section~\ref{sec:experiments} evaluates only the SAM3
+far-range phase. Integration of the two phases into a single continuous
+pipeline (with an automatic handoff at the LOCK transition) is a planned
+but not yet implemented step.
+
+\subsection{Servo Update Rate and SAM3 Latency}
+
+The minimum inter-command interval is $0.3$\,s, giving a maximum control
+rate of approximately $3.3$\,Hz. SAM3 is queried on every camera frame
+(REDETECT\_INTERVAL\,=\,1), meaning that the effective control rate is
+limited by SAM3 inference time in addition to the $0.3$\,s floor. On
+the GPU used in experiments (unspecified at time of writing), SAM3 inference
+latency has not yet been characterised.
+
+
+% =========================================================================
+\section*{Acknowledgments}
+I would like to thank Prof.\ Jeffrey Ichnowski for his invaluable guidance,
+technical insight, and consistent support throughout this project. His
+mentorship at the Momentum Robotics Lab has been central in shaping both the
+research direction and the system design presented in this work.
+The author also thanks the members of the Momentum Robotics Lab for their
+helpful discussions and feedback during development. Access to the xArm
+manipulator, ZED Mini stereo camera, and associated lab infrastructure was
+essential to the real-world experiments reported here.
+This work was carried out as part of an independent study in the Master of
+Science in Computer Vision program at Carnegie Mellon University's Robotics
+Institute.
+
+\vfill
+
+\end{document}
