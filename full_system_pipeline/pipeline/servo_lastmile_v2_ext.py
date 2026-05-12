@@ -49,6 +49,7 @@ try:
         _run_zed_loop,
         _run_opencv_loop,
         DEFAULT_INTRINSICS,
+        gaussian_mask_samples,
     )
 except ImportError:
     from servo_lastmile_v2 import (
@@ -69,6 +70,7 @@ except ImportError:
         _run_zed_loop,
         _run_opencv_loop,
         DEFAULT_INTRINSICS,
+        gaussian_mask_samples,
     )
 
 try:
@@ -85,6 +87,10 @@ except ImportError:
             return make_default_sam3_runner(ref_image, prompt)
 
 log = logging.getLogger("lastmile_v2_ext")
+
+# More tracking points than the base 80 — Gaussian-biased near grasp centroid.
+# Higher density keeps more points in-frame as the object exits the border.
+EXT_COTRACKER_INIT_POINTS = 150
 
 
 # ---------------------------------------------------------------------------
@@ -127,6 +133,23 @@ class LastMilePipelineV2Ext(LastMilePipelineV2):
         super().__init__(*args, **kwargs)
         self.detector_name = detector_name
         log.info("LastMilePipelineV2Ext: detector_name=%s", detector_name)
+
+    def _enter_lock(self, frame_bgr: np.ndarray, sam3_result: dict,
+                    depth_map: np.ndarray | None):
+        lock = super()._enter_lock(frame_bgr, sam3_result, depth_map)
+        if lock is None:
+            return None
+        # Replace the base uniform-80 seed with a Gaussian-150 seed.
+        # Gaussian bias keeps density near the grasp centroid; more points
+        # means CoTracker3 retains coverage longer as the box exits the frame.
+        mask = lock.mask_uint8
+        rng = np.random.default_rng(42)
+        lock.init_points = gaussian_mask_samples(
+            mask, EXT_COTRACKER_INIT_POINTS, sigma_frac=0.30, rng=rng)
+        self.signal_B.reset(lock, frame_bgr)
+        log.info("LOCK (ext): reseeded CoTracker3 with %d gaussian points",
+                 lock.init_points.shape[0])
+        return lock
 
     def step(self, frame_bgr: np.ndarray) -> dict:
         res = super().step(frame_bgr)
