@@ -36,9 +36,7 @@ try:
         run_offline_v2,
         _build_argparser,
         _serialize_result_v2,
-        _make_overlay_v2,
         VideoRecorder,
-        _process_offline_frame_v2,
         _setup_logger,
         _init_debug_dir,
         _finalize_debug_dir,
@@ -58,9 +56,7 @@ except ImportError:
         run_offline_v2,
         _build_argparser,
         _serialize_result_v2,
-        _make_overlay_v2,
         VideoRecorder,
-        _process_offline_frame_v2,
         _setup_logger,
         _init_debug_dir,
         _finalize_debug_dir,
@@ -295,17 +291,31 @@ def run_offline_v2_ext(args: argparse.Namespace,
                     ok, frame = cap.read()
                     if not ok:
                         break
-                    n = _process_offline_frame_v2(
-                        pipeline, frame, n, path, out_dir,
-                        fh, args, debug_dir, recorder)
+                    res = pipeline.step(frame)
+                    fh.write(json.dumps(_serialize_result_v2(res)) + "\n")
+                    fh.flush()
+                    overlay = _make_overlay_ext(frame, res)
+                    recorder.write(frame, overlay)
+                    if not getattr(args, "no_overlays", False):
+                        cv2.imwrite(os.path.join(out_dir, f"overlay_{n:06d}.png"), overlay)
+                    if debug_dir is not None:
+                        _dump_debug_frame(debug_dir, n, frame, res, overlay, path)
+                    n += 1
                 cap.release()
             else:
                 frame = cv2.imread(path)
                 if frame is None:
                     continue
-                n = _process_offline_frame_v2(
-                    pipeline, frame, n, path, out_dir,
-                    fh, args, debug_dir, recorder)
+                res = pipeline.step(frame)
+                fh.write(json.dumps(_serialize_result_v2(res)) + "\n")
+                fh.flush()
+                overlay = _make_overlay_ext(frame, res)
+                recorder.write(frame, overlay)
+                if not getattr(args, "no_overlays", False):
+                    cv2.imwrite(os.path.join(out_dir, f"overlay_{n:06d}.png"), overlay)
+                if debug_dir is not None:
+                    _dump_debug_frame(debug_dir, n, frame, res, overlay, path)
+                n += 1
 
     recorder.release()
     log.info("Wrote %d frame summaries to %s", n, jsonl_path)
@@ -504,10 +514,7 @@ def run_live_v2_ext(args: argparse.Namespace,
                     terminal_error["error_xyz_mm"],
                 )
 
-        _TILT_KEYS = ("tilt_deg", "roll_deg", "pitch_deg",
-                      "near_plane_normal", "near_plane_n_inliers", "_tilt")
-        res_no_tilt = {k: v for k, v in res.items() if k not in _TILT_KEYS}
-        overlay = _make_overlay_v2(frame_bgr, res_no_tilt)
+        overlay = _make_overlay_ext(frame_bgr, res)
 
         if show_window:
             try:
