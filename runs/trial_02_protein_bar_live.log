@@ -1,0 +1,1195 @@
+18:28:14 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260510_182814.log
+18:28:14 [INFO ] ======================================================================
+18:28:14 [INFO ] servo_lastmile_v2_ext starting
+18:28:14 [INFO ]   detector=sam3  prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+18:28:14 [INFO ]   offline=False  debug=False  dry-run=False  no-robot=False
+18:28:14 [INFO ] ======================================================================
+18:28:14 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+SDK_VERSION: 1.17.3
+ROBOT_IP: 192.168.1.241, VERSION: v2.5.5, PROTOCOL: V1, DETAIL: 7,7,XS1305,MC1303,v2.5.5, TYPE1300: [1, 1]
+change protocol identifier to 3
+[motion_enable], xArm is not ready to move
+[set_state], xArm is ready to move
+18:28:15 [INFO ] Robot connected: 192.168.1.241
+18:28:15 [INFO ] Home position captured: [181.3, -7.5, -48.6] mm
+18:28:15 [INFO ] Processing reference image ...
+Loading weights:   0%|          | 0/1468 [00:00<?, ?it/s]Loading weights:  95%|█████████▌| 1401/1468 [00:00<00:00, 14005.14it/s]Loading weights: 100%|██████████| 1468/1468 [00:00<00:00, 14005.28it/s]
+18:28:19 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+18:28:19 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:19 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+18:28:20 [INFO ] Feature extractor (ResNet-18) loaded
+18:28:20 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:28:20 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+18:28:20 [INFO ] LastMilePipelineV2Ext: detector_name=sam3
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+[2026-05-10 18:28:20 UTC][ZED][INFO] Logging level INFO
+[2026-05-10 18:28:22 UTC][ZED][INFO] [Init]  Camera successfully opened.
+[2026-05-10 18:28:22 UTC][ZED][INFO] [Init]  Camera FW version: 1523
+[2026-05-10 18:28:22 UTC][ZED][INFO] [Init]  Video mode: HD720@30
+[2026-05-10 18:28:22 UTC][ZED][INFO] [Init]  Serial Number: S/N 19668636
+[2026-05-10 18:28:22 UTC][ZED][WARNING] [Init]  PERFORMANCE is deprecated. Please update your configuration to use NEURAL instead.
+18:28:23 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:23 [INFO ] SAM3: 'box' score=0.98 @ [711 209 947 620]  (top of 1)  sim=0.914
+18:28:23 [INFO ] SAM3: mask obtained (score=0.976, area=94023 px)
+18:28:23 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:28:23 [INFO ] === Calibration: waiting for camera frame ===
+18:28:23 [INFO ] Home: [181.3, -7.5, -48.6] mm
+18:28:23 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+xFormers not available
+xFormers not available
+18:28:26 [INFO ]   [Y] returning home...
+18:28:26 [INFO ] frame=0 state=FAR       c=(830,413) z=475.6mm tilt=- tilt_corr=False
+18:28:27 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:27 [INFO ] SAM3: 'box' score=0.98 @ [737 207 978 619]  (top of 1)  sim=0.903
+18:28:27 [INFO ] SAM3: mask obtained (score=0.981, area=96338 px)
+18:28:27 [INFO ] frame=1 state=FAR       c=(859,411) z=474.1mm tilt=- tilt_corr=False
+18:28:27 [WARNING]   [Y] flow too small (0.00 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+18:28:27 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:27 [INFO ] SAM3: 'box' score=0.98 @ [722 208 961 619]  (top of 1)  sim=0.911
+18:28:27 [INFO ] SAM3: mask obtained (score=0.978, area=95035 px)
+18:28:27 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+Using cache found in /home/akanksha/.cache/torch/hub/facebookresearch_co-tracker_main
+18:28:30 [INFO ]   [Z] returning home...
+18:28:31 [WARNING]   [Z] flow too small (0.00 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+18:28:31 [INFO ] J_yz (px/mm):
+[[0. 0.]
+ [0. 0.]]
+18:28:31 [WARNING] J_yz rank=0 - approach-only mode.
+Using cache found in /home/akanksha/.cache/torch/hub/facebookresearch_dinov2_main
+18:28:42 [INFO ] Servo: err=(+203,+52)px r=209  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-50)  [skipped (no flow data)]
+18:28:42 [INFO ] frame=2 state=NEAR      c=(843,412) z=474.5mm tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=2 state=NEAR      c=(843,412) z=474.5mm tilt=- tilt_corr=False
+18:28:42 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:42 [INFO ] SAM3: 'box' score=0.98 @ [713 207 949 619]  (top of 1)  sim=0.915
+18:28:42 [INFO ] SAM3: mask obtained (score=0.977, area=93876 px)
+18:28:43 [INFO ] Servo: err=(+193,+52)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-51)  [skipped (no flow data)]
+18:28:43 [INFO ] frame=3 state=NEAR      c=(833,412) z=474.9mm tilt=3.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=3 state=NEAR      c=(833,412) z=474.9mm tilt=3.2° tilt_corr=False
+18:28:43 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:43 [INFO ] SAM3: 'box' score=0.98 @ [713 206 950 618]  (top of 1)  sim=0.915
+18:28:43 [INFO ] SAM3: mask obtained (score=0.975, area=94019 px)
+18:28:43 [INFO ] Servo: err=(+193,+51)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-52)  [skipped (no flow data)]
+18:28:43 [INFO ] frame=4 state=NEAR      c=(833,411) z=474.6mm tilt=3.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=4 state=NEAR      c=(833,411) z=474.6mm tilt=3.2° tilt_corr=False
+18:28:44 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:44 [INFO ] SAM3: 'box' score=0.98 @ [713 205 949 617]  (top of 1)  sim=0.916
+18:28:44 [INFO ] SAM3: mask obtained (score=0.976, area=94049 px)
+18:28:44 [INFO ] Servo: err=(+193,+50)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-53)  [skipped (no flow data)]
+18:28:44 [INFO ] frame=5 state=NEAR      c=(833,410) z=474.6mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=5 state=NEAR      c=(833,410) z=474.6mm tilt=2.5° tilt_corr=False
+18:28:44 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:44 [INFO ] SAM3: 'box' score=0.97 @ [713 203 950 615]  (top of 1)  sim=0.916
+18:28:44 [INFO ] SAM3: mask obtained (score=0.974, area=94140 px)
+18:28:44 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.989)
+18:28:45 [INFO ] Servo: err=(+193,+48)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-54)  [skipped (no flow data)]
+18:28:45 [INFO ] frame=6 state=NEAR      c=(833,408) z=474.8mm tilt=3.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=6 state=NEAR      c=(833,408) z=474.8mm tilt=3.3° tilt_corr=False
+18:28:45 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:45 [INFO ] SAM3: 'box' score=0.98 @ [713 202 950 615]  (top of 1)  sim=0.917
+18:28:45 [INFO ] SAM3: mask obtained (score=0.976, area=94378 px)
+18:28:45 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.993)
+18:28:45 [INFO ] Servo: err=(+193,+47)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-55)  [skipped (no flow data)]
+18:28:45 [INFO ] frame=7 state=NEAR      c=(833,407) z=474.4mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=7 state=NEAR      c=(833,407) z=474.4mm tilt=2.0° tilt_corr=False
+18:28:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:46 [INFO ] SAM3: 'box' score=0.98 @ [714 201 950 614]  (top of 1)  sim=0.916
+18:28:46 [INFO ] SAM3: mask obtained (score=0.975, area=94509 px)
+18:28:46 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.993)
+18:28:46 [INFO ] Servo: err=(+194,+47)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-56)  [skipped (no flow data)]
+18:28:46 [INFO ] frame=8 state=NEAR      c=(834,407) z=473.8mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=8 state=NEAR      c=(834,407) z=473.8mm tilt=2.0° tilt_corr=False
+18:28:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:46 [INFO ] SAM3: 'box' score=0.98 @ [714 201 951 614]  (top of 1)  sim=0.914
+18:28:46 [INFO ] SAM3: mask obtained (score=0.975, area=94536 px)
+18:28:47 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.997)
+[SDK][ERROR][2026-05-10 18:28:47][base.py:423] - - wait_feedback, xarm is stop, state=4
+18:28:47 [INFO ] Servo: err=(+194,+46)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:47 [INFO ] frame=9 state=NEAR      c=(834,406) z=473.6mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=9 state=NEAR      c=(834,406) z=473.6mm tilt=1.7° tilt_corr=False
+ControllerError, code: 22
+ERROR:origin.print:ControllerError, code: 22
+18:28:47 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:47 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:47 [INFO ] SAM3: mask obtained (score=0.976, area=94632 px)
+18:28:47 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.997)
+[SDK][ERROR][2026-05-10 18:28:47][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:47 [INFO ] Servo: err=(+194,+46)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:47 [INFO ] frame=10 state=NEAR      c=(834,406) z=473.5mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=10 state=NEAR      c=(834,406) z=473.5mm tilt=1.8° tilt_corr=False
+18:28:47 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:47 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:28:47 [INFO ] SAM3: mask obtained (score=0.975, area=94484 px)
+18:28:48 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.993)
+[SDK][ERROR][2026-05-10 18:28:48][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:48 [INFO ] Servo: err=(+193,+46)px r=199  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:48 [INFO ] frame=11 state=NEAR      c=(833,406) z=473.5mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=11 state=NEAR      c=(833,406) z=473.5mm tilt=2.1° tilt_corr=False
+18:28:48 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:48 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.910
+18:28:48 [INFO ] SAM3: mask obtained (score=0.976, area=94436 px)
+18:28:48 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:48][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:48 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:48 [INFO ] frame=12 state=NEAR      c=(833,406) z=473.5mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=12 state=NEAR      c=(833,406) z=473.5mm tilt=1.7° tilt_corr=False
+18:28:48 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:48 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:48 [INFO ] SAM3: mask obtained (score=0.975, area=94400 px)
+18:28:48 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:48][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:48 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:48 [INFO ] frame=13 state=NEAR      c=(833,406) z=473.4mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=13 state=NEAR      c=(833,406) z=473.4mm tilt=2.0° tilt_corr=False
+18:28:49 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:49 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:49 [INFO ] SAM3: mask obtained (score=0.978, area=94410 px)
+18:28:49 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:49][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:49 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:49 [INFO ] frame=14 state=NEAR      c=(833,406) z=473.5mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=14 state=NEAR      c=(833,406) z=473.5mm tilt=1.6° tilt_corr=False
+18:28:49 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:49 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:28:49 [INFO ] SAM3: mask obtained (score=0.977, area=94467 px)
+18:28:49 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:49][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:49 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:49 [INFO ] frame=15 state=NEAR      c=(833,406) z=473.4mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=15 state=NEAR      c=(833,406) z=473.4mm tilt=1.8° tilt_corr=False
+18:28:50 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:50 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:50 [INFO ] SAM3: mask obtained (score=0.976, area=94474 px)
+18:28:50 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:50][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:50 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:50 [INFO ] frame=16 state=NEAR      c=(833,406) z=473.4mm tilt=3.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=16 state=NEAR      c=(833,406) z=473.4mm tilt=3.5° tilt_corr=False
+18:28:50 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:50 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.915
+18:28:50 [INFO ] SAM3: mask obtained (score=0.975, area=94398 px)
+18:28:50 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:50][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:50 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:50 [INFO ] frame=17 state=NEAR      c=(833,406) z=473.4mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=17 state=NEAR      c=(833,406) z=473.4mm tilt=1.7° tilt_corr=False
+18:28:51 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:51 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:28:51 [INFO ] SAM3: mask obtained (score=0.978, area=94429 px)
+18:28:51 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:51][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:51 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:51 [INFO ] frame=18 state=NEAR      c=(833,406) z=473.4mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=18 state=NEAR      c=(833,406) z=473.4mm tilt=2.0° tilt_corr=False
+18:28:51 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:51 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:51 [INFO ] SAM3: mask obtained (score=0.976, area=94406 px)
+18:28:51 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:51][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:51 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:51 [INFO ] frame=19 state=NEAR      c=(833,406) z=473.3mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=19 state=NEAR      c=(833,406) z=473.3mm tilt=2.0° tilt_corr=False
+18:28:51 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:51 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:51 [INFO ] SAM3: mask obtained (score=0.976, area=94431 px)
+18:28:51 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:51][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:51 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:51 [INFO ] frame=20 state=NEAR      c=(833,406) z=473.3mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=20 state=NEAR      c=(833,406) z=473.3mm tilt=1.8° tilt_corr=False
+18:28:52 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:52 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:28:52 [INFO ] SAM3: mask obtained (score=0.976, area=94345 px)
+18:28:52 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:52][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:52 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:52 [INFO ] frame=21 state=NEAR      c=(833,406) z=473.3mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=21 state=NEAR      c=(833,406) z=473.3mm tilt=2.3° tilt_corr=False
+18:28:52 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:52 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.911
+18:28:52 [INFO ] SAM3: mask obtained (score=0.976, area=94397 px)
+18:28:52 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:52][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:52 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:52 [INFO ] frame=22 state=NEAR      c=(833,406) z=473.4mm tilt=2.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=22 state=NEAR      c=(833,406) z=473.4mm tilt=2.4° tilt_corr=False
+18:28:53 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:53 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:53 [INFO ] SAM3: mask obtained (score=0.976, area=94449 px)
+18:28:53 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:53][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:53 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:53 [INFO ] frame=23 state=NEAR      c=(833,406) z=473.4mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=23 state=NEAR      c=(833,406) z=473.4mm tilt=2.6° tilt_corr=False
+18:28:53 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:53 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:53 [INFO ] SAM3: mask obtained (score=0.974, area=94454 px)
+18:28:53 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:53][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:53 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:53 [INFO ] frame=24 state=NEAR      c=(833,406) z=473.3mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=24 state=NEAR      c=(833,406) z=473.3mm tilt=1.0° tilt_corr=False
+18:28:54 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:54 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:54 [INFO ] SAM3: mask obtained (score=0.976, area=94424 px)
+18:28:54 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:54][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:54 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:54 [INFO ] frame=25 state=NEAR      c=(833,406) z=473.4mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=25 state=NEAR      c=(833,406) z=473.4mm tilt=0.7° tilt_corr=False
+18:28:54 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:54 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:54 [INFO ] SAM3: mask obtained (score=0.975, area=94417 px)
+18:28:54 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:54][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:54 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:54 [INFO ] frame=26 state=NEAR      c=(833,406) z=473.4mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=26 state=NEAR      c=(833,406) z=473.4mm tilt=1.6° tilt_corr=False
+18:28:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:55 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.911
+18:28:55 [INFO ] SAM3: mask obtained (score=0.976, area=94399 px)
+18:28:55 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:55][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:55 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:55 [INFO ] frame=27 state=NEAR      c=(833,406) z=473.4mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=27 state=NEAR      c=(833,406) z=473.4mm tilt=1.0° tilt_corr=False
+18:28:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:55 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:55 [INFO ] SAM3: mask obtained (score=0.974, area=94456 px)
+18:28:55 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:55][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:55 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:55 [INFO ] frame=28 state=NEAR      c=(833,406) z=473.4mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=28 state=NEAR      c=(833,406) z=473.4mm tilt=1.8° tilt_corr=False
+18:28:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:56 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.911
+18:28:56 [INFO ] SAM3: mask obtained (score=0.976, area=94373 px)
+18:28:56 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:56][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:56 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:56 [INFO ] frame=29 state=NEAR      c=(833,406) z=473.4mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=29 state=NEAR      c=(833,406) z=473.4mm tilt=2.3° tilt_corr=False
+18:28:56 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:56 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:56 [INFO ] SAM3: mask obtained (score=0.976, area=94404 px)
+18:28:56 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:56][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:56 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:56 [INFO ] frame=30 state=NEAR      c=(833,406) z=473.4mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=30 state=NEAR      c=(833,406) z=473.4mm tilt=1.7° tilt_corr=False
+18:28:56 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:56 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:56 [INFO ] SAM3: mask obtained (score=0.975, area=94419 px)
+18:28:56 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:56][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:56 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:56 [INFO ] frame=31 state=NEAR      c=(833,406) z=473.4mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=31 state=NEAR      c=(833,406) z=473.4mm tilt=1.3° tilt_corr=False
+18:28:57 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:57 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:28:57 [INFO ] SAM3: mask obtained (score=0.974, area=94392 px)
+18:28:57 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:28:57][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:57 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:57 [INFO ] frame=32 state=NEAR      c=(833,406) z=473.4mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=32 state=NEAR      c=(833,406) z=473.4mm tilt=2.5° tilt_corr=False
+18:28:57 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:57 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:57 [INFO ] SAM3: mask obtained (score=0.975, area=94412 px)
+18:28:57 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:57][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:57 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:57 [INFO ] frame=33 state=NEAR      c=(833,406) z=473.4mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=33 state=NEAR      c=(833,406) z=473.4mm tilt=2.3° tilt_corr=False
+18:28:58 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:58 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.910
+18:28:58 [INFO ] SAM3: mask obtained (score=0.976, area=94368 px)
+18:28:58 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:58][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:58 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:58 [INFO ] frame=34 state=NEAR      c=(833,406) z=473.5mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=34 state=NEAR      c=(833,406) z=473.5mm tilt=0.3° tilt_corr=False
+18:28:58 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:58 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:58 [INFO ] SAM3: mask obtained (score=0.976, area=94449 px)
+18:28:58 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:58][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:58 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:58 [INFO ] frame=35 state=NEAR      c=(833,406) z=473.5mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=35 state=NEAR      c=(833,406) z=473.5mm tilt=1.3° tilt_corr=False
+18:28:58 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:58 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:58 [INFO ] SAM3: mask obtained (score=0.976, area=94438 px)
+18:28:59 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:59][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:59 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:59 [INFO ] frame=36 state=NEAR      c=(833,406) z=473.5mm tilt=2.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=36 state=NEAR      c=(833,406) z=473.5mm tilt=2.8° tilt_corr=False
+18:28:59 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:59 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:28:59 [INFO ] SAM3: mask obtained (score=0.976, area=94459 px)
+18:28:59 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:59][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:59 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:59 [INFO ] frame=37 state=NEAR      c=(833,406) z=473.6mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=37 state=NEAR      c=(833,406) z=473.6mm tilt=0.6° tilt_corr=False
+18:28:59 [INFO ] SAM3: 1 detection(s) for 'box'
+18:28:59 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:28:59 [INFO ] SAM3: mask obtained (score=0.975, area=94435 px)
+18:28:59 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:28:59][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:28:59 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:28:59 [INFO ] frame=38 state=NEAR      c=(833,406) z=473.6mm tilt=2.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=38 state=NEAR      c=(833,406) z=473.6mm tilt=2.4° tilt_corr=False
+18:29:00 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:00 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:00 [INFO ] SAM3: mask obtained (score=0.975, area=94381 px)
+18:29:00 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:00][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:00 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:00 [INFO ] frame=39 state=NEAR      c=(833,406) z=473.6mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=39 state=NEAR      c=(833,406) z=473.6mm tilt=0.3° tilt_corr=False
+18:29:00 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:00 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:00 [INFO ] SAM3: mask obtained (score=0.975, area=94387 px)
+18:29:00 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:00][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:00 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:00 [INFO ] frame=40 state=NEAR      c=(833,406) z=473.6mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=40 state=NEAR      c=(833,406) z=473.6mm tilt=2.1° tilt_corr=False
+18:29:01 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:01 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:01 [INFO ] SAM3: mask obtained (score=0.976, area=94391 px)
+18:29:01 [INFO ] MaskTracker: anchor locked (IoU streak=40, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:01][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:01 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:01 [INFO ] frame=41 state=NEAR      c=(833,406) z=473.7mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=41 state=NEAR      c=(833,406) z=473.7mm tilt=0.3° tilt_corr=False
+18:29:01 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:01 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.915
+18:29:01 [INFO ] SAM3: mask obtained (score=0.975, area=94405 px)
+18:29:01 [INFO ] MaskTracker: anchor locked (IoU streak=41, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:01][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:01 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:01 [INFO ] frame=42 state=NEAR      c=(833,406) z=473.7mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=42 state=NEAR      c=(833,406) z=473.7mm tilt=2.6° tilt_corr=False
+18:29:01 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:02 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:02 [INFO ] SAM3: mask obtained (score=0.976, area=94386 px)
+18:29:02 [INFO ] MaskTracker: anchor locked (IoU streak=42, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:02][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:02 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:02 [INFO ] frame=43 state=NEAR      c=(833,406) z=473.7mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=43 state=NEAR      c=(833,406) z=473.7mm tilt=1.8° tilt_corr=False
+18:29:02 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:02 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:02 [INFO ] SAM3: mask obtained (score=0.976, area=94406 px)
+18:29:02 [INFO ] MaskTracker: anchor locked (IoU streak=43, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:02][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:02 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:02 [INFO ] frame=44 state=NEAR      c=(833,406) z=473.6mm tilt=0.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=44 state=NEAR      c=(833,406) z=473.6mm tilt=0.4° tilt_corr=False
+18:29:02 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:02 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:02 [INFO ] SAM3: mask obtained (score=0.977, area=94437 px)
+18:29:02 [INFO ] MaskTracker: anchor locked (IoU streak=44, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:02][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:02 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:02 [INFO ] frame=45 state=NEAR      c=(833,406) z=473.6mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=45 state=NEAR      c=(833,406) z=473.6mm tilt=1.5° tilt_corr=False
+18:29:03 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:03 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:03 [INFO ] SAM3: mask obtained (score=0.975, area=94433 px)
+18:29:03 [INFO ] MaskTracker: anchor locked (IoU streak=45, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:03][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:03 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:03 [INFO ] frame=46 state=NEAR      c=(833,406) z=473.6mm tilt=0.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=46 state=NEAR      c=(833,406) z=473.6mm tilt=0.9° tilt_corr=False
+18:29:03 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:03 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:03 [INFO ] SAM3: mask obtained (score=0.975, area=94409 px)
+18:29:03 [INFO ] MaskTracker: anchor locked (IoU streak=46, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:03][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:03 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:03 [INFO ] frame=47 state=NEAR      c=(833,406) z=473.6mm tilt=1.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=47 state=NEAR      c=(833,406) z=473.6mm tilt=1.2° tilt_corr=False
+18:29:04 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:04 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:04 [INFO ] SAM3: mask obtained (score=0.973, area=94403 px)
+18:29:04 [INFO ] MaskTracker: anchor locked (IoU streak=47, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:04][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:04 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:04 [INFO ] frame=48 state=NEAR      c=(833,406) z=473.6mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=48 state=NEAR      c=(833,406) z=473.6mm tilt=2.3° tilt_corr=False
+18:29:04 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:04 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:04 [INFO ] SAM3: mask obtained (score=0.975, area=94378 px)
+18:29:04 [INFO ] MaskTracker: anchor locked (IoU streak=48, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:04][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:04 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:04 [INFO ] frame=49 state=NEAR      c=(833,406) z=473.6mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=49 state=NEAR      c=(833,406) z=473.6mm tilt=2.1° tilt_corr=False
+18:29:05 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:05 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:05 [INFO ] SAM3: mask obtained (score=0.975, area=94372 px)
+18:29:05 [INFO ] MaskTracker: anchor locked (IoU streak=49, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:05][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:05 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:05 [INFO ] frame=50 state=NEAR      c=(833,406) z=473.6mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=50 state=NEAR      c=(833,406) z=473.6mm tilt=0.7° tilt_corr=False
+18:29:05 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:05 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:05 [INFO ] SAM3: mask obtained (score=0.976, area=94428 px)
+18:29:05 [INFO ] MaskTracker: anchor locked (IoU streak=50, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:05][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:05 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:05 [INFO ] frame=51 state=NEAR      c=(833,406) z=473.5mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=51 state=NEAR      c=(833,406) z=473.5mm tilt=1.1° tilt_corr=False
+18:29:05 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:05 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:05 [INFO ] SAM3: mask obtained (score=0.976, area=94371 px)
+18:29:05 [INFO ] MaskTracker: anchor locked (IoU streak=51, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:05][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:05 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:06 [INFO ] frame=52 state=NEAR      c=(833,406) z=473.6mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=52 state=NEAR      c=(833,406) z=473.6mm tilt=1.6° tilt_corr=False
+18:29:06 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:06 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:06 [INFO ] SAM3: mask obtained (score=0.977, area=94379 px)
+18:29:06 [INFO ] MaskTracker: anchor locked (IoU streak=52, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:06][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:06 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:06 [INFO ] frame=53 state=NEAR      c=(833,406) z=473.7mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=53 state=NEAR      c=(833,406) z=473.7mm tilt=1.5° tilt_corr=False
+18:29:06 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:06 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:06 [INFO ] SAM3: mask obtained (score=0.976, area=94365 px)
+18:29:06 [INFO ] MaskTracker: anchor locked (IoU streak=53, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:06][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:06 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:06 [INFO ] frame=54 state=NEAR      c=(833,406) z=473.7mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=54 state=NEAR      c=(833,406) z=473.7mm tilt=0.7° tilt_corr=False
+18:29:07 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:07 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.916
+18:29:07 [INFO ] SAM3: mask obtained (score=0.977, area=94405 px)
+18:29:07 [INFO ] MaskTracker: anchor locked (IoU streak=54, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:07][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:07 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:07 [INFO ] frame=55 state=NEAR      c=(833,406) z=473.7mm tilt=2.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=55 state=NEAR      c=(833,406) z=473.7mm tilt=2.8° tilt_corr=False
+18:29:07 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:07 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.916
+18:29:07 [INFO ] SAM3: mask obtained (score=0.976, area=94420 px)
+18:29:07 [INFO ] MaskTracker: anchor locked (IoU streak=55, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:07][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:07 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:07 [INFO ] frame=56 state=NEAR      c=(833,406) z=473.7mm tilt=2.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=56 state=NEAR      c=(833,406) z=473.7mm tilt=2.9° tilt_corr=False
+18:29:08 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:08 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:08 [INFO ] SAM3: mask obtained (score=0.976, area=94446 px)
+18:29:08 [INFO ] MaskTracker: anchor locked (IoU streak=56, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:08][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:08 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:08 [INFO ] frame=57 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=57 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+18:29:08 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:08 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.917
+18:29:08 [INFO ] SAM3: mask obtained (score=0.975, area=94433 px)
+18:29:08 [INFO ] MaskTracker: anchor locked (IoU streak=57, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:08][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:08 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:08 [INFO ] frame=58 state=NEAR      c=(833,406) z=473.7mm tilt=0.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=58 state=NEAR      c=(833,406) z=473.7mm tilt=0.2° tilt_corr=False
+18:29:09 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:09 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:09 [INFO ] SAM3: mask obtained (score=0.976, area=94389 px)
+18:29:09 [INFO ] MaskTracker: anchor locked (IoU streak=58, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:09][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:09 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:09 [INFO ] frame=59 state=NEAR      c=(833,406) z=473.7mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=59 state=NEAR      c=(833,406) z=473.7mm tilt=1.3° tilt_corr=False
+18:29:09 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:09 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:09 [INFO ] SAM3: mask obtained (score=0.976, area=94419 px)
+18:29:09 [INFO ] MaskTracker: anchor locked (IoU streak=59, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:09][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:09 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:09 [INFO ] frame=60 state=NEAR      c=(833,406) z=473.6mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=60 state=NEAR      c=(833,406) z=473.6mm tilt=1.6° tilt_corr=False
+18:29:10 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:10 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:10 [INFO ] SAM3: mask obtained (score=0.975, area=94449 px)
+18:29:10 [INFO ] MaskTracker: anchor locked (IoU streak=60, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:10][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:10 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:10 [INFO ] frame=61 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=61 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+18:29:10 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:10 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:10 [INFO ] SAM3: mask obtained (score=0.977, area=94392 px)
+18:29:10 [INFO ] MaskTracker: anchor locked (IoU streak=61, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:10][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:10 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:10 [INFO ] frame=62 state=NEAR      c=(833,406) z=473.8mm tilt=3.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=62 state=NEAR      c=(833,406) z=473.8mm tilt=3.0° tilt_corr=False
+18:29:10 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:10 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:10 [INFO ] SAM3: mask obtained (score=0.975, area=94452 px)
+18:29:10 [INFO ] MaskTracker: anchor locked (IoU streak=62, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:10][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:10 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:10 [INFO ] frame=63 state=NEAR      c=(833,406) z=473.8mm tilt=2.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=63 state=NEAR      c=(833,406) z=473.8mm tilt=2.4° tilt_corr=False
+18:29:11 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:11 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.916
+18:29:11 [INFO ] SAM3: mask obtained (score=0.976, area=94393 px)
+18:29:11 [INFO ] MaskTracker: anchor locked (IoU streak=63, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:11][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:11 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:11 [INFO ] frame=64 state=NEAR      c=(833,406) z=473.9mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=64 state=NEAR      c=(833,406) z=473.9mm tilt=1.0° tilt_corr=False
+18:29:11 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:11 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:11 [INFO ] SAM3: mask obtained (score=0.977, area=94415 px)
+18:29:11 [INFO ] MaskTracker: anchor locked (IoU streak=64, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:11][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:11 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:11 [INFO ] frame=65 state=NEAR      c=(833,406) z=473.9mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=65 state=NEAR      c=(833,406) z=473.9mm tilt=2.0° tilt_corr=False
+18:29:12 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:12 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:12 [INFO ] SAM3: mask obtained (score=0.974, area=94436 px)
+18:29:12 [INFO ] MaskTracker: anchor locked (IoU streak=65, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:12][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:12 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:12 [INFO ] frame=66 state=NEAR      c=(833,406) z=473.9mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=66 state=NEAR      c=(833,406) z=473.9mm tilt=0.3° tilt_corr=False
+18:29:12 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:12 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:12 [INFO ] SAM3: mask obtained (score=0.975, area=94410 px)
+18:29:12 [INFO ] MaskTracker: anchor locked (IoU streak=66, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:12][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:12 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:12 [INFO ] frame=67 state=NEAR      c=(833,406) z=473.9mm tilt=2.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=67 state=NEAR      c=(833,406) z=473.9mm tilt=2.4° tilt_corr=False
+18:29:13 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:13 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:13 [INFO ] SAM3: mask obtained (score=0.977, area=94438 px)
+18:29:13 [INFO ] MaskTracker: anchor locked (IoU streak=67, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:13][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:13 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:13 [INFO ] frame=68 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=68 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+18:29:13 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:13 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:13 [INFO ] SAM3: mask obtained (score=0.975, area=94428 px)
+18:29:13 [INFO ] MaskTracker: anchor locked (IoU streak=68, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:13][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:13 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:13 [INFO ] frame=69 state=NEAR      c=(833,406) z=473.9mm tilt=2.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=69 state=NEAR      c=(833,406) z=473.9mm tilt=2.7° tilt_corr=False
+18:29:13 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:14 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:14 [INFO ] SAM3: mask obtained (score=0.975, area=94399 px)
+18:29:14 [INFO ] MaskTracker: anchor locked (IoU streak=69, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:14][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:14 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:14 [INFO ] frame=70 state=NEAR      c=(833,406) z=473.9mm tilt=1.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=70 state=NEAR      c=(833,406) z=473.9mm tilt=1.4° tilt_corr=False
+18:29:14 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:14 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:14 [INFO ] SAM3: mask obtained (score=0.976, area=94418 px)
+18:29:14 [INFO ] MaskTracker: anchor locked (IoU streak=70, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:14][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:14 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:14 [INFO ] frame=71 state=NEAR      c=(833,406) z=473.9mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=71 state=NEAR      c=(833,406) z=473.9mm tilt=2.1° tilt_corr=False
+18:29:14 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:14 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:14 [INFO ] SAM3: mask obtained (score=0.975, area=94398 px)
+18:29:14 [INFO ] MaskTracker: anchor locked (IoU streak=71, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:14][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:14 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:14 [INFO ] frame=72 state=NEAR      c=(833,406) z=474.0mm tilt=0.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=72 state=NEAR      c=(833,406) z=474.0mm tilt=0.9° tilt_corr=False
+18:29:15 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:15 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:15 [INFO ] SAM3: mask obtained (score=0.976, area=94399 px)
+18:29:15 [INFO ] MaskTracker: anchor locked (IoU streak=72, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:15][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:15 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:15 [INFO ] frame=73 state=NEAR      c=(833,406) z=474.0mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=73 state=NEAR      c=(833,406) z=474.0mm tilt=1.6° tilt_corr=False
+18:29:15 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:15 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:15 [INFO ] SAM3: mask obtained (score=0.975, area=94389 px)
+18:29:15 [INFO ] MaskTracker: anchor locked (IoU streak=73, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:15][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:15 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:15 [INFO ] frame=74 state=NEAR      c=(833,406) z=474.0mm tilt=1.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=74 state=NEAR      c=(833,406) z=474.0mm tilt=1.2° tilt_corr=False
+18:29:16 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:16 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.915
+18:29:16 [INFO ] SAM3: mask obtained (score=0.976, area=94413 px)
+18:29:16 [INFO ] MaskTracker: anchor locked (IoU streak=74, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:16][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:16 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:16 [INFO ] frame=75 state=NEAR      c=(833,406) z=474.0mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=75 state=NEAR      c=(833,406) z=474.0mm tilt=2.6° tilt_corr=False
+18:29:16 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:16 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:16 [INFO ] SAM3: mask obtained (score=0.975, area=94358 px)
+18:29:16 [INFO ] MaskTracker: anchor locked (IoU streak=75, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:16][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:16 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:16 [INFO ] frame=76 state=NEAR      c=(833,406) z=473.9mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=76 state=NEAR      c=(833,406) z=473.9mm tilt=1.3° tilt_corr=False
+18:29:17 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:17 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:17 [INFO ] SAM3: mask obtained (score=0.976, area=94403 px)
+18:29:17 [INFO ] MaskTracker: anchor locked (IoU streak=76, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:17][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:17 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:17 [INFO ] frame=77 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=77 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+18:29:17 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:17 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:17 [INFO ] SAM3: mask obtained (score=0.975, area=94391 px)
+18:29:17 [INFO ] MaskTracker: anchor locked (IoU streak=77, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:17][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:17 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:17 [INFO ] frame=78 state=NEAR      c=(833,406) z=474.0mm tilt=0.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=78 state=NEAR      c=(833,406) z=474.0mm tilt=0.8° tilt_corr=False
+18:29:17 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:17 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:17 [INFO ] SAM3: mask obtained (score=0.977, area=94387 px)
+18:29:17 [INFO ] MaskTracker: anchor locked (IoU streak=78, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:17][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:17 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:17 [INFO ] frame=79 state=NEAR      c=(833,406) z=474.0mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=79 state=NEAR      c=(833,406) z=474.0mm tilt=1.6° tilt_corr=False
+18:29:18 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:18 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:18 [INFO ] SAM3: mask obtained (score=0.977, area=94360 px)
+18:29:18 [INFO ] MaskTracker: anchor locked (IoU streak=79, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:18][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:18 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:18 [INFO ] frame=80 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=80 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+18:29:18 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:18 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:18 [INFO ] SAM3: mask obtained (score=0.974, area=94417 px)
+18:29:18 [INFO ] MaskTracker: anchor locked (IoU streak=80, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:18][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:18 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:18 [INFO ] frame=81 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=81 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+18:29:19 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:19 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:19 [INFO ] SAM3: mask obtained (score=0.975, area=94417 px)
+18:29:19 [INFO ] MaskTracker: anchor locked (IoU streak=81, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:19][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:19 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:19 [INFO ] frame=82 state=NEAR      c=(833,406) z=474.0mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=82 state=NEAR      c=(833,406) z=474.0mm tilt=2.2° tilt_corr=False
+18:29:19 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:19 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:19 [INFO ] SAM3: mask obtained (score=0.975, area=94368 px)
+18:29:19 [INFO ] MaskTracker: anchor locked (IoU streak=82, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:19][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:19 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:19 [INFO ] frame=83 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=83 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+18:29:19 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:19 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:19 [INFO ] SAM3: mask obtained (score=0.974, area=94434 px)
+18:29:19 [INFO ] MaskTracker: anchor locked (IoU streak=83, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:19][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:19 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:19 [INFO ] frame=84 state=NEAR      c=(833,406) z=474.1mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=84 state=NEAR      c=(833,406) z=474.1mm tilt=2.0° tilt_corr=False
+18:29:20 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:20 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:20 [INFO ] SAM3: mask obtained (score=0.975, area=94391 px)
+18:29:20 [INFO ] MaskTracker: anchor locked (IoU streak=84, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:20][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:20 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:20 [INFO ] frame=85 state=NEAR      c=(833,406) z=474.1mm tilt=0.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=85 state=NEAR      c=(833,406) z=474.1mm tilt=0.8° tilt_corr=False
+18:29:20 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:20 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:20 [INFO ] SAM3: mask obtained (score=0.976, area=94430 px)
+18:29:20 [INFO ] MaskTracker: anchor locked (IoU streak=85, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:20][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:20 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:20 [INFO ] frame=86 state=NEAR      c=(833,406) z=474.0mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=86 state=NEAR      c=(833,406) z=474.0mm tilt=1.9° tilt_corr=False
+18:29:21 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:21 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:21 [INFO ] SAM3: mask obtained (score=0.977, area=94408 px)
+18:29:21 [INFO ] MaskTracker: anchor locked (IoU streak=86, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:21][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:21 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:21 [INFO ] frame=87 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=87 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+18:29:21 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:21 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:21 [INFO ] SAM3: mask obtained (score=0.975, area=94417 px)
+18:29:21 [INFO ] MaskTracker: anchor locked (IoU streak=87, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:21][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:21 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:21 [INFO ] frame=88 state=NEAR      c=(833,406) z=474.1mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=88 state=NEAR      c=(833,406) z=474.1mm tilt=1.0° tilt_corr=False
+18:29:22 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:22 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:22 [INFO ] SAM3: mask obtained (score=0.978, area=94480 px)
+18:29:22 [INFO ] MaskTracker: anchor locked (IoU streak=88, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:22][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:22 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:22 [INFO ] frame=89 state=NEAR      c=(833,406) z=474.0mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=89 state=NEAR      c=(833,406) z=474.0mm tilt=0.3° tilt_corr=False
+18:29:22 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:22 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:22 [INFO ] SAM3: mask obtained (score=0.976, area=94408 px)
+18:29:22 [INFO ] MaskTracker: anchor locked (IoU streak=89, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:22][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:22 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:22 [INFO ] frame=90 state=NEAR      c=(833,406) z=474.1mm tilt=0.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=90 state=NEAR      c=(833,406) z=474.1mm tilt=0.1° tilt_corr=False
+18:29:22 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:22 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.916
+18:29:22 [INFO ] SAM3: mask obtained (score=0.974, area=94394 px)
+18:29:23 [INFO ] MaskTracker: anchor locked (IoU streak=90, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:23][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:23 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:23 [INFO ] frame=91 state=NEAR      c=(833,406) z=474.1mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=91 state=NEAR      c=(833,406) z=474.1mm tilt=1.7° tilt_corr=False
+18:29:23 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:23 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:23 [INFO ] SAM3: mask obtained (score=0.977, area=94468 px)
+18:29:23 [INFO ] MaskTracker: anchor locked (IoU streak=91, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:23][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:23 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:23 [INFO ] frame=92 state=NEAR      c=(833,406) z=474.1mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=92 state=NEAR      c=(833,406) z=474.1mm tilt=1.0° tilt_corr=False
+18:29:23 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:23 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:23 [INFO ] SAM3: mask obtained (score=0.976, area=94436 px)
+18:29:23 [INFO ] MaskTracker: anchor locked (IoU streak=92, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:23][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:23 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:23 [INFO ] frame=93 state=NEAR      c=(833,406) z=474.0mm tilt=3.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=93 state=NEAR      c=(833,406) z=474.0mm tilt=3.3° tilt_corr=False
+18:29:24 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:24 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:24 [INFO ] SAM3: mask obtained (score=0.976, area=94382 px)
+18:29:24 [INFO ] MaskTracker: anchor locked (IoU streak=93, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:24][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:24 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:24 [INFO ] frame=94 state=NEAR      c=(833,406) z=474.0mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=94 state=NEAR      c=(833,406) z=474.0mm tilt=1.0° tilt_corr=False
+18:29:24 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:24 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:24 [INFO ] SAM3: mask obtained (score=0.975, area=94451 px)
+18:29:24 [INFO ] MaskTracker: anchor locked (IoU streak=94, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:24][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:24 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:24 [INFO ] frame=95 state=NEAR      c=(833,406) z=474.1mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=95 state=NEAR      c=(833,406) z=474.1mm tilt=2.0° tilt_corr=False
+18:29:25 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:25 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:25 [INFO ] SAM3: mask obtained (score=0.977, area=94446 px)
+18:29:25 [INFO ] MaskTracker: anchor locked (IoU streak=95, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:25][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:25 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:25 [INFO ] frame=96 state=NEAR      c=(833,406) z=474.1mm tilt=0.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=96 state=NEAR      c=(833,406) z=474.1mm tilt=0.5° tilt_corr=False
+18:29:25 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:25 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:25 [INFO ] SAM3: mask obtained (score=0.976, area=94369 px)
+18:29:25 [INFO ] MaskTracker: anchor locked (IoU streak=96, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:25][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:25 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:25 [INFO ] frame=97 state=NEAR      c=(833,406) z=474.0mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=97 state=NEAR      c=(833,406) z=474.0mm tilt=1.8° tilt_corr=False
+18:29:25 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:25 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:25 [INFO ] SAM3: mask obtained (score=0.975, area=94426 px)
+18:29:26 [INFO ] MaskTracker: anchor locked (IoU streak=97, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:26][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:26 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:26 [INFO ] frame=98 state=NEAR      c=(833,406) z=474.0mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=98 state=NEAR      c=(833,406) z=474.0mm tilt=2.6° tilt_corr=False
+18:29:26 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:26 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:26 [INFO ] SAM3: mask obtained (score=0.976, area=94399 px)
+18:29:26 [INFO ] MaskTracker: anchor locked (IoU streak=98, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:26][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:26 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:26 [INFO ] frame=99 state=NEAR      c=(833,406) z=474.0mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=99 state=NEAR      c=(833,406) z=474.0mm tilt=2.5° tilt_corr=False
+18:29:26 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:26 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:26 [INFO ] SAM3: mask obtained (score=0.976, area=94453 px)
+18:29:26 [INFO ] MaskTracker: anchor locked (IoU streak=99, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:26][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:26 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:26 [INFO ] frame=100 state=NEAR      c=(833,406) z=474.0mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=100 state=NEAR      c=(833,406) z=474.0mm tilt=1.8° tilt_corr=False
+18:29:27 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:27 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.915
+18:29:27 [INFO ] SAM3: mask obtained (score=0.976, area=94410 px)
+18:29:27 [INFO ] MaskTracker: anchor locked (IoU streak=100, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:27][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:27 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:27 [INFO ] frame=101 state=NEAR      c=(833,406) z=473.9mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=101 state=NEAR      c=(833,406) z=473.9mm tilt=2.6° tilt_corr=False
+18:29:27 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:27 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:27 [INFO ] SAM3: mask obtained (score=0.977, area=94392 px)
+18:29:27 [INFO ] MaskTracker: anchor locked (IoU streak=101, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:27][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:27 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:27 [INFO ] frame=102 state=NEAR      c=(833,406) z=473.9mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=102 state=NEAR      c=(833,406) z=473.9mm tilt=2.1° tilt_corr=False
+18:29:28 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:28 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:28 [INFO ] SAM3: mask obtained (score=0.977, area=94400 px)
+18:29:28 [INFO ] MaskTracker: anchor locked (IoU streak=102, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:28][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:28 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:28 [INFO ] frame=103 state=NEAR      c=(833,406) z=473.8mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=103 state=NEAR      c=(833,406) z=473.8mm tilt=0.6° tilt_corr=False
+18:29:28 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:28 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.911
+18:29:28 [INFO ] SAM3: mask obtained (score=0.976, area=94425 px)
+18:29:28 [INFO ] MaskTracker: anchor locked (IoU streak=103, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:28][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:28 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:28 [INFO ] frame=104 state=NEAR      c=(833,406) z=473.9mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=104 state=NEAR      c=(833,406) z=473.9mm tilt=1.5° tilt_corr=False
+18:29:29 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:29 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:29 [INFO ] SAM3: mask obtained (score=0.974, area=94415 px)
+18:29:29 [INFO ] MaskTracker: anchor locked (IoU streak=104, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:29][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:29 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:29 [INFO ] frame=105 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=105 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+18:29:29 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:29 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:29 [INFO ] SAM3: mask obtained (score=0.975, area=94407 px)
+18:29:29 [INFO ] MaskTracker: anchor locked (IoU streak=105, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:29][base.py:423] - - API -> set_position -> code=1, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:29 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:29 [INFO ] frame=106 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=106 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+ControllerError had clean
+INFO:origin.print:ControllerError had clean
+18:29:30 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:30 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:30 [INFO ] SAM3: mask obtained (score=0.976, area=94361 px)
+18:29:30 [INFO ] MaskTracker: anchor locked (IoU streak=106, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:30][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:30 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:30 [INFO ] frame=107 state=NEAR      c=(833,406) z=473.8mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=107 state=NEAR      c=(833,406) z=473.8mm tilt=1.5° tilt_corr=False
+18:29:30 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:30 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:30 [INFO ] SAM3: mask obtained (score=0.976, area=94431 px)
+18:29:30 [INFO ] MaskTracker: anchor locked (IoU streak=107, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:30][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:30 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:30 [INFO ] frame=108 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=108 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+18:29:31 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:31 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:31 [INFO ] SAM3: mask obtained (score=0.975, area=94445 px)
+18:29:31 [INFO ] MaskTracker: anchor locked (IoU streak=108, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:31][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:31 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:31 [INFO ] frame=109 state=NEAR      c=(833,406) z=473.8mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=109 state=NEAR      c=(833,406) z=473.8mm tilt=0.6° tilt_corr=False
+18:29:31 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:31 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:31 [INFO ] SAM3: mask obtained (score=0.974, area=94447 px)
+18:29:31 [INFO ] MaskTracker: anchor locked (IoU streak=109, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:31][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:31 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:31 [INFO ] frame=110 state=NEAR      c=(833,406) z=473.8mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=110 state=NEAR      c=(833,406) z=473.8mm tilt=1.0° tilt_corr=False
+18:29:31 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:31 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:31 [INFO ] SAM3: mask obtained (score=0.976, area=94443 px)
+18:29:32 [INFO ] MaskTracker: anchor locked (IoU streak=110, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:32][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:32 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:32 [INFO ] frame=111 state=NEAR      c=(833,406) z=473.9mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=111 state=NEAR      c=(833,406) z=473.9mm tilt=0.3° tilt_corr=False
+18:29:32 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:32 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:32 [INFO ] SAM3: mask obtained (score=0.978, area=94441 px)
+18:29:32 [INFO ] MaskTracker: anchor locked (IoU streak=111, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:32][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:32 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:32 [INFO ] frame=112 state=NEAR      c=(833,406) z=473.8mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=112 state=NEAR      c=(833,406) z=473.8mm tilt=2.0° tilt_corr=False
+18:29:32 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:32 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:32 [INFO ] SAM3: mask obtained (score=0.977, area=94427 px)
+18:29:32 [INFO ] MaskTracker: anchor locked (IoU streak=112, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:32][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:32 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:32 [INFO ] frame=113 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=113 state=NEAR      c=(833,406) z=473.8mm tilt=2.1° tilt_corr=False
+18:29:33 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:33 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:33 [INFO ] SAM3: mask obtained (score=0.976, area=94407 px)
+18:29:33 [INFO ] MaskTracker: anchor locked (IoU streak=113, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:33][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:33 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:33 [INFO ] frame=114 state=NEAR      c=(833,406) z=473.7mm tilt=0.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=114 state=NEAR      c=(833,406) z=473.7mm tilt=0.9° tilt_corr=False
+18:29:33 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:33 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:33 [INFO ] SAM3: mask obtained (score=0.977, area=94451 px)
+18:29:33 [INFO ] MaskTracker: anchor locked (IoU streak=114, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:33][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:33 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:33 [INFO ] frame=115 state=NEAR      c=(833,406) z=473.7mm tilt=0.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=115 state=NEAR      c=(833,406) z=473.7mm tilt=0.3° tilt_corr=False
+18:29:34 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:34 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:34 [INFO ] SAM3: mask obtained (score=0.977, area=94431 px)
+18:29:34 [INFO ] MaskTracker: anchor locked (IoU streak=115, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:34][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:34 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:34 [INFO ] frame=116 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=116 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+18:29:34 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:34 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:34 [INFO ] SAM3: mask obtained (score=0.975, area=94443 px)
+18:29:34 [INFO ] MaskTracker: anchor locked (IoU streak=116, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:34][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:34 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:34 [INFO ] frame=117 state=NEAR      c=(833,406) z=473.7mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=117 state=NEAR      c=(833,406) z=473.7mm tilt=1.9° tilt_corr=False
+18:29:35 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:35 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:35 [INFO ] SAM3: mask obtained (score=0.975, area=94437 px)
+18:29:35 [INFO ] MaskTracker: anchor locked (IoU streak=117, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:35][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:35 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:35 [INFO ] frame=118 state=NEAR      c=(833,406) z=473.7mm tilt=2.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=118 state=NEAR      c=(833,406) z=473.7mm tilt=2.9° tilt_corr=False
+18:29:35 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:35 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:35 [INFO ] SAM3: mask obtained (score=0.977, area=94451 px)
+18:29:35 [INFO ] MaskTracker: anchor locked (IoU streak=118, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:35][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:35 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:35 [INFO ] frame=119 state=NEAR      c=(833,406) z=473.7mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=119 state=NEAR      c=(833,406) z=473.7mm tilt=2.1° tilt_corr=False
+18:29:36 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:36 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:36 [INFO ] SAM3: mask obtained (score=0.975, area=94427 px)
+18:29:36 [INFO ] MaskTracker: anchor locked (IoU streak=119, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:36][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:36 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:36 [INFO ] frame=120 state=NEAR      c=(833,406) z=473.8mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=120 state=NEAR      c=(833,406) z=473.8mm tilt=1.6° tilt_corr=False
+18:29:36 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:36 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:36 [INFO ] SAM3: mask obtained (score=0.975, area=94408 px)
+18:29:36 [INFO ] MaskTracker: anchor locked (IoU streak=120, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:36][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:36 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:36 [INFO ] frame=121 state=NEAR      c=(833,406) z=473.8mm tilt=0.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=121 state=NEAR      c=(833,406) z=473.8mm tilt=0.8° tilt_corr=False
+18:29:37 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:37 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:37 [INFO ] SAM3: mask obtained (score=0.977, area=94421 px)
+18:29:37 [INFO ] MaskTracker: anchor locked (IoU streak=121, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:37][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:37 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:37 [INFO ] frame=122 state=NEAR      c=(833,406) z=473.8mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=122 state=NEAR      c=(833,406) z=473.8mm tilt=1.3° tilt_corr=False
+18:29:37 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:37 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:37 [INFO ] SAM3: mask obtained (score=0.975, area=94398 px)
+18:29:37 [INFO ] MaskTracker: anchor locked (IoU streak=122, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:37][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:37 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:37 [INFO ] frame=123 state=NEAR      c=(833,406) z=473.8mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=123 state=NEAR      c=(833,406) z=473.8mm tilt=2.6° tilt_corr=False
+18:29:38 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:38 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:38 [INFO ] SAM3: mask obtained (score=0.974, area=94389 px)
+18:29:38 [INFO ] MaskTracker: anchor locked (IoU streak=123, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:38][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:38 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:38 [INFO ] frame=124 state=NEAR      c=(833,406) z=473.8mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=124 state=NEAR      c=(833,406) z=473.8mm tilt=2.5° tilt_corr=False
+18:29:38 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:38 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:38 [INFO ] SAM3: mask obtained (score=0.975, area=94413 px)
+18:29:38 [INFO ] MaskTracker: anchor locked (IoU streak=124, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:38][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:38 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:38 [INFO ] frame=125 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=125 state=NEAR      c=(833,406) z=473.8mm tilt=1.9° tilt_corr=False
+18:29:39 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:39 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:39 [INFO ] SAM3: mask obtained (score=0.977, area=94393 px)
+18:29:39 [INFO ] MaskTracker: anchor locked (IoU streak=125, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:39][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:39 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:39 [INFO ] frame=126 state=NEAR      c=(833,406) z=473.8mm tilt=0.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=126 state=NEAR      c=(833,406) z=473.8mm tilt=0.8° tilt_corr=False
+18:29:39 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:39 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:39 [INFO ] SAM3: mask obtained (score=0.977, area=94425 px)
+18:29:39 [INFO ] MaskTracker: anchor locked (IoU streak=126, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:39][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:39 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:39 [INFO ] frame=127 state=NEAR      c=(833,406) z=473.9mm tilt=0.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=127 state=NEAR      c=(833,406) z=473.9mm tilt=0.5° tilt_corr=False
+18:29:40 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:40 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:40 [INFO ] SAM3: mask obtained (score=0.977, area=94372 px)
+18:29:40 [INFO ] MaskTracker: anchor locked (IoU streak=127, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:40][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:40 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:40 [INFO ] frame=128 state=NEAR      c=(833,406) z=473.7mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=128 state=NEAR      c=(833,406) z=473.7mm tilt=0.7° tilt_corr=False
+18:29:40 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:40 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:40 [INFO ] SAM3: mask obtained (score=0.975, area=94447 px)
+18:29:40 [INFO ] MaskTracker: anchor locked (IoU streak=128, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:40][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:40 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:40 [INFO ] frame=129 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=129 state=NEAR      c=(833,406) z=473.8mm tilt=2.2° tilt_corr=False
+18:29:41 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:41 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:41 [INFO ] SAM3: mask obtained (score=0.976, area=94432 px)
+18:29:41 [INFO ] MaskTracker: anchor locked (IoU streak=129, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:41][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:41 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:41 [INFO ] frame=130 state=NEAR      c=(833,406) z=473.9mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=130 state=NEAR      c=(833,406) z=473.9mm tilt=0.6° tilt_corr=False
+18:29:41 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:41 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:41 [INFO ] SAM3: mask obtained (score=0.977, area=94388 px)
+18:29:41 [INFO ] MaskTracker: anchor locked (IoU streak=130, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:41][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:41 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:41 [INFO ] frame=131 state=NEAR      c=(833,406) z=473.9mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=131 state=NEAR      c=(833,406) z=473.9mm tilt=1.6° tilt_corr=False
+18:29:42 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:42 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:42 [INFO ] SAM3: mask obtained (score=0.976, area=94397 px)
+18:29:42 [INFO ] MaskTracker: anchor locked (IoU streak=131, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:42][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:42 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:42 [INFO ] frame=132 state=NEAR      c=(833,406) z=473.9mm tilt=1.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=132 state=NEAR      c=(833,406) z=473.9mm tilt=1.4° tilt_corr=False
+18:29:42 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:42 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:42 [INFO ] SAM3: mask obtained (score=0.976, area=94410 px)
+18:29:42 [INFO ] MaskTracker: anchor locked (IoU streak=132, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:42][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:42 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:42 [INFO ] frame=133 state=NEAR      c=(833,406) z=473.9mm tilt=3.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=133 state=NEAR      c=(833,406) z=473.9mm tilt=3.3° tilt_corr=False
+18:29:43 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:43 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:43 [INFO ] SAM3: mask obtained (score=0.976, area=94446 px)
+18:29:43 [INFO ] MaskTracker: anchor locked (IoU streak=133, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:43][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:43 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:43 [INFO ] frame=134 state=NEAR      c=(833,406) z=473.9mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=134 state=NEAR      c=(833,406) z=473.9mm tilt=2.2° tilt_corr=False
+18:29:43 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:43 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.912
+18:29:43 [INFO ] SAM3: mask obtained (score=0.976, area=94450 px)
+18:29:43 [INFO ] MaskTracker: anchor locked (IoU streak=134, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:43][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:43 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:43 [INFO ] frame=135 state=NEAR      c=(833,406) z=473.9mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=135 state=NEAR      c=(833,406) z=473.9mm tilt=2.5° tilt_corr=False
+18:29:44 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:44 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:44 [INFO ] SAM3: mask obtained (score=0.977, area=94409 px)
+18:29:44 [INFO ] MaskTracker: anchor locked (IoU streak=135, last IoU=0.998)
+[SDK][ERROR][2026-05-10 18:29:44][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:44 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:44 [INFO ] frame=136 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=136 state=NEAR      c=(833,406) z=474.0mm tilt=0.7° tilt_corr=False
+18:29:44 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:44 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:44 [INFO ] SAM3: mask obtained (score=0.977, area=94426 px)
+18:29:44 [INFO ] MaskTracker: anchor locked (IoU streak=136, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:44][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:44 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:44 [INFO ] frame=137 state=NEAR      c=(833,406) z=474.0mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=137 state=NEAR      c=(833,406) z=474.0mm tilt=1.0° tilt_corr=False
+18:29:45 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:45 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.914
+18:29:45 [INFO ] SAM3: mask obtained (score=0.975, area=94423 px)
+18:29:45 [INFO ] MaskTracker: anchor locked (IoU streak=137, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:45][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:45 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:45 [INFO ] frame=138 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=138 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+18:29:45 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:45 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.916
+18:29:45 [INFO ] SAM3: mask obtained (score=0.977, area=94418 px)
+18:29:45 [INFO ] MaskTracker: anchor locked (IoU streak=138, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:45][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:45 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:45 [INFO ] frame=139 state=NEAR      c=(833,406) z=474.0mm tilt=2.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=139 state=NEAR      c=(833,406) z=474.0mm tilt=2.7° tilt_corr=False
+18:29:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:46 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.915
+18:29:46 [INFO ] SAM3: mask obtained (score=0.976, area=94470 px)
+18:29:46 [INFO ] MaskTracker: anchor locked (IoU streak=139, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:46][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:46 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:46 [INFO ] frame=140 state=NEAR      c=(833,406) z=474.0mm tilt=2.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=140 state=NEAR      c=(833,406) z=474.0mm tilt=2.4° tilt_corr=False
+18:29:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:46 [INFO ] SAM3: 'box' score=0.98 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:46 [INFO ] SAM3: mask obtained (score=0.977, area=94400 px)
+18:29:46 [INFO ] MaskTracker: anchor locked (IoU streak=140, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:46][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:46 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:46 [INFO ] frame=141 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=141 state=NEAR      c=(833,406) z=474.0mm tilt=2.0° tilt_corr=False
+18:29:47 [INFO ] SAM3: 1 detection(s) for 'box'
+18:29:47 [INFO ] SAM3: 'box' score=0.97 @ [713 201 950 614]  (top of 1)  sim=0.913
+18:29:47 [INFO ] SAM3: mask obtained (score=0.975, area=94405 px)
+18:29:47 [INFO ] MaskTracker: anchor locked (IoU streak=141, last IoU=0.999)
+[SDK][ERROR][2026-05-10 18:29:47][base.py:423] - - API -> set_position -> code=9, pos=[181.300644, -7.470852, -57.150368, 3.126503008115948, 0.015054005850519211, 0.011931995791136792], radius=-1, velo=150.0, acc=500.0
+18:29:47 [INFO ] Servo: err=(+193,+46)px r=198  Δ=(+0.0,+0.0,-1.0)mm  pos=(181,-7,-57)  [skipped (no flow data)]
+18:29:47 [INFO ] Quit requested via window key.
+INFO:lastmile_v2_ext:Quit requested via window key.
+18:29:47 [INFO ] frame=142 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=142 state=NEAR      c=(833,406) z=474.0mm tilt=1.1° tilt_corr=False
+18:29:47 [INFO ] Returning to home position [181.3, -7.5, -48.6] mm ...
+INFO:lastmile_v2_ext:Returning to home position [181.3, -7.5, -48.6] mm ...
+[SDK][ERROR][2026-05-10 18:29:47][base.py:423] - - API -> set_position -> code=9, pos=[181.29953, -7.468647, -48.632114, 3.1264979990209953, 0.01505100388420578, 0.01193300808210295], radius=-1, velo=50.0, acc=500.0
+18:29:47 [INFO ] Home position reached.
+INFO:lastmile_v2_ext:Home position reached.
+18:29:47 [INFO ] Robot stopped.
+18:29:47 [INFO ] Done.
+INFO:lastmile_v2_ext:Done.

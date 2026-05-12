@@ -1,0 +1,636 @@
+20:45:08.975 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260510_204508.log
+20:45:08.991 [INFO ] ======================================================================
+20:45:08.992 [INFO ] servo_lastmile_v2 starting
+20:45:08.992 [INFO ]   improvements: surface-normal-in-NEAR=ON  ee-masking=ON  sixdof=False
+20:45:08.992 [INFO ]   prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+20:45:08.992 [INFO ]   offline=False  debug=True  dry-run=False  no-robot=False
+20:45:08.992 [INFO ] ======================================================================
+20:45:09.020 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+20:45:10.095 [INFO ] Robot connected: 192.168.1.241
+20:45:10.096 [INFO ] Home position captured: [181.3, -7.5, -48.6] mm
+20:45:10.102 [INFO ] Processing reference image ...
+20:45:13.425 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+20:45:13.919 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:13.919 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+20:45:14.002 [INFO ] Feature extractor (ResNet-18) loaded
+20:45:14.027 [INFO ] Ref features: 512-d vector (norm=1.000)
+20:45:14.028 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+20:45:16.135 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:16.137 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=0.00 -> 0.621
+20:45:16.139 [INFO ] SAM3: 'box' score=0.96 @ [564 211 775 621]  (top of 1)  sim=0.924
+20:45:16.140 [INFO ] SAM3: mask obtained (score=0.960, area=84072 px)
+20:45:16.348 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+20:45:16.348 [INFO ] === Calibration: waiting for camera frame ===
+20:45:16.349 [INFO ] Home: [181.3, -7.5, -48.6] mm  rpy=[179.14, 0.86, 0.68] deg
+20:45:16.368 [DEBUG] Grasp point: robust centroid (670, 416)
+20:45:16.370 [DEBUG] Servo: waiting [calibrating Y...]
+20:45:16.377 [INFO ] Video recording: overlay=runs/v2_live_nocup_20260510_204507/overlay.mp4  raw=runs/v2_live_nocup_20260510_204507/raw.mp4
+20:45:16.438 [INFO ] frame=0 state=FAR       c=(670,415) z=474.2mm tilt=-
+20:45:16.649 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+20:45:16.693 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:16.695 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.871
+20:45:16.697 [INFO ] SAM3: 'box' score=0.96 @ [564 211 775 621]  (top of 1)  sim=0.924
+20:45:16.697 [INFO ] SAM3: mask obtained (score=0.961, area=84071 px)
+20:45:16.727 [DEBUG] Grasp point: robust centroid (669, 416)
+20:45:16.744 [INFO ] frame=1 state=FAR       c=(670,415) z=475.3mm tilt=-
+20:45:17.008 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:17.011 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.871
+20:45:17.013 [INFO ] SAM3: 'box' score=0.96 @ [564 211 775 621]  (top of 1)  sim=0.924
+20:45:17.013 [INFO ] SAM3: mask obtained (score=0.960, area=84112 px)
+20:45:17.042 [DEBUG] Grasp point: robust centroid (670, 416)
+20:45:19.314 [INFO ]   [Y] returning home...
+20:45:20.173 [INFO ] frame=2 state=NEAR      c=(670,415) z=474.9mm tilt=-
+20:45:20.425 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:20.428 [DEBUG]   det conf=0.96 sim=0.925 pos=0.42 prox=0.96 -> 0.862
+20:45:20.430 [INFO ] SAM3: 'box' score=0.96 @ [577 210 788 620]  (top of 1)  sim=0.925
+20:45:20.431 [INFO ] SAM3: mask obtained (score=0.964, area=84342 px)
+20:45:20.459 [DEBUG] Grasp point: robust centroid (683, 415)
+20:45:20.461 [DEBUG] NEAR SAM3: c=(683,414) score=0.96
+20:45:20.472 [INFO ] frame=3 state=NEAR      c=(683,414) z=475.2mm tilt=-
+20:45:20.502 [WARNING]   [Y] flow too small (0.02 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+20:45:20.728 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:20.731 [DEBUG]   det conf=0.96 sim=0.915 pos=0.42 prox=0.96 -> 0.858
+20:45:20.733 [INFO ] SAM3: 'box' score=0.96 @ [565 211 776 620]  (top of 1)  sim=0.915
+20:45:20.733 [INFO ] SAM3: mask obtained (score=0.962, area=84412 px)
+20:45:20.761 [DEBUG] Grasp point: robust centroid (670, 416)
+20:45:20.762 [DEBUG] NEAR SAM3: c=(675,415) score=0.96
+20:45:20.774 [INFO ] frame=4 state=NEAR      c=(675,415) z=475.3mm tilt=-
+20:45:20.802 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+20:45:21.029 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:21.032 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.871
+20:45:21.034 [INFO ] SAM3: 'box' score=0.96 @ [563 210 775 621]  (top of 1)  sim=0.924
+20:45:21.034 [INFO ] SAM3: mask obtained (score=0.957, area=84084 px)
+20:45:21.062 [DEBUG] Grasp point: robust centroid (668, 416)
+20:45:21.063 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.986)
+20:45:21.064 [DEBUG] NEAR SAM3: c=(671,415) score=0.96
+20:45:21.076 [INFO ] frame=5 state=NEAR      c=(671,415) z=475.4mm tilt=-
+20:45:21.332 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:21.335 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=0.99 -> 0.868
+20:45:21.337 [INFO ] SAM3: 'box' score=0.96 @ [564 213 776 623]  (top of 1)  sim=0.924
+20:45:21.337 [INFO ] SAM3: mask obtained (score=0.961, area=84148 px)
+20:45:21.368 [DEBUG] Grasp point: robust centroid (670, 418)
+20:45:21.368 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.985)
+20:45:21.369 [DEBUG] NEAR SAM3: c=(670,417) score=0.96
+20:45:21.381 [INFO ] frame=6 state=NEAR      c=(670,417) z=475.8mm tilt=-
+20:45:21.639 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:21.642 [DEBUG]   det conf=0.96 sim=0.924 pos=0.40 prox=0.96 -> 0.859
+20:45:21.644 [INFO ] SAM3: 'box' score=0.96 @ [564 225 776 635]  (top of 1)  sim=0.924
+20:45:21.644 [INFO ] SAM3: mask obtained (score=0.963, area=84203 px)
+20:45:21.672 [DEBUG] Grasp point: robust centroid (669, 430)
+20:45:21.673 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.942)
+20:45:21.674 [DEBUG] NEAR SAM3: c=(670,425) score=0.96
+20:45:21.674 [DEBUG] Servo: waiting [calibrating Z...]
+20:45:21.686 [INFO ] frame=7 state=NEAR      c=(670,425) z=476.1mm tilt=-
+20:45:21.941 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:21.944 [DEBUG]   det conf=0.97 sim=0.925 pos=0.38 prox=0.96 -> 0.855
+20:45:21.946 [INFO ] SAM3: 'box' score=0.97 @ [563 239 775 649]  (top of 1)  sim=0.925
+20:45:21.946 [INFO ] SAM3: mask obtained (score=0.968, area=84183 px)
+20:45:21.975 [DEBUG] Grasp point: robust centroid (668, 444)
+20:45:21.976 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.926)
+20:45:21.977 [DEBUG] NEAR SAM3: c=(670,438) score=0.97
+20:45:21.989 [INFO ] frame=8 state=NEAR      c=(670,438) z=476.5mm tilt=-
+20:45:22.245 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:22.247 [DEBUG]   det conf=0.97 sim=0.924 pos=0.37 prox=0.97 -> 0.856
+20:45:22.249 [INFO ] SAM3: 'box' score=0.97 @ [563 249 775 658]  (top of 1)  sim=0.924
+20:45:22.250 [INFO ] SAM3: mask obtained (score=0.967, area=83888 px)
+20:45:22.279 [DEBUG] Grasp point: robust centroid (668, 454)
+20:45:22.280 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.951)
+20:45:22.281 [DEBUG] NEAR SAM3: c=(669,448) score=0.97
+20:45:22.294 [INFO ] frame=9 state=NEAR      c=(669,448) z=477.2mm tilt=-
+20:45:22.551 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:22.554 [DEBUG]   det conf=0.97 sim=0.920 pos=0.37 prox=0.99 -> 0.861
+20:45:22.558 [INFO ] SAM3: 'box' score=0.97 @ [564 250 774 658]  (top of 1)  sim=0.920
+20:45:22.559 [INFO ] SAM3: mask obtained (score=0.968, area=83754 px)
+20:45:22.587 [DEBUG] Grasp point: robust centroid (668, 454)
+20:45:22.588 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.995)
+20:45:22.589 [DEBUG] NEAR SAM3: c=(669,452) score=0.97
+20:45:22.601 [INFO ] frame=10 state=NEAR      c=(669,452) z=477.0mm tilt=-
+20:45:22.852 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:22.855 [DEBUG]   det conf=0.97 sim=0.925 pos=0.37 prox=0.99 -> 0.863
+20:45:22.857 [INFO ] SAM3: 'box' score=0.97 @ [564 250 774 659]  (top of 1)  sim=0.925
+20:45:22.858 [INFO ] SAM3: mask obtained (score=0.968, area=83793 px)
+20:45:22.886 [DEBUG] Grasp point: robust centroid (669, 454)
+20:45:22.886 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.998)
+20:45:22.888 [DEBUG] NEAR SAM3: c=(669,453) score=0.97
+20:45:22.899 [INFO ] frame=11 state=NEAR      c=(669,453) z=476.8mm tilt=-
+20:45:23.158 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:23.162 [DEBUG]   det conf=0.97 sim=0.922 pos=0.37 prox=1.00 -> 0.862
+20:45:23.163 [INFO ] SAM3: 'box' score=0.97 @ [564 250 774 658]  (top of 1)  sim=0.922
+20:45:23.164 [INFO ] SAM3: mask obtained (score=0.966, area=83773 px)
+20:45:23.193 [DEBUG] Grasp point: robust centroid (669, 454)
+20:45:23.193 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.999)
+20:45:23.195 [DEBUG] NEAR SAM3: c=(669,453) score=0.97
+20:45:23.205 [INFO ] frame=12 state=NEAR      c=(669,453) z=476.9mm tilt=-
+20:45:23.463 [INFO ]   [Z] returning home...
+20:45:23.465 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:23.468 [DEBUG]   det conf=0.97 sim=0.922 pos=0.37 prox=1.00 -> 0.863
+20:45:23.470 [INFO ] SAM3: 'box' score=0.97 @ [564 250 774 658]  (top of 1)  sim=0.922
+20:45:23.470 [INFO ] SAM3: mask obtained (score=0.969, area=83760 px)
+20:45:23.499 [DEBUG] Grasp point: robust centroid (670, 454)
+20:45:23.500 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.999)
+20:45:23.501 [DEBUG] NEAR SAM3: c=(669,453) score=0.97
+20:45:23.512 [INFO ] frame=13 state=NEAR      c=(669,453) z=476.9mm tilt=-
+20:45:23.770 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:23.774 [DEBUG]   det conf=0.97 sim=0.923 pos=0.37 prox=1.00 -> 0.863
+20:45:23.776 [INFO ] SAM3: 'box' score=0.97 @ [564 250 774 659]  (top of 1)  sim=0.923
+20:45:23.777 [INFO ] SAM3: mask obtained (score=0.968, area=83785 px)
+20:45:23.804 [DEBUG] Grasp point: robust centroid (670, 454)
+20:45:23.805 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.999)
+20:45:23.806 [DEBUG] NEAR SAM3: c=(669,453) score=0.97
+20:45:23.816 [INFO ] frame=14 state=NEAR      c=(669,453) z=477.0mm tilt=-
+20:45:24.072 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:24.074 [DEBUG]   det conf=0.97 sim=0.923 pos=0.37 prox=0.99 -> 0.862
+20:45:24.076 [INFO ] SAM3: 'box' score=0.97 @ [563 246 775 654]  (top of 1)  sim=0.923
+20:45:24.077 [INFO ] SAM3: mask obtained (score=0.969, area=83894 px)
+20:45:24.103 [DEBUG] Grasp point: robust centroid (669, 450)
+20:45:24.104 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.977)
+20:45:24.105 [DEBUG] NEAR SAM3: c=(669,450) score=0.97
+20:45:24.115 [INFO ] frame=15 state=NEAR      c=(669,450) z=477.1mm tilt=-
+20:45:24.371 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:24.374 [DEBUG]   det conf=0.96 sim=0.926 pos=0.39 prox=0.96 -> 0.858
+20:45:24.376 [INFO ] SAM3: 'box' score=0.96 @ [564 232 775 641]  (top of 1)  sim=0.926
+20:45:24.377 [INFO ] SAM3: mask obtained (score=0.963, area=83741 px)
+20:45:24.405 [DEBUG] Grasp point: robust centroid (668, 436)
+20:45:24.406 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.930)
+20:45:24.407 [DEBUG] NEAR SAM3: c=(670,440) score=0.96
+20:45:24.418 [INFO ] frame=16 state=NEAR      c=(670,440) z=477.1mm tilt=-
+20:45:24.631 [INFO ]   [Z] flow: (-0.5, +38.6) px / 25 mm  -> J[:,{col}]=[-0.0183, +1.5430]
+20:45:24.631 [INFO ] J_yz (px/mm):
+[[ 0.         -0.01830566]
+ [ 0.          1.54297607]]
+20:45:24.632 [INFO ] J_yz_inv (mm/px):
+[[ 0.          0.        ]
+ [-0.00768787  0.64800698]]
+20:45:24.632 [INFO ] === Calibration complete [partial cal (rank=1)] ===
+20:45:24.675 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:24.677 [DEBUG]   det conf=0.96 sim=0.920 pos=0.41 prox=0.96 -> 0.858
+20:45:24.679 [INFO ] SAM3: 'box' score=0.96 @ [563 219 775 628]  (top of 1)  sim=0.920
+20:45:24.680 [INFO ] SAM3: mask obtained (score=0.962, area=84095 px)
+20:45:24.709 [DEBUG] Grasp point: robust centroid (670, 423)
+20:45:24.710 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.934)
+20:45:24.711 [DEBUG] NEAR SAM3: c=(670,428) score=0.96
+20:45:25.217 [INFO ] Servo: err=(+30,+68)px r=74  Δ=(+5.0,-1.5,+0.0)mm  pos=(186,-9,-49)  [partial cal (rank=1)]
+20:45:25.229 [INFO ] frame=17 state=NEAR      c=(670,428) z=477.3mm tilt=-
+20:45:25.488 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:25.499 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=0.98 -> 0.866
+20:45:25.501 [INFO ] SAM3: 'box' score=0.96 @ [561 210 775 624]  (top of 1)  sim=0.924
+20:45:25.501 [INFO ] SAM3: mask obtained (score=0.958, area=86046 px)
+20:45:25.530 [DEBUG] Grasp point: robust centroid (668, 417)
+20:45:25.531 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.953)
+20:45:25.532 [DEBUG] NEAR SAM3: c=(668,419) score=0.96
+20:45:26.038 [INFO ] Servo: err=(+28,+59)px r=66  Δ=(+5.0,-1.4,+0.0)mm  pos=(191,-10,-49)  [partial cal (rank=1)]
+20:45:26.051 [INFO ] frame=18 state=NEAR      c=(668,419) z=473.9mm tilt=-
+20:45:26.308 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:26.311 [DEBUG]   det conf=0.96 sim=0.927 pos=0.42 prox=1.00 -> 0.872
+20:45:26.313 [INFO ] SAM3: 'box' score=0.96 @ [559 208 775 626]  (top of 1)  sim=0.927
+20:45:26.313 [INFO ] SAM3: mask obtained (score=0.959, area=87538 px)
+20:45:26.342 [DEBUG] Grasp point: robust centroid (666, 417)
+20:45:26.342 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.983)
+20:45:26.343 [DEBUG] NEAR SAM3: c=(668,417) score=0.96
+20:45:26.849 [INFO ] Servo: err=(+28,+57)px r=63  Δ=(+5.0,-1.4,+0.0)mm  pos=(196,-12,-49)  [partial cal (rank=1)]
+20:45:26.861 [INFO ] frame=19 state=NEAR      c=(668,417) z=469.2mm tilt=-
+20:45:27.119 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:27.131 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.870
+20:45:27.133 [INFO ] SAM3: 'box' score=0.96 @ [556 206 774 629]  (top of 1)  sim=0.924
+20:45:27.133 [INFO ] SAM3: mask obtained (score=0.960, area=89579 px)
+20:45:27.161 [DEBUG] Grasp point: robust centroid (666, 418)
+20:45:27.162 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.976)
+20:45:27.163 [DEBUG] NEAR SAM3: c=(666,417) score=0.96
+20:45:27.669 [INFO ] Servo: err=(+26,+57)px r=63  Δ=(+5.0,-1.3,+0.0)mm  pos=(201,-13,-49)  [partial cal (rank=1)]
+20:45:27.681 [INFO ] frame=20 state=NEAR      c=(666,417) z=464.0mm tilt=-
+20:45:27.941 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:27.943 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+20:45:27.946 [INFO ] SAM3: 'box' score=0.96 @ [555 204 776 631]  (top of 1)  sim=0.921
+20:45:27.946 [INFO ] SAM3: mask obtained (score=0.963, area=91712 px)
+20:45:27.975 [DEBUG] Grasp point: robust centroid (666, 418)
+20:45:27.975 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.977)
+20:45:27.976 [DEBUG] NEAR SAM3: c=(666,417) score=0.96
+20:45:28.482 [INFO ] Servo: err=(+26,+57)px r=63  Δ=(+5.0,-1.3,+0.0)mm  pos=(206,-14,-49)  [partial cal (rank=1)]
+20:45:28.494 [INFO ] frame=21 state=NEAR      c=(666,417) z=458.7mm tilt=-
+20:45:28.762 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:28.764 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.869
+20:45:28.766 [INFO ] SAM3: 'box' score=0.96 @ [555 202 778 634]  (top of 1)  sim=0.921
+20:45:28.767 [INFO ] SAM3: mask obtained (score=0.964, area=93871 px)
+20:45:28.795 [DEBUG] Grasp point: robust centroid (666, 418)
+20:45:28.796 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.977)
+20:45:28.797 [DEBUG] NEAR SAM3: c=(667,417) score=0.96
+20:45:29.302 [INFO ] Servo: err=(+27,+57)px r=63  Δ=(+5.0,-1.4,+0.0)mm  pos=(211,-16,-49)  [partial cal (rank=1)]
+20:45:29.314 [INFO ] frame=22 state=NEAR      c=(667,417) z=453.5mm tilt=-
+20:45:29.570 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:29.575 [DEBUG]   det conf=0.96 sim=0.919 pos=0.42 prox=1.00 -> 0.868
+20:45:29.578 [INFO ] SAM3: 'box' score=0.96 @ [553 200 779 636]  (top of 1)  sim=0.919
+20:45:29.578 [INFO ] SAM3: mask obtained (score=0.962, area=95732 px)
+20:45:29.607 [DEBUG] Grasp point: robust centroid (667, 418)
+20:45:29.607 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.981)
+20:45:29.608 [DEBUG] NEAR SAM3: c=(667,417) score=0.96
+20:45:30.114 [INFO ] Servo: err=(+27,+57)px r=63  Δ=(+5.0,-1.3,+0.0)mm  pos=(216,-17,-49)  [partial cal (rank=1)]
+20:45:30.126 [INFO ] frame=23 state=NEAR      c=(667,417) z=448.3mm tilt=-
+20:45:30.378 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:30.381 [DEBUG]   det conf=0.96 sim=0.918 pos=0.42 prox=0.99 -> 0.865
+20:45:30.382 [INFO ] SAM3: 'box' score=0.96 @ [550 198 778 639]  (top of 1)  sim=0.918
+20:45:30.383 [INFO ] SAM3: mask obtained (score=0.960, area=97912 px)
+20:45:30.411 [DEBUG] Grasp point: robust centroid (664, 420)
+20:45:30.411 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.975)
+20:45:30.413 [DEBUG] NEAR SAM3: c=(666,418) score=0.96
+20:45:30.918 [INFO ] Servo: err=(+26,+58)px r=63  Δ=(+5.0,-1.3,+0.0)mm  pos=(221,-18,-49)  [partial cal (rank=1)]
+20:45:30.929 [INFO ] frame=24 state=NEAR      c=(666,418) z=443.4mm tilt=-
+20:45:31.203 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:31.205 [DEBUG]   det conf=0.96 sim=0.927 pos=0.42 prox=1.00 -> 0.871
+20:45:31.207 [INFO ] SAM3: 'box' score=0.96 @ [546 196 778 643]  (top of 1)  sim=0.927
+20:45:31.208 [INFO ] SAM3: mask obtained (score=0.961, area=100270 px)
+20:45:31.236 [DEBUG] Grasp point: robust centroid (662, 420)
+20:45:31.236 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.970)
+20:45:31.238 [DEBUG] NEAR SAM3: c=(664,418) score=0.96
+20:45:31.743 [INFO ] Servo: err=(+24,+58)px r=63  Δ=(+5.0,-1.2,+0.0)mm  pos=(226,-20,-49)  [partial cal (rank=1)]
+20:45:31.757 [INFO ] frame=25 state=NEAR      c=(664,418) z=438.4mm tilt=-
+20:45:32.015 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:32.017 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.870
+20:45:32.019 [INFO ] SAM3: 'box' score=0.96 @ [544 194 778 645]  (top of 1)  sim=0.924
+20:45:32.019 [INFO ] SAM3: mask obtained (score=0.961, area=102370 px)
+20:45:32.047 [DEBUG] Grasp point: robust centroid (661, 420)
+20:45:32.048 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.979)
+20:45:32.049 [DEBUG] NEAR SAM3: c=(663,419) score=0.96
+20:45:32.554 [INFO ] Servo: err=(+23,+59)px r=63  Δ=(+5.0,-1.1,+0.0)mm  pos=(231,-21,-49)  [partial cal (rank=1)]
+20:45:32.567 [INFO ] frame=26 state=NEAR      c=(663,419) z=433.4mm tilt=-
+20:45:32.823 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:32.826 [DEBUG]   det conf=0.96 sim=0.920 pos=0.42 prox=1.00 -> 0.868
+20:45:32.828 [INFO ] SAM3: 'box' score=0.96 @ [542 192 777 648]  (top of 1)  sim=0.920
+20:45:32.828 [INFO ] SAM3: mask obtained (score=0.963, area=104726 px)
+20:45:32.857 [DEBUG] Grasp point: robust centroid (659, 420)
+20:45:32.857 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.976)
+20:45:32.859 [DEBUG] NEAR SAM3: c=(661,419) score=0.96
+20:45:33.364 [INFO ] Servo: err=(+21,+59)px r=63  Δ=(+5.0,-1.1,+0.0)mm  pos=(236,-22,-49)  [partial cal (rank=1)]
+20:45:33.377 [INFO ] frame=27 state=NEAR      c=(661,419) z=428.5mm tilt=-
+20:45:33.632 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:33.634 [DEBUG]   det conf=0.96 sim=0.920 pos=0.41 prox=0.99 -> 0.867
+20:45:33.636 [INFO ] SAM3: 'box' score=0.96 @ [539 190 778 652]  (top of 1)  sim=0.920
+20:45:33.637 [INFO ] SAM3: mask obtained (score=0.959, area=107203 px)
+20:45:33.666 [DEBUG] Grasp point: robust centroid (658, 422)
+20:45:33.666 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.976)
+20:45:33.668 [DEBUG] NEAR SAM3: c=(660,420) score=0.96
+20:45:34.173 [INFO ] Servo: err=(+20,+60)px r=64  Δ=(+5.0,-1.0,+0.0)mm  pos=(241,-23,-49)  [partial cal (rank=1)]
+20:45:34.184 [INFO ] frame=28 state=NEAR      c=(660,420) z=423.2mm tilt=-
+20:45:34.443 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:34.447 [DEBUG]   det conf=0.96 sim=0.923 pos=0.41 prox=1.00 -> 0.869
+20:45:34.449 [INFO ] SAM3: 'box' score=0.96 @ [536 189 778 656]  (top of 1)  sim=0.923
+20:45:34.449 [INFO ] SAM3: mask obtained (score=0.958, area=109792 px)
+20:45:34.477 [DEBUG] Grasp point: robust centroid (657, 422)
+20:45:34.478 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.976)
+20:45:34.479 [DEBUG] NEAR SAM3: c=(659,421) score=0.96
+20:45:34.984 [INFO ] Servo: err=(+19,+61)px r=64  Δ=(+5.0,-0.9,+0.0)mm  pos=(246,-24,-49)  [partial cal (rank=1)]
+20:45:34.996 [INFO ] frame=29 state=NEAR      c=(659,421) z=418.0mm tilt=-
+20:45:35.258 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:35.262 [DEBUG]   det conf=0.97 sim=0.922 pos=0.41 prox=0.99 -> 0.867
+20:45:35.264 [INFO ] SAM3: 'box' score=0.97 @ [534 187 778 659]  (top of 1)  sim=0.922
+20:45:35.265 [INFO ] SAM3: mask obtained (score=0.967, area=112469 px)
+20:45:35.294 [DEBUG] Grasp point: robust centroid (658, 423)
+20:45:35.295 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.976)
+20:45:35.296 [DEBUG] NEAR SAM3: c=(657,422) score=0.97
+20:45:35.802 [INFO ] Servo: err=(+17,+62)px r=65  Δ=(+5.0,-0.9,+0.0)mm  pos=(251,-25,-49)  [partial cal (rank=1)]
+20:45:35.869 [INFO ] frame=30 state=NEAR      c=(657,422) z=412.6mm tilt=-
+20:45:36.126 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:36.129 [DEBUG]   det conf=0.96 sim=0.920 pos=0.41 prox=0.99 -> 0.865
+20:45:36.131 [INFO ] SAM3: 'box' score=0.96 @ [530 185 777 663]  (top of 1)  sim=0.920
+20:45:36.131 [INFO ] SAM3: mask obtained (score=0.964, area=115118 px)
+20:45:36.160 [DEBUG] Grasp point: robust centroid (655, 424)
+20:45:36.160 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.972)
+20:45:36.161 [DEBUG] NEAR SAM3: c=(656,423) score=0.96
+20:45:36.667 [INFO ] Servo: err=(+16,+63)px r=65  Δ=(+5.0,-0.8,+0.0)mm  pos=(256,-25,-49)  [partial cal (rank=1)]
+20:45:36.678 [INFO ] frame=31 state=NEAR      c=(656,423) z=407.2mm tilt=-
+20:45:36.935 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:36.938 [DEBUG]   det conf=0.96 sim=0.919 pos=0.41 prox=0.99 -> 0.866
+20:45:36.941 [INFO ] SAM3: 'box' score=0.96 @ [528 182 778 666]  (top of 1)  sim=0.919
+20:45:36.941 [INFO ] SAM3: mask obtained (score=0.960, area=117927 px)
+20:45:36.970 [DEBUG] Grasp point: robust centroid (653, 424)
+20:45:36.970 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.976)
+20:45:36.971 [DEBUG] NEAR SAM3: c=(655,423) score=0.96
+20:45:37.477 [INFO ] Servo: err=(+15,+63)px r=65  Δ=(+5.0,-0.7,+0.0)mm  pos=(261,-26,-49)  [partial cal (rank=1)]
+20:45:37.489 [INFO ] frame=32 state=NEAR      c=(655,423) z=402.0mm tilt=-
+20:45:37.746 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:37.749 [DEBUG]   det conf=0.96 sim=0.925 pos=0.41 prox=0.99 -> 0.868
+20:45:37.751 [INFO ] SAM3: 'box' score=0.96 @ [526 181 779 670]  (top of 1)  sim=0.925
+20:45:37.751 [INFO ] SAM3: mask obtained (score=0.960, area=120583 px)
+20:45:37.779 [DEBUG] Grasp point: robust centroid (652, 426)
+20:45:37.779 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.978)
+20:45:37.781 [DEBUG] NEAR SAM3: c=(654,424) score=0.96
+20:45:38.286 [INFO ] Servo: err=(+14,+64)px r=66  Δ=(+5.0,-0.7,+0.0)mm  pos=(266,-27,-49)  [partial cal (rank=1)]
+20:45:38.298 [INFO ] frame=33 state=NEAR      c=(654,424) z=397.3mm tilt=-
+20:45:38.556 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:38.559 [DEBUG]   det conf=0.96 sim=0.924 pos=0.41 prox=1.00 -> 0.868
+20:45:38.560 [INFO ] SAM3: 'box' score=0.96 @ [523 179 779 675]  (top of 1)  sim=0.924
+20:45:38.561 [INFO ] SAM3: mask obtained (score=0.959, area=123556 px)
+20:45:38.588 [DEBUG] Grasp point: robust centroid (651, 427)
+20:45:38.589 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.976)
+20:45:38.590 [DEBUG] NEAR SAM3: c=(653,425) score=0.96
+20:45:39.096 [INFO ] Servo: err=(+13,+65)px r=67  Δ=(+5.0,-0.6,+0.0)mm  pos=(271,-27,-49)  [partial cal (rank=1)]
+20:45:39.107 [INFO ] frame=34 state=NEAR      c=(653,425) z=392.1mm tilt=-
+20:45:39.365 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:39.368 [DEBUG]   det conf=0.96 sim=0.925 pos=0.40 prox=1.00 -> 0.868
+20:45:39.370 [INFO ] SAM3: 'box' score=0.96 @ [521 177 780 679]  (top of 1)  sim=0.925
+20:45:39.370 [INFO ] SAM3: mask obtained (score=0.961, area=126496 px)
+20:45:39.399 [DEBUG] Grasp point: robust centroid (650, 428)
+20:45:39.399 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.977)
+20:45:39.401 [DEBUG] NEAR SAM3: c=(651,426) score=0.96
+20:45:39.906 [INFO ] Servo: err=(+11,+66)px r=67  Δ=(+5.0,-0.6,+0.0)mm  pos=(276,-28,-49)  [partial cal (rank=1)]
+20:45:39.917 [INFO ] frame=35 state=NEAR      c=(651,426) z=387.3mm tilt=-
+20:45:40.178 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:40.181 [DEBUG]   det conf=0.95 sim=0.923 pos=0.40 prox=1.00 -> 0.866
+20:45:40.183 [INFO ] SAM3: 'box' score=0.95 @ [518 174 781 683]  (top of 1)  sim=0.923
+20:45:40.183 [INFO ] SAM3: mask obtained (score=0.951, area=129752 px)
+20:45:40.213 [DEBUG] Grasp point: robust centroid (650, 428)
+20:45:40.214 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.975)
+20:45:40.215 [DEBUG] NEAR SAM3: c=(651,427) score=0.95
+20:45:40.670 [INFO ] Servo: err=(+11,+67)px r=68  Δ=(+5.0,-0.5,+0.0)mm  pos=(281,-28,-49)  [partial cal (rank=1)]
+20:45:40.682 [INFO ] frame=36 state=NEAR      c=(651,427) z=381.9mm tilt=-
+20:45:40.940 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:40.943 [DEBUG]   det conf=0.96 sim=0.922 pos=0.40 prox=0.99 -> 0.866
+20:45:40.945 [INFO ] SAM3: 'box' score=0.96 @ [516 172 782 687]  (top of 1)  sim=0.922
+20:45:40.946 [INFO ] SAM3: mask obtained (score=0.959, area=133523 px)
+20:45:40.974 [DEBUG] Grasp point: robust centroid (648, 430)
+20:45:40.974 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.972)
+20:45:40.976 [DEBUG] NEAR SAM3: c=(650,428) score=0.96
+20:45:41.481 [INFO ] Servo: err=(+10,+68)px r=69  Δ=(+5.0,-0.5,+0.0)mm  pos=(286,-29,-49)  [partial cal (rank=1)]
+20:45:41.495 [INFO ] frame=37 state=NEAR      c=(650,428) z=377.1mm tilt=-
+20:45:41.752 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:41.755 [DEBUG]   det conf=0.96 sim=0.926 pos=0.40 prox=1.00 -> 0.868
+20:45:41.758 [INFO ] SAM3: 'box' score=0.96 @ [514 169 783 691]  (top of 1)  sim=0.926
+20:45:41.758 [INFO ] SAM3: mask obtained (score=0.958, area=136978 px)
+20:45:41.786 [DEBUG] Grasp point: robust centroid (650, 430)
+20:45:41.786 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.975)
+20:45:41.788 [DEBUG] NEAR SAM3: c=(650,429) score=0.96
+20:45:42.293 [INFO ] Servo: err=(+10,+69)px r=69  Δ=(+5.0,-0.5,+0.0)mm  pos=(291,-29,-49)  [partial cal (rank=1)]
+20:45:42.305 [INFO ] frame=38 state=NEAR      c=(650,429) z=371.8mm tilt=-
+20:45:42.561 [INFO ] SAM3: 1 detection(s) for 'box'
+20:45:42.565 [DEBUG]   det conf=0.96 sim=0.920 pos=0.40 prox=0.99 -> 0.864
+20:45:42.567 [INFO ] SAM3: 'box' score=0.96 @ [512 167 784 696]  (top of 1)  sim=0.920
+20:45:42.567 [INFO ] SAM3: mask obtained (score=0.958, area=140456 px)
+20:45:42.595 [DEBUG] Grasp point: robust centroid (646, 432)
+20:45:42.596 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.975)
+20:45:42.596 [INFO ] NEAR: box exited frame (score=0.96 border=True) — switching to tracking phase
+20:45:42.787 [DEBUG] Signal C: logits re-seeded from SAM3 handoff mask.
+20:45:42.787 [INFO ] NEAR handoff anchor: (651, 427)
+20:45:43.430 [INFO ] Servo: err=(+8,+73)px r=73  Δ=(+5.0,-0.4,+0.0)mm  pos=(296,-30,-49)  [partial cal (rank=1)]
+20:45:43.442 [INFO ] frame=39 state=NEAR      c=(648,433) z=366.5mm tilt=-
+20:45:44.086 [INFO ] Servo: err=(+8,+73)px r=73  Δ=(+5.0,-0.4,+0.0)mm  pos=(301,-30,-49)  [partial cal (rank=1)]
+20:45:44.098 [INFO ] frame=40 state=NEAR      c=(648,433) z=361.5mm tilt=-
+20:45:44.107 [WARNING] Signal B: CoTracker3 step failed (narrow(): length must be non-negative.); downgrading to LK for the rest of approach.
+20:45:44.657 [INFO ] Servo: err=(+7,+75)px r=75  Δ=(+5.0,-0.4,+0.0)mm  pos=(306,-31,-49)  [partial cal (rank=1)]
+20:45:44.669 [INFO ] frame=41 state=NEAR      c=(647,435) z=356.8mm tilt=-
+20:45:45.294 [INFO ] Servo: err=(+7,+76)px r=76  Δ=(+5.0,-0.3,+0.0)mm  pos=(311,-31,-49)  [partial cal (rank=1)]
+20:45:45.307 [INFO ] frame=42 state=NEAR      c=(647,436) z=351.6mm tilt=-
+20:45:45.912 [INFO ] Servo: err=(+6,+77)px r=77  Δ=(+5.0,-0.3,+0.0)mm  pos=(316,-31,-49)  [partial cal (rank=1)]
+20:45:45.926 [INFO ] frame=43 state=NEAR      c=(646,437) z=346.6mm tilt=-
+20:45:46.481 [INFO ] Servo: err=(+6,+78)px r=79  Δ=(+5.0,-0.3,+0.0)mm  pos=(321,-32,-49)  [partial cal (rank=1)]
+20:45:46.492 [INFO ] frame=44 state=NEAR      c=(646,438) z=341.3mm tilt=-
+20:45:47.099 [INFO ] Servo: err=(+6,+79)px r=79  Δ=(+5.0,-0.3,+0.0)mm  pos=(326,-32,-49)  [partial cal (rank=1)]
+20:45:47.111 [INFO ] frame=45 state=NEAR      c=(646,439) z=335.7mm tilt=-
+20:45:47.717 [INFO ] Servo: err=(+5,+80)px r=80  Δ=(+5.0,-0.3,+0.0)mm  pos=(331,-32,-49)  [partial cal (rank=1)]
+20:45:47.730 [INFO ] frame=46 state=NEAR      c=(645,440) z=330.7mm tilt=-
+20:45:48.341 [INFO ] Servo: err=(+5,+82)px r=82  Δ=(+5.0,-0.2,+0.0)mm  pos=(336,-32,-49)  [partial cal (rank=1)]
+20:45:48.352 [INFO ] frame=47 state=NEAR      c=(645,442) z=326.6mm tilt=-
+20:45:48.974 [INFO ] Servo: err=(+5,+83)px r=83  Δ=(+5.0,-0.2,+0.0)mm  pos=(341,-33,-49)  [partial cal (rank=1)]
+20:45:48.985 [INFO ] frame=48 state=NEAR      c=(645,443) z=321.7mm tilt=-
+20:45:49.542 [INFO ] Servo: err=(+4,+84)px r=84  Δ=(+5.0,-0.2,+0.0)mm  pos=(346,-33,-49)  [partial cal (rank=1)]
+20:45:49.553 [INFO ] frame=49 state=NEAR      c=(644,444) z=316.8mm tilt=-
+20:45:50.157 [INFO ] Servo: err=(+4,+85)px r=85  Δ=(+5.0,-0.2,+0.0)mm  pos=(351,-33,-49)  [partial cal (rank=1)]
+20:45:50.169 [INFO ] frame=50 state=NEAR      c=(644,445) z=312.2mm tilt=-
+20:45:50.779 [INFO ] Servo: err=(+4,+87)px r=87  Δ=(+5.0,-0.2,+0.0)mm  pos=(356,-33,-49)  [partial cal (rank=1)]
+20:45:50.791 [INFO ] frame=51 state=NEAR      c=(644,447) z=307.2mm tilt=-
+20:45:51.397 [INFO ] Servo: err=(+4,+88)px r=88  Δ=(+5.0,-0.2,+0.0)mm  pos=(361,-33,-49)  [partial cal (rank=1)]
+20:45:51.409 [INFO ] frame=52 state=NEAR      c=(644,448) z=301.7mm tilt=-
+20:45:51.961 [INFO ] Servo: err=(+4,+90)px r=90  Δ=(+5.0,-0.2,+0.0)mm  pos=(366,-34,-49)  [partial cal (rank=1)]
+20:45:51.973 [INFO ] frame=53 state=NEAR      c=(644,450) z=- tilt=-
+20:45:52.579 [INFO ] Servo: err=(+3,+91)px r=91  Δ=(+5.0,-0.2,+0.0)mm  pos=(371,-34,-49)  [partial cal (rank=1)]
+20:45:52.590 [INFO ] frame=54 state=NEAR      c=(643,451) z=- tilt=-
+20:45:53.146 [INFO ] Servo: err=(+3,+93)px r=93  Δ=(+5.0,-0.1,+0.0)mm  pos=(376,-34,-49)  [partial cal (rank=1)]
+20:45:53.159 [INFO ] frame=55 state=NEAR      c=(643,453) z=- tilt=-
+20:45:53.766 [INFO ] Servo: err=(+3,+95)px r=95  Δ=(+5.0,-0.2,+0.0)mm  pos=(381,-34,-49)  [partial cal (rank=1)]
+20:45:53.778 [INFO ] frame=56 state=NEAR      c=(643,455) z=- tilt=-
+20:45:54.385 [INFO ] Servo: err=(+3,+96)px r=96  Δ=(+5.0,-0.1,+0.0)mm  pos=(386,-34,-49)  [partial cal (rank=1)]
+20:45:54.398 [INFO ] frame=57 state=NEAR      c=(643,456) z=- tilt=-
+20:45:54.969 [INFO ] Servo: err=(+3,+98)px r=98  Δ=(+5.0,-0.1,+0.0)mm  pos=(391,-34,-49)  [partial cal (rank=1)]
+20:45:54.982 [INFO ] frame=58 state=NEAR      c=(643,458) z=- tilt=-
+20:45:55.537 [INFO ] Servo: err=(+3,+100)px r=100  Δ=(+5.0,-0.1,+0.0)mm  pos=(396,-34,-49)  [partial cal (rank=1)]
+20:45:55.549 [INFO ] frame=59 state=NEAR      c=(643,460) z=- tilt=-
+20:45:56.101 [INFO ] Servo: err=(+3,+102)px r=102  Δ=(+5.0,-0.1,+0.0)mm  pos=(401,-35,-49)  [partial cal (rank=1)]
+20:45:56.171 [INFO ] frame=60 state=NEAR      c=(643,462) z=- tilt=-
+20:45:56.725 [INFO ] Servo: err=(+3,+104)px r=104  Δ=(+5.0,-0.1,+0.0)mm  pos=(406,-35,-49)  [partial cal (rank=1)]
+20:45:56.737 [INFO ] frame=61 state=NEAR      c=(643,464) z=- tilt=-
+20:45:57.342 [INFO ] Servo: err=(+3,+105)px r=105  Δ=(+5.0,-0.1,+0.0)mm  pos=(411,-35,-49)  [partial cal (rank=1)]
+20:45:57.355 [INFO ] frame=62 state=NEAR      c=(643,465) z=- tilt=-
+20:45:57.910 [INFO ] Servo: err=(+3,+108)px r=108  Δ=(+5.0,-0.1,+0.0)mm  pos=(416,-35,-49)  [partial cal (rank=1)]
+20:45:57.921 [INFO ] frame=63 state=NEAR      c=(643,468) z=- tilt=-
+20:45:58.527 [INFO ] Servo: err=(+2,+110)px r=110  Δ=(+5.0,-0.1,+0.0)mm  pos=(421,-35,-49)  [partial cal (rank=1)]
+20:45:58.539 [INFO ] frame=64 state=NEAR      c=(642,470) z=- tilt=-
+20:45:58.638 [WARNING] Servo paused — watchdog alarm active.
+20:45:58.650 [INFO ] frame=65 state=NEAR      c=(642,473) z=- tilt=-
+20:45:58.761 [WARNING] Servo paused — watchdog alarm active.
+20:45:58.772 [INFO ] frame=66 state=NEAR      c=(642,472) z=- tilt=-
+20:45:58.874 [WARNING] Servo paused — watchdog alarm active.
+20:45:58.884 [INFO ] frame=67 state=NEAR      c=(642,472) z=- tilt=-
+20:45:58.984 [WARNING] Servo paused — watchdog alarm active.
+20:45:58.994 [INFO ] frame=68 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.097 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.108 [INFO ] frame=69 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.205 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.215 [INFO ] frame=70 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.314 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.325 [INFO ] frame=71 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.426 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.438 [INFO ] frame=72 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.540 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.551 [INFO ] frame=73 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.651 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.661 [INFO ] frame=74 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.763 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.773 [INFO ] frame=75 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.875 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.885 [INFO ] frame=76 state=NEAR      c=(642,472) z=- tilt=-
+20:45:59.985 [WARNING] Servo paused — watchdog alarm active.
+20:45:59.996 [INFO ] frame=77 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.099 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.110 [INFO ] frame=78 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.211 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.222 [INFO ] frame=79 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.324 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.335 [INFO ] frame=80 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.434 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.444 [INFO ] frame=81 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.546 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.556 [INFO ] frame=82 state=NEAR      c=(642,472) z=- tilt=-
+20:46:00.659 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.668 [INFO ] frame=83 state=NEAR      c=(642,473) z=- tilt=-
+20:46:00.766 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.778 [INFO ] frame=84 state=NEAR      c=(642,473) z=- tilt=-
+20:46:00.877 [WARNING] Servo paused — watchdog alarm active.
+20:46:00.888 [INFO ] frame=85 state=NEAR      c=(642,473) z=- tilt=-
+20:46:00.990 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.001 [INFO ] frame=86 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.101 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.112 [INFO ] frame=87 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.214 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.224 [INFO ] frame=88 state=NEAR      c=(642,473) z=- tilt=-
+20:46:01.323 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.332 [INFO ] frame=89 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.432 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.494 [INFO ] frame=90 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.595 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.605 [INFO ] frame=91 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.704 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.714 [INFO ] frame=92 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.813 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.822 [INFO ] frame=93 state=NEAR      c=(642,472) z=- tilt=-
+20:46:01.924 [WARNING] Servo paused — watchdog alarm active.
+20:46:01.935 [INFO ] frame=94 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.033 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.043 [INFO ] frame=95 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.145 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.156 [INFO ] frame=96 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.258 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.268 [INFO ] frame=97 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.370 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.381 [INFO ] frame=98 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.480 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.491 [INFO ] frame=99 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.590 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.601 [INFO ] frame=100 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.706 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.717 [INFO ] frame=101 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.815 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.825 [INFO ] frame=102 state=NEAR      c=(642,472) z=- tilt=-
+20:46:02.932 [WARNING] Servo paused — watchdog alarm active.
+20:46:02.942 [INFO ] frame=103 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.046 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.057 [INFO ] frame=104 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.155 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.165 [INFO ] frame=105 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.291 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.301 [INFO ] frame=106 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.408 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.418 [INFO ] frame=107 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.527 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.539 [INFO ] frame=108 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.638 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.649 [INFO ] frame=109 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.751 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.761 [INFO ] frame=110 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.861 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.871 [INFO ] frame=111 state=NEAR      c=(642,472) z=- tilt=-
+20:46:03.972 [WARNING] Servo paused — watchdog alarm active.
+20:46:03.983 [INFO ] frame=112 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.085 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.096 [INFO ] frame=113 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.196 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.206 [INFO ] frame=114 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.303 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.313 [INFO ] frame=115 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.426 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.436 [INFO ] frame=116 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.543 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.554 [INFO ] frame=117 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.655 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.665 [INFO ] frame=118 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.764 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.775 [INFO ] frame=119 state=NEAR      c=(642,472) z=- tilt=-
+20:46:04.877 [WARNING] Servo paused — watchdog alarm active.
+20:46:04.943 [INFO ] frame=120 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.045 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.056 [INFO ] frame=121 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.162 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.172 [INFO ] frame=122 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.275 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.285 [INFO ] frame=123 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.386 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.396 [INFO ] frame=124 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.502 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.513 [INFO ] frame=125 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.615 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.625 [INFO ] frame=126 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.725 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.736 [INFO ] frame=127 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.836 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.846 [INFO ] frame=128 state=NEAR      c=(642,472) z=- tilt=-
+20:46:05.947 [WARNING] Servo paused — watchdog alarm active.
+20:46:05.957 [INFO ] frame=129 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.058 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.071 [INFO ] frame=130 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.172 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.183 [INFO ] frame=131 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.298 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.309 [INFO ] frame=132 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.411 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.422 [INFO ] frame=133 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.525 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.535 [INFO ] frame=134 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.635 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.647 [INFO ] frame=135 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.775 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.786 [INFO ] frame=136 state=NEAR      c=(642,472) z=- tilt=-
+20:46:06.901 [WARNING] Servo paused — watchdog alarm active.
+20:46:06.911 [INFO ] frame=137 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.010 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.020 [INFO ] frame=138 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.120 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.130 [INFO ] frame=139 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.232 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.242 [INFO ] frame=140 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.343 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.354 [INFO ] frame=141 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.455 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.465 [INFO ] frame=142 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.565 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.575 [INFO ] frame=143 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.679 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.690 [INFO ] frame=144 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.791 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.802 [INFO ] frame=145 state=NEAR      c=(642,472) z=- tilt=-
+20:46:07.902 [WARNING] Servo paused — watchdog alarm active.
+20:46:07.912 [INFO ] frame=146 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.013 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.023 [INFO ] frame=147 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.123 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.132 [INFO ] frame=148 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.233 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.243 [INFO ] frame=149 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.343 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.408 [INFO ] frame=150 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.508 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.518 [INFO ] frame=151 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.617 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.627 [INFO ] frame=152 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.731 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.742 [INFO ] frame=153 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.843 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.852 [INFO ] frame=154 state=NEAR      c=(642,472) z=- tilt=-
+20:46:08.954 [WARNING] Servo paused — watchdog alarm active.
+20:46:08.964 [INFO ] frame=155 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.067 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.078 [INFO ] frame=156 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.184 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.196 [INFO ] frame=157 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.330 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.341 [INFO ] frame=158 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.443 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.454 [INFO ] frame=159 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.557 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.567 [INFO ] frame=160 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.677 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.687 [INFO ] frame=161 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.788 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.798 [INFO ] frame=162 state=NEAR      c=(642,472) z=- tilt=-
+20:46:09.899 [WARNING] Servo paused — watchdog alarm active.
+20:46:09.909 [INFO ] frame=163 state=NEAR      c=(642,472) z=- tilt=-
+20:46:10.011 [WARNING] Servo paused — watchdog alarm active.
+20:46:10.021 [INFO ] frame=164 state=NEAR      c=(642,472) z=- tilt=-
+20:46:10.122 [WARNING] Servo paused — watchdog alarm active.
+20:46:10.132 [INFO ] frame=165 state=NEAR      c=(642,472) z=- tilt=-
+20:46:10.230 [WARNING] Servo paused — watchdog alarm active.
+20:46:10.240 [INFO ] frame=166 state=NEAR      c=(642,472) z=- tilt=-
+20:46:10.341 [WARNING] Servo paused — watchdog alarm active.
+20:46:10.344 [INFO ] Quit requested via window key.
+20:46:10.349 [INFO ] frame=167 state=NEAR      c=(642,472) z=- tilt=-
+20:46:10.415 [INFO ] Video saved: runs/v2_live_nocup_20260510_204507/overlay.mp4
+20:46:10.416 [INFO ] Video saved: runs/v2_live_nocup_20260510_204507/raw.mp4
+20:46:10.416 [INFO ] Returning to home position [181.3, -7.5, -48.6] mm …
+20:46:15.760 [INFO ] Home position reached.
+20:46:15.761 [INFO ] Robot stopped.

@@ -1,0 +1,49 @@
+00:29:16.977 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260430_002916.log
+00:29:16.977 [INFO ] ======================================================================
+00:29:16.978 [INFO ] servo_lastmile_v2_ext starting
+00:29:16.978 [INFO ]   detector=sam3  prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+00:29:16.978 [INFO ]   offline=False  debug=False  dry-run=False  no-robot=False
+00:29:16.978 [INFO ] ======================================================================
+00:29:17.004 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+00:29:18.092 [INFO ] Robot connected: 192.168.1.241
+00:29:18.093 [INFO ] Home position captured: [205.3, 5.6, -52.9] mm
+00:29:18.102 [INFO ] Processing reference image ...
+00:29:26.211 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+00:29:27.190 [INFO ] SAM3: 1 detection(s) for 'box'
+00:29:27.190 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+00:29:27.528 [INFO ] Feature extractor (ResNet-18) loaded
+00:29:27.643 [INFO ] Ref features: 512-d vector (norm=1.000)
+00:29:27.644 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+00:29:27.645 [INFO ] LastMilePipelineV2Ext: detector_name=sam3
+00:29:30.515 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+00:29:30.515 [INFO ] === Calibration: waiting for camera frame ===
+00:29:30.516 [INFO ] Home: [205.3, 5.6, -52.9] mm
+00:29:30.816 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+00:29:31.071 [INFO ] SAM3: 1 detection(s) for 'box'
+00:29:31.326 [DEBUG]   det conf=0.95 sim=0.926 pos=0.41 prox=0.00 -> 0.619
+00:29:31.441 [INFO ] SAM3: 'box' score=0.95 @ [561 211 789 637]  (top of 1)  sim=0.926
+00:29:31.441 [INFO ] SAM3: mask obtained (score=0.946, area=90496 px)
+00:29:33.485 [INFO ]   [Y] returning home...
+00:29:34.681 [WARNING]   [Y] flow too small (0.00 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+00:29:34.982 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+00:29:37.647 [INFO ]   [Z] returning home...
+00:29:38.830 [WARNING]   [Z] flow too small (0.00 px < 1.0 px threshold) — axis ignored to prevent runaway. Try moving the robot closer or increasing CAL_DELTA.
+00:29:38.830 [INFO ] J_yz (px/mm):
+[[0. 0.]
+ [0. 0.]]
+00:29:38.831 [WARNING] J_yz rank=0 - approach-only mode.
+00:29:41.210 [DEBUG] Grasp point: robust centroid (674, 422)
+00:29:41.717 [INFO ] Servo: err=(+33,+63)px r=71  Δ=(+5.0,+0.0,-1.0)mm  pos=(210,6,-54)  [skipped (no flow data)]
+00:29:41.733 [INFO ] frame=0 state=FAR       c=(673,423) z=461.9mm tilt=- tilt_corr=False
+00:29:42.386 [INFO ] SAM3: 1 detection(s) for 'box'
+00:29:42.588 [DEBUG]   det conf=0.96 sim=0.922 pos=0.41 prox=0.99 -> 0.867
+00:29:42.705 [INFO ] SAM3: 'box' score=0.96 @ [561 208 792 638]  (top of 1)  sim=0.922
+00:29:42.705 [INFO ] SAM3: mask obtained (score=0.961, area=92448 px)
+00:29:42.740 [DEBUG] Grasp point: robust centroid (674, 421)
+00:29:43.248 [INFO ] Servo: err=(+34,+62)px r=71  Δ=(+5.0,+0.0,-1.0)mm  pos=(215,6,-55)  [skipped (no flow data)]
+00:29:43.263 [INFO ] frame=1 state=FAR       c=(674,422) z=455.9mm tilt=- tilt_corr=False
+00:29:44.079 [INFO ] SAM3: 1 detection(s) for 'box'
+00:29:44.267 [DEBUG]   det conf=0.95 sim=0.925 pos=0.41 prox=0.99 -> 0.867
+00:29:44.549 [INFO ] SAM3: 'box' score=0.95 @ [560 205 794 639]  (top of 1)  sim=0.925
+00:29:44.550 [INFO ] SAM3: mask obtained (score=0.955, area=94632 px)
+00:29:44.599 [DEBUG] Grasp point: robust centroid (676, 420)

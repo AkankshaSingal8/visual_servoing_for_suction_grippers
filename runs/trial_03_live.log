@@ -1,0 +1,906 @@
+18:37:41 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260510_183741.log
+18:37:41 [INFO ] ======================================================================
+18:37:41 [INFO ] servo_lastmile_v2_ext starting
+18:37:41 [INFO ]   detector=sam3  prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+18:37:41 [INFO ]   offline=False  debug=False  dry-run=False  no-robot=False
+18:37:41 [INFO ] ======================================================================
+18:37:41 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+SDK_VERSION: 1.17.3
+ROBOT_IP: 192.168.1.241, VERSION: v2.5.5, PROTOCOL: V1, DETAIL: 7,7,XS1305,MC1303,v2.5.5, TYPE1300: [1, 1]
+change protocol identifier to 3
+[motion_enable], xArm is not ready to move
+[set_state], xArm is ready to move
+18:37:42 [INFO ] Robot connected: 192.168.1.241
+18:37:42 [INFO ] Home position captured: [181.3, -7.5, -48.6] mm
+18:37:42 [INFO ] Processing reference image ...
+Loading weights:   0%|          | 0/1468 [00:00<?, ?it/s]Loading weights: 100%|██████████| 1468/1468 [00:00<00:00, 22310.86it/s]
+18:37:46 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+18:37:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:46 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+18:37:47 [INFO ] Feature extractor (ResNet-18) loaded
+18:37:47 [INFO ] Ref features: 512-d vector (norm=1.000)
+18:37:47 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+18:37:47 [INFO ] LastMilePipelineV2Ext: detector_name=sam3
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /home/akanksha/miniconda3/envs/semvs/lib/python3.10/site-packages/cv2/qt/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+[2026-05-10 18:37:47 UTC][ZED][INFO] Logging level INFO
+[2026-05-10 18:37:48 UTC][ZED][INFO] [Init]  Camera successfully opened.
+[2026-05-10 18:37:48 UTC][ZED][INFO] [Init]  Camera FW version: 1523
+[2026-05-10 18:37:48 UTC][ZED][INFO] [Init]  Video mode: HD720@30
+[2026-05-10 18:37:48 UTC][ZED][INFO] [Init]  Serial Number: S/N 19668636
+[2026-05-10 18:37:48 UTC][ZED][WARNING] [Init]  PERFORMANCE is deprecated. Please update your configuration to use NEURAL instead.
+18:37:49 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:49 [INFO ] SAM3: 'box' score=0.98 @ [714 208 951 620]  (top of 1)  sim=0.912
+18:37:49 [INFO ] SAM3: mask obtained (score=0.978, area=94219 px)
+xFormers not available
+xFormers not available
+18:37:49 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+18:37:49 [INFO ] === Calibration: waiting for camera frame ===
+18:37:49 [INFO ] Home: [181.3, -7.5, -48.6] mm
+18:37:49 [INFO ]   [Y] moving +25 mm at 30 mm/s...
+18:37:49 [INFO ] frame=0 state=FAR       c=(834,413) z=474.8mm tilt=- tilt_corr=False
+18:37:50 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:50 [INFO ] SAM3: 'box' score=0.97 @ [714 208 950 620]  (top of 1)  sim=0.914
+18:37:50 [INFO ] SAM3: mask obtained (score=0.975, area=94120 px)
+18:37:50 [INFO ] frame=1 state=FAR       c=(833,413) z=474.1mm tilt=- tilt_corr=False
+18:37:50 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:50 [INFO ] SAM3: 'box' score=0.98 @ [726 207 966 619]  (top of 1)  sim=0.904
+18:37:50 [INFO ] SAM3: mask obtained (score=0.980, area=95230 px)
+Using cache found in /home/akanksha/.cache/torch/hub/facebookresearch_co-tracker_main
+18:37:52 [INFO ]   [Y] returning home...
+18:37:53 [INFO ]   [Y] flow: (+15.0, -0.5) px / 25 mm  -> J[:,{col}]=[+0.5994, -0.0206]
+Using cache found in /home/akanksha/.cache/torch/hub/facebookresearch_dinov2_main
+18:37:53 [INFO ]   [Z] moving +25 mm at 30 mm/s...
+18:37:53 [INFO ] frame=2 state=NEAR      c=(847,412) z=473.9mm tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=2 state=NEAR      c=(847,412) z=473.9mm tilt=- tilt_corr=False
+18:37:54 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:54 [INFO ] SAM3: 'box' score=0.98 @ [714 208 950 620]  (top of 1)  sim=0.912
+18:37:54 [INFO ] SAM3: mask obtained (score=0.975, area=94004 px)
+18:37:54 [INFO ] frame=3 state=NEAR      c=(833,413) z=474.2mm tilt=2.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=3 state=NEAR      c=(833,413) z=474.2mm tilt=2.6° tilt_corr=False
+18:37:54 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:54 [INFO ] SAM3: 'box' score=0.98 @ [714 221 950 634]  (top of 1)  sim=0.915
+18:37:54 [INFO ] SAM3: mask obtained (score=0.976, area=94289 px)
+18:37:54 [INFO ] frame=4 state=NEAR      c=(833,422) z=474.8mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=4 state=NEAR      c=(833,422) z=474.8mm tilt=2.0° tilt_corr=False
+18:37:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:55 [INFO ] SAM3: 'box' score=0.98 @ [713 239 949 651]  (top of 1)  sim=0.917
+18:37:55 [INFO ] SAM3: mask obtained (score=0.976, area=93904 px)
+18:37:55 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.911)
+18:37:55 [INFO ] frame=5 state=NEAR      c=(833,437) z=474.5mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=5 state=NEAR      c=(833,437) z=474.5mm tilt=2.3° tilt_corr=False
+18:37:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:55 [INFO ] SAM3: 'box' score=0.98 @ [713 247 949 659]  (top of 1)  sim=0.920
+18:37:55 [INFO ] SAM3: mask obtained (score=0.978, area=93645 px)
+18:37:55 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.959)
+18:37:55 [INFO ] frame=6 state=NEAR      c=(833,447) z=474.8mm tilt=3.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=6 state=NEAR      c=(833,447) z=474.8mm tilt=3.1° tilt_corr=False
+18:37:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:55 [INFO ] SAM3: 'box' score=0.98 @ [713 247 949 659]  (top of 1)  sim=0.920
+18:37:55 [INFO ] SAM3: mask obtained (score=0.976, area=93629 px)
+18:37:55 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.998)
+18:37:55 [INFO ] frame=7 state=NEAR      c=(832,450) z=474.7mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=7 state=NEAR      c=(832,450) z=474.7mm tilt=1.7° tilt_corr=False
+18:37:56 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:56 [INFO ] SAM3: 'box' score=0.98 @ [713 247 949 659]  (top of 1)  sim=0.921
+18:37:56 [INFO ] SAM3: mask obtained (score=0.978, area=93597 px)
+18:37:56 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.998)
+18:37:56 [INFO ] frame=8 state=NEAR      c=(832,451) z=474.7mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=8 state=NEAR      c=(832,451) z=474.7mm tilt=1.8° tilt_corr=False
+18:37:56 [INFO ]   [Z] returning home...
+18:37:56 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:56 [INFO ] SAM3: 'box' score=0.98 @ [713 247 949 659]  (top of 1)  sim=0.923
+18:37:56 [INFO ] SAM3: mask obtained (score=0.979, area=93575 px)
+18:37:56 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.998)
+18:37:56 [INFO ] frame=9 state=NEAR      c=(832,451) z=474.6mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=9 state=NEAR      c=(832,451) z=474.6mm tilt=1.0° tilt_corr=False
+18:37:57 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:57 [INFO ] SAM3: 'box' score=0.98 @ [713 244 949 655]  (top of 1)  sim=0.921
+18:37:57 [INFO ] SAM3: mask obtained (score=0.978, area=93555 px)
+18:37:57 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.980)
+18:37:57 [INFO ] frame=10 state=NEAR      c=(832,449) z=474.5mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=10 state=NEAR      c=(832,449) z=474.5mm tilt=2.2° tilt_corr=False
+18:37:57 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:57 [INFO ] SAM3: 'box' score=0.97 @ [713 224 949 635]  (top of 1)  sim=0.915
+18:37:57 [INFO ] SAM3: mask obtained (score=0.975, area=93849 px)
+18:37:57 [INFO ]   [Z] flow: (-16.1, +39.3) px / 25 mm  -> J[:,{col}]=[-0.6447, +1.5726]
+18:37:57 [INFO ] J_yz (px/mm):
+[[ 0.59937256 -0.64468262]
+ [-0.02057678  1.57261475]]
+18:37:57 [INFO ] J_yz_inv (mm/px):
+[[1.69222706 0.69371686]
+ [0.02214184 0.64496054]]
+18:37:57 [INFO ] === Calibration complete [calibrated] ===
+18:37:57 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.904)
+18:37:58 [INFO ] Servo: err=(+193,+74)px r=206  Δ=(+0.0,-12.0,-12.0)mm  pos=(181,-19,-61)  [calibrated]
+18:37:58 [INFO ] frame=11 state=NEAR      c=(833,434) z=473.8mm tilt=0.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=11 state=NEAR      c=(833,434) z=473.8mm tilt=0.9° tilt_corr=False
+18:37:58 [INFO ] SAM3: 1 detection(s) for 'box'
+18:37:58 [INFO ] SAM3: 'box' score=0.98 @ [695 187 931 603]  (top of 1)  sim=0.923
+18:37:58 [INFO ] SAM3: mask obtained (score=0.976, area=92703 px)
+18:37:59 [INFO ] Servo: err=(+179,+46)px r=185  Δ=(+0.0,-12.0,-12.0)mm  pos=(181,-31,-73)  [calibrated]
+18:37:59 [INFO ] frame=12 state=NEAR      c=(819,406) z=473.5mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=12 state=NEAR      c=(819,406) z=473.5mm tilt=1.5° tilt_corr=False
+18:38:00 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:00 [INFO ] SAM3: 'box' score=0.97 @ [679 173 911 589]  (top of 1)  sim=0.926
+18:38:00 [INFO ] SAM3: mask obtained (score=0.975, area=91458 px)
+18:38:00 [INFO ] Servo: err=(+163,+28)px r=165  Δ=(+0.0,-12.0,-10.9)mm  pos=(181,-43,-84)  [calibrated]
+18:38:01 [INFO ] frame=13 state=NEAR      c=(803,388) z=473.1mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=13 state=NEAR      c=(803,388) z=473.1mm tilt=1.6° tilt_corr=False
+18:38:01 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:01 [INFO ] SAM3: 'box' score=0.98 @ [665 156 893 571]  (top of 1)  sim=0.922
+18:38:01 [INFO ] SAM3: mask obtained (score=0.977, area=90209 px)
+18:38:02 [INFO ] Servo: err=(+147,+11)px r=147  Δ=(+0.0,-12.0,-5.0)mm  pos=(181,-55,-89)  [calibrated]
+18:38:02 [INFO ] frame=14 state=NEAR      c=(787,371) z=473.0mm tilt=1.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=14 state=NEAR      c=(787,371) z=473.0mm tilt=1.9° tilt_corr=False
+18:38:02 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:02 [INFO ] SAM3: 'box' score=0.98 @ [650 149 875 565]  (top of 1)  sim=0.924
+18:38:02 [INFO ] SAM3: mask obtained (score=0.976, area=88739 px)
+18:38:03 [INFO ] Servo: err=(+130,+0)px r=130  Δ=(+0.0,-12.0,-1.6)mm  pos=(181,-67,-90)  [calibrated]
+18:38:03 [INFO ] frame=15 state=NEAR      c=(770,360) z=473.3mm tilt=2.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=15 state=NEAR      c=(770,360) z=473.3mm tilt=2.8° tilt_corr=False
+18:38:03 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:03 [INFO ] SAM3: 'box' score=0.97 @ [635 147 857 563]  (top of 1)  sim=0.929
+18:38:03 [INFO ] SAM3: mask obtained (score=0.970, area=87097 px)
+18:38:04 [INFO ] Servo: err=(+114,-4)px r=114  Δ=(+0.0,-12.0,+0.1)mm  pos=(181,-79,-90)  [calibrated]
+18:38:04 [INFO ] frame=16 state=NEAR      c=(754,356) z=473.9mm tilt=0.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=16 state=NEAR      c=(754,356) z=473.9mm tilt=0.5° tilt_corr=False
+18:38:04 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:05 [INFO ] SAM3: 'box' score=0.97 @ [619 147 840 563]  (top of 1)  sim=0.924
+18:38:05 [INFO ] SAM3: mask obtained (score=0.970, area=85827 px)
+18:38:05 [INFO ] Servo: err=(+97,-5)px r=97  Δ=(+0.0,-12.0,+0.6)mm  pos=(181,-91,-89)  [calibrated]
+18:38:05 [INFO ] frame=17 state=NEAR      c=(737,355) z=474.0mm tilt=0.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=17 state=NEAR      c=(737,355) z=474.0mm tilt=0.9° tilt_corr=False
+18:38:06 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:06 [INFO ] SAM3: 'box' score=0.96 @ [601 149 821 565]  (top of 1)  sim=0.925
+18:38:06 [INFO ] SAM3: mask obtained (score=0.965, area=85331 px)
+18:38:06 [INFO ] Servo: err=(+79,-4)px r=79  Δ=(+0.0,-12.0,+0.4)mm  pos=(181,-103,-89)  [calibrated]
+18:38:06 [INFO ] frame=18 state=NEAR      c=(719,356) z=474.1mm tilt=1.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=18 state=NEAR      c=(719,356) z=474.1mm tilt=1.2° tilt_corr=False
+18:38:07 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:07 [INFO ] SAM3: 'box' score=0.97 @ [583 150 802 566]  (top of 1)  sim=0.930
+18:38:07 [INFO ] SAM3: mask obtained (score=0.966, area=85237 px)
+18:38:07 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.836)
+18:38:08 [INFO ] Servo: err=(+61,-3)px r=61  Δ=(+0.0,-12.0,+0.2)mm  pos=(181,-115,-89)  [calibrated]
+18:38:08 [INFO ] frame=19 state=NEAR      c=(701,357) z=474.4mm tilt=0.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=19 state=NEAR      c=(701,357) z=474.4mm tilt=0.5° tilt_corr=False
+18:38:08 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:08 [INFO ] SAM3: 'box' score=0.97 @ [565 151 784 567]  (top of 1)  sim=0.925
+18:38:08 [INFO ] SAM3: mask obtained (score=0.968, area=85084 px)
+18:38:08 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.837)
+18:38:09 [INFO ] Servo: err=(+43,-2)px r=43  Δ=(+5.0,-12.0,+0.1)mm  pos=(186,-127,-89)  [calibrated]
+18:38:09 [INFO ] frame=20 state=NEAR      c=(683,358) z=474.8mm tilt=2.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=20 state=NEAR      c=(683,358) z=474.8mm tilt=2.3° tilt_corr=False
+18:38:09 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:09 [INFO ] SAM3: 'box' score=0.97 @ [545 151 767 570]  (top of 1)  sim=0.925
+18:38:09 [INFO ] SAM3: mask obtained (score=0.970, area=86598 px)
+18:38:09 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.832)
+18:38:10 [INFO ] Servo: err=(+24,-1)px r=24  Δ=(+5.0,-12.0,+0.0)mm  pos=(191,-139,-89)  [calibrated]
+18:38:10 [INFO ] frame=21 state=NEAR      c=(664,359) z=472.6mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=21 state=NEAR      c=(664,359) z=472.6mm tilt=1.8° tilt_corr=False
+18:38:10 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:10 [INFO ] SAM3: 'box' score=0.96 @ [525 149 750 572]  (top of 1)  sim=0.927
+18:38:10 [INFO ] SAM3: mask obtained (score=0.962, area=88263 px)
+18:38:10 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.833)
+18:38:11 [INFO ] Servo: err=(+6,-0)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(196,-139,-90)  [calibrated]
+18:38:11 [INFO ] frame=22 state=NEAR      c=(646,360) z=468.4mm tilt=3.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=22 state=NEAR      c=(646,360) z=468.4mm tilt=3.1° tilt_corr=False
+18:38:11 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:11 [INFO ] SAM3: 'box' score=0.96 @ [524 145 751 573]  (top of 1)  sim=0.926
+18:38:11 [INFO ] SAM3: mask obtained (score=0.963, area=90091 px)
+18:38:11 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.980)
+18:38:12 [INFO ] Servo: err=(+0,-1)px r=1  Δ=(+5.0,+0.0,-1.0)mm  pos=(201,-139,-91)  [calibrated]
+18:38:12 [INFO ] frame=23 state=NEAR      c=(640,359) z=463.8mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=23 state=NEAR      c=(640,359) z=463.8mm tilt=1.7° tilt_corr=False
+18:38:12 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:12 [INFO ] SAM3: 'box' score=0.96 @ [523 141 753 573]  (top of 1)  sim=0.928
+18:38:12 [INFO ] SAM3: mask obtained (score=0.964, area=92182 px)
+18:38:12 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.977)
+18:38:13 [INFO ] Servo: err=(-1,-3)px r=3  Δ=(+5.0,+0.0,-1.0)mm  pos=(206,-139,-92)  [calibrated]
+18:38:13 [INFO ] frame=24 state=NEAR      c=(639,357) z=458.4mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=24 state=NEAR      c=(639,357) z=458.4mm tilt=0.6° tilt_corr=False
+18:38:13 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:13 [INFO ] SAM3: 'box' score=0.96 @ [522 137 754 574]  (top of 1)  sim=0.927
+18:38:13 [INFO ] SAM3: mask obtained (score=0.962, area=94105 px)
+18:38:13 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.980)
+18:38:14 [INFO ] Servo: err=(-1,-4)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(211,-139,-93)  [calibrated]
+18:38:14 [INFO ] frame=25 state=NEAR      c=(639,356) z=453.2mm tilt=1.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=25 state=NEAR      c=(639,356) z=453.2mm tilt=1.4° tilt_corr=False
+18:38:14 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:14 [INFO ] SAM3: 'box' score=0.96 @ [521 132 756 574]  (top of 1)  sim=0.926
+18:38:14 [INFO ] SAM3: mask obtained (score=0.964, area=96267 px)
+18:38:14 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.978)
+18:38:14 [INFO ] Servo: err=(-1,-6)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(216,-139,-94)  [calibrated]
+18:38:14 [INFO ] frame=26 state=NEAR      c=(639,354) z=447.9mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=26 state=NEAR      c=(639,354) z=447.9mm tilt=1.1° tilt_corr=False
+18:38:15 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:15 [INFO ] SAM3: 'box' score=0.97 @ [520 128 757 575]  (top of 1)  sim=0.927
+18:38:15 [INFO ] SAM3: mask obtained (score=0.969, area=98480 px)
+18:38:15 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.978)
+18:38:15 [INFO ] Servo: err=(-1,-8)px r=8  Δ=(+5.0,+3.8,+2.6)mm  pos=(221,-136,-91)  [calibrated]
+18:38:15 [INFO ] frame=27 state=NEAR      c=(639,352) z=442.6mm tilt=1.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=27 state=NEAR      c=(639,352) z=442.6mm tilt=1.7° tilt_corr=False
+18:38:16 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:16 [INFO ] SAM3: 'box' score=0.97 @ [523 129 763 581]  (top of 1)  sim=0.932
+18:38:16 [INFO ] SAM3: mask obtained (score=0.968, area=100664 px)
+18:38:16 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.940)
+18:38:16 [INFO ] Servo: err=(+2,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(226,-136,-92)  [calibrated]
+18:38:16 [INFO ] frame=28 state=NEAR      c=(642,354) z=437.5mm tilt=1.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=28 state=NEAR      c=(642,354) z=437.5mm tilt=1.3° tilt_corr=False
+18:38:17 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:17 [INFO ] SAM3: 'box' score=0.97 @ [524 125 765 582]  (top of 1)  sim=0.926
+18:38:17 [INFO ] SAM3: mask obtained (score=0.971, area=102989 px)
+18:38:17 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.977)
+18:38:17 [INFO ] Servo: err=(+4,-7)px r=8  Δ=(+5.0,-1.3,+2.2)mm  pos=(231,-137,-90)  [calibrated]
+18:38:17 [INFO ] frame=29 state=NEAR      c=(644,353) z=432.3mm tilt=1.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=29 state=NEAR      c=(644,353) z=432.3mm tilt=1.5° tilt_corr=False
+18:38:18 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:18 [INFO ] SAM3: 'box' score=0.97 @ [521 125 766 587]  (top of 1)  sim=0.925
+18:38:18 [INFO ] SAM3: mask obtained (score=0.970, area=105296 px)
+18:38:18 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.975)
+18:38:18 [INFO ] Servo: err=(+4,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(236,-137,-91)  [calibrated]
+18:38:18 [INFO ] frame=30 state=NEAR      c=(644,355) z=427.0mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=30 state=NEAR      c=(644,355) z=427.0mm tilt=2.5° tilt_corr=False
+18:38:19 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:19 [INFO ] SAM3: 'box' score=0.97 @ [519 121 767 589]  (top of 1)  sim=0.925
+18:38:19 [INFO ] SAM3: mask obtained (score=0.968, area=107742 px)
+18:38:19 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.977)
+18:38:19 [INFO ] Servo: err=(+4,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(241,-137,-92)  [calibrated]
+18:38:19 [INFO ] frame=31 state=NEAR      c=(644,355) z=422.2mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=31 state=NEAR      c=(644,355) z=422.2mm tilt=2.1° tilt_corr=False
+18:38:20 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:20 [INFO ] SAM3: 'box' score=0.91 @ [519 116 768 590]  (top of 1)  sim=0.922
+18:38:20 [INFO ] SAM3: mask obtained (score=0.912, area=110351 px)
+18:38:20 [INFO ] MaskTracker: anchor locked (IoU streak=18, last IoU=0.976)
+18:38:20 [INFO ] Servo: err=(+4,-7)px r=8  Δ=(+5.0,+0.0,-1.0)mm  pos=(246,-137,-93)  [calibrated]
+18:38:20 [INFO ] frame=32 state=NEAR      c=(644,353) z=417.0mm tilt=1.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=32 state=NEAR      c=(644,353) z=417.0mm tilt=1.0° tilt_corr=False
+18:38:20 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:20 [INFO ] SAM3: 'box' score=0.96 @ [517 111 770 591]  (top of 1)  sim=0.925
+18:38:20 [INFO ] SAM3: mask obtained (score=0.963, area=113032 px)
+18:38:21 [INFO ] MaskTracker: anchor locked (IoU streak=19, last IoU=0.976)
+18:38:21 [INFO ] Servo: err=(+4,-8)px r=9  Δ=(+5.0,-0.6,+2.7)mm  pos=(251,-138,-90)  [calibrated]
+18:38:21 [INFO ] frame=33 state=NEAR      c=(644,352) z=412.4mm tilt=2.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=33 state=NEAR      c=(644,352) z=412.4mm tilt=2.5° tilt_corr=False
+18:38:21 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:21 [INFO ] SAM3: 'box' score=0.96 @ [516 112 770 597]  (top of 1)  sim=0.924
+18:38:21 [INFO ] SAM3: mask obtained (score=0.961, area=115970 px)
+18:38:21 [INFO ] MaskTracker: anchor locked (IoU streak=20, last IoU=0.973)
+18:38:22 [INFO ] Servo: err=(+4,-7)px r=8  Δ=(+5.0,+0.0,-1.0)mm  pos=(256,-138,-91)  [calibrated]
+18:38:22 [INFO ] frame=34 state=NEAR      c=(644,353) z=406.8mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=34 state=NEAR      c=(644,353) z=406.8mm tilt=2.1° tilt_corr=False
+18:38:22 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:22 [INFO ] SAM3: 'box' score=0.96 @ [513 109 773 599]  (top of 1)  sim=0.929
+18:38:22 [INFO ] SAM3: mask obtained (score=0.965, area=118895 px)
+18:38:22 [INFO ] MaskTracker: anchor locked (IoU streak=21, last IoU=0.975)
+18:38:23 [INFO ] Servo: err=(+4,-7)px r=8  Δ=(+5.0,+0.0,-1.0)mm  pos=(261,-138,-92)  [calibrated]
+18:38:23 [INFO ] frame=35 state=NEAR      c=(644,353) z=401.5mm tilt=0.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=35 state=NEAR      c=(644,353) z=401.5mm tilt=0.4° tilt_corr=False
+18:38:23 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:23 [INFO ] SAM3: 'box' score=0.97 @ [512 103 774 600]  (top of 1)  sim=0.930
+18:38:23 [INFO ] SAM3: mask obtained (score=0.969, area=121743 px)
+18:38:23 [INFO ] MaskTracker: anchor locked (IoU streak=22, last IoU=0.977)
+18:38:24 [INFO ] Servo: err=(+4,-8)px r=9  Δ=(+5.0,-0.2,+2.6)mm  pos=(266,-138,-90)  [calibrated]
+18:38:24 [INFO ] frame=36 state=NEAR      c=(644,352) z=396.6mm tilt=4.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=36 state=NEAR      c=(644,352) z=396.6mm tilt=4.3° tilt_corr=False
+18:38:24 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:24 [INFO ] SAM3: 'box' score=0.97 @ [510 103 775 606]  (top of 1)  sim=0.930
+18:38:24 [INFO ] SAM3: mask obtained (score=0.969, area=124763 px)
+18:38:24 [INFO ] MaskTracker: anchor locked (IoU streak=23, last IoU=0.975)
+18:38:25 [INFO ] Servo: err=(+4,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(271,-138,-91)  [calibrated]
+18:38:25 [INFO ] frame=37 state=NEAR      c=(644,354) z=391.5mm tilt=3.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=37 state=NEAR      c=(644,354) z=391.5mm tilt=3.1° tilt_corr=False
+18:38:25 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:25 [INFO ] SAM3: 'box' score=0.96 @ [508 100 777 609]  (top of 1)  sim=0.927
+18:38:25 [INFO ] SAM3: mask obtained (score=0.963, area=127852 px)
+18:38:25 [INFO ] MaskTracker: anchor locked (IoU streak=24, last IoU=0.976)
+18:38:26 [INFO ] Servo: err=(+4,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(276,-138,-92)  [calibrated]
+18:38:26 [INFO ] frame=38 state=NEAR      c=(644,354) z=386.1mm tilt=2.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=38 state=NEAR      c=(644,354) z=386.1mm tilt=2.0° tilt_corr=False
+18:38:26 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:26 [INFO ] SAM3: 'box' score=0.96 @ [506  94 778 610]  (top of 1)  sim=0.936
+18:38:26 [INFO ] SAM3: mask obtained (score=0.964, area=131192 px)
+18:38:26 [INFO ] MaskTracker: anchor locked (IoU streak=25, last IoU=0.975)
+18:38:26 [INFO ] Servo: err=(+4,-8)px r=9  Δ=(+5.0,-0.4,+2.5)mm  pos=(281,-138,-89)  [calibrated]
+18:38:27 [INFO ] frame=39 state=NEAR      c=(644,352) z=381.3mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=39 state=NEAR      c=(644,352) z=381.3mm tilt=1.8° tilt_corr=False
+18:38:27 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:27 [INFO ] SAM3: 'box' score=0.96 @ [504  95 780 617]  (top of 1)  sim=0.933
+18:38:27 [INFO ] SAM3: mask obtained (score=0.964, area=134592 px)
+18:38:27 [INFO ] MaskTracker: anchor locked (IoU streak=26, last IoU=0.974)
+18:38:27 [INFO ] Servo: err=(+3,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(286,-138,-90)  [calibrated]
+18:38:27 [INFO ] frame=40 state=NEAR      c=(643,354) z=376.2mm tilt=2.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=40 state=NEAR      c=(643,354) z=376.2mm tilt=2.9° tilt_corr=False
+18:38:28 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:28 [INFO ] SAM3: 'box' score=0.96 @ [503  89 782 619]  (top of 1)  sim=0.930
+18:38:28 [INFO ] SAM3: mask obtained (score=0.963, area=138160 px)
+18:38:28 [INFO ] MaskTracker: anchor locked (IoU streak=27, last IoU=0.974)
+18:38:28 [INFO ] Servo: err=(+4,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(291,-138,-91)  [calibrated]
+18:38:28 [INFO ] frame=41 state=NEAR      c=(644,354) z=371.1mm tilt=2.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=41 state=NEAR      c=(644,354) z=371.1mm tilt=2.2° tilt_corr=False
+18:38:29 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:29 [INFO ] SAM3: 'box' score=0.97 @ [501  84 784 620]  (top of 1)  sim=0.934
+18:38:29 [INFO ] SAM3: mask obtained (score=0.967, area=141701 px)
+18:38:29 [INFO ] MaskTracker: anchor locked (IoU streak=28, last IoU=0.975)
+18:38:29 [INFO ] Servo: err=(+4,-8)px r=9  Δ=(+5.0,-0.4,+2.5)mm  pos=(296,-139,-89)  [calibrated]
+18:38:29 [INFO ] frame=42 state=NEAR      c=(644,352) z=366.3mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=42 state=NEAR      c=(644,352) z=366.3mm tilt=2.1° tilt_corr=False
+18:38:30 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:30 [INFO ] SAM3: 'box' score=0.97 @ [498  84 785 628]  (top of 1)  sim=0.933
+18:38:30 [INFO ] SAM3: mask obtained (score=0.969, area=145686 px)
+18:38:30 [INFO ] MaskTracker: anchor locked (IoU streak=29, last IoU=0.971)
+18:38:30 [INFO ] Servo: err=(+3,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(301,-139,-90)  [calibrated]
+18:38:30 [INFO ] frame=43 state=NEAR      c=(643,355) z=360.5mm tilt=1.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=43 state=NEAR      c=(643,355) z=360.5mm tilt=1.1° tilt_corr=False
+18:38:31 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:31 [INFO ] SAM3: 'box' score=0.96 @ [497  79 788 629]  (top of 1)  sim=0.935
+18:38:31 [INFO ] SAM3: mask obtained (score=0.962, area=149887 px)
+18:38:31 [INFO ] MaskTracker: anchor locked (IoU streak=30, last IoU=0.972)
+18:38:31 [INFO ] Servo: err=(+4,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(306,-139,-91)  [calibrated]
+18:38:31 [INFO ] frame=44 state=NEAR      c=(644,354) z=355.6mm tilt=3.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=44 state=NEAR      c=(644,354) z=355.6mm tilt=3.6° tilt_corr=False
+18:38:31 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:31 [INFO ] SAM3: 'box' score=0.97 @ [495  72 790 631]  (top of 1)  sim=0.934
+18:38:31 [INFO ] SAM3: mask obtained (score=0.966, area=154122 px)
+18:38:31 [INFO ] MaskTracker: anchor locked (IoU streak=31, last IoU=0.973)
+18:38:32 [INFO ] Servo: err=(+4,-8)px r=9  Δ=(+5.0,-0.9,+2.5)mm  pos=(311,-139,-88)  [calibrated]
+18:38:32 [INFO ] frame=45 state=NEAR      c=(644,352) z=350.2mm tilt=3.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=45 state=NEAR      c=(644,352) z=350.2mm tilt=3.3° tilt_corr=False
+18:38:32 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:32 [INFO ] SAM3: 'box' score=0.97 @ [491  73 791 640]  (top of 1)  sim=0.938
+18:38:32 [INFO ] SAM3: mask obtained (score=0.969, area=158504 px)
+18:38:32 [INFO ] MaskTracker: anchor locked (IoU streak=32, last IoU=0.968)
+18:38:33 [INFO ] Servo: err=(+3,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(316,-139,-89)  [calibrated]
+18:38:33 [INFO ] frame=46 state=NEAR      c=(643,355) z=345.3mm tilt=2.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=46 state=NEAR      c=(643,355) z=345.3mm tilt=2.7° tilt_corr=False
+18:38:33 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:33 [INFO ] SAM3: 'box' score=0.96 @ [489  68 793 642]  (top of 1)  sim=0.935
+18:38:33 [INFO ] SAM3: mask obtained (score=0.964, area=163074 px)
+18:38:33 [INFO ] MaskTracker: anchor locked (IoU streak=33, last IoU=0.972)
+18:38:34 [INFO ] Servo: err=(+3,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(321,-139,-90)  [calibrated]
+18:38:34 [INFO ] frame=47 state=NEAR      c=(643,355) z=340.3mm tilt=1.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=47 state=NEAR      c=(643,355) z=340.3mm tilt=1.6° tilt_corr=False
+18:38:34 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:34 [INFO ] SAM3: 'box' score=0.97 @ [487  61 795 644]  (top of 1)  sim=0.938
+18:38:34 [INFO ] SAM3: mask obtained (score=0.968, area=167924 px)
+18:38:34 [INFO ] MaskTracker: anchor locked (IoU streak=34, last IoU=0.971)
+18:38:35 [INFO ] Servo: err=(+3,-7)px r=8  Δ=(+5.0,+0.0,-1.0)mm  pos=(326,-139,-91)  [calibrated]
+18:38:35 [INFO ] frame=48 state=NEAR      c=(643,353) z=335.3mm tilt=0.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=48 state=NEAR      c=(643,353) z=335.3mm tilt=0.6° tilt_corr=False
+18:38:35 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:35 [INFO ] SAM3: 'box' score=0.97 @ [485  54 798 647]  (top of 1)  sim=0.934
+18:38:35 [INFO ] SAM3: mask obtained (score=0.967, area=172692 px)
+18:38:35 [INFO ] MaskTracker: anchor locked (IoU streak=35, last IoU=0.972)
+18:38:36 [INFO ] Servo: err=(+3,-9)px r=10  Δ=(+5.0,+0.7,+3.0)mm  pos=(331,-139,-88)  [calibrated]
+18:38:36 [INFO ] frame=49 state=NEAR      c=(643,351) z=330.4mm tilt=3.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=49 state=NEAR      c=(643,351) z=330.4mm tilt=3.5° tilt_corr=False
+18:38:36 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:36 [INFO ] SAM3: 'box' score=0.96 @ [484  55 802 656]  (top of 1)  sim=0.934
+18:38:36 [INFO ] SAM3: mask obtained (score=0.963, area=177876 px)
+18:38:36 [INFO ] MaskTracker: anchor locked (IoU streak=36, last IoU=0.969)
+18:38:37 [INFO ] Servo: err=(+4,-7)px r=8  Δ=(+5.0,+0.0,-1.0)mm  pos=(336,-139,-89)  [calibrated]
+18:38:37 [INFO ] frame=50 state=NEAR      c=(644,353) z=325.3mm tilt=2.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=50 state=NEAR      c=(644,353) z=325.3mm tilt=2.1° tilt_corr=False
+18:38:37 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:37 [INFO ] SAM3: 'box' score=0.96 @ [483  48 805 659]  (top of 1)  sim=0.937
+18:38:37 [INFO ] SAM3: mask obtained (score=0.961, area=183436 px)
+18:38:37 [INFO ] MaskTracker: anchor locked (IoU streak=37, last IoU=0.970)
+18:38:38 [INFO ] Servo: err=(+5,-7)px r=8  Δ=(+5.0,-2.0,+2.1)mm  pos=(341,-141,-87)  [calibrated]
+18:38:38 [INFO ] frame=51 state=NEAR      c=(645,353) z=320.2mm tilt=1.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=51 state=NEAR      c=(645,353) z=320.2mm tilt=1.4° tilt_corr=False
+18:38:38 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:38 [INFO ] SAM3: 'box' score=0.97 @ [476  48 803 668]  (top of 1)  sim=0.937
+18:38:38 [INFO ] SAM3: mask obtained (score=0.968, area=188881 px)
+18:38:38 [INFO ] MaskTracker: anchor locked (IoU streak=38, last IoU=0.957)
+18:38:39 [INFO ] Servo: err=(+2,-4)px r=4  Δ=(+5.0,+0.0,-1.0)mm  pos=(346,-141,-88)  [calibrated]
+18:38:39 [INFO ] frame=52 state=NEAR      c=(642,356) z=315.4mm tilt=3.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=52 state=NEAR      c=(642,356) z=315.4mm tilt=3.9° tilt_corr=False
+18:38:39 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:39 [INFO ] SAM3: 'box' score=0.96 @ [473  41 806 670]  (top of 1)  sim=0.940
+18:38:39 [INFO ] SAM3: mask obtained (score=0.959, area=195073 px)
+18:38:39 [INFO ] MaskTracker: anchor locked (IoU streak=39, last IoU=0.968)
+18:38:39 [INFO ] Servo: err=(+2,-4)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(351,-141,-89)  [calibrated]
+18:38:40 [INFO ] frame=53 state=NEAR      c=(642,356) z=311.2mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=53 state=NEAR      c=(642,356) z=311.2mm tilt=1.8° tilt_corr=False
+18:38:40 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:40 [INFO ] SAM3: 'box' score=0.96 @ [470  33 809 674]  (top of 1)  sim=0.939
+18:38:40 [INFO ] SAM3: mask obtained (score=0.964, area=201599 px)
+18:38:40 [INFO ] MaskTracker: anchor locked (IoU streak=40, last IoU=0.968)
+18:38:40 [INFO ] Servo: err=(+2,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(356,-141,-90)  [calibrated]
+18:38:41 [INFO ] frame=54 state=NEAR      c=(642,354) z=305.4mm tilt=4.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=54 state=NEAR      c=(642,354) z=305.4mm tilt=4.5° tilt_corr=False
+18:38:41 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:41 [INFO ] SAM3: 'box' score=0.96 @ [468  26 812 677]  (top of 1)  sim=0.938
+18:38:41 [INFO ] SAM3: mask obtained (score=0.964, area=208227 px)
+18:38:41 [INFO ] MaskTracker: anchor locked (IoU streak=41, last IoU=0.968)
+18:38:42 [INFO ] Servo: err=(+2,-9)px r=9  Δ=(+5.0,+1.4,+2.7)mm  pos=(361,-139,-87)  [calibrated]
+18:38:42 [INFO ] frame=55 state=NEAR      c=(642,351) z=300.2mm tilt=1.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=55 state=NEAR      c=(642,351) z=300.2mm tilt=1.8° tilt_corr=False
+18:38:42 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:42 [INFO ] SAM3: 'box' score=0.97 @ [467  26 817 688]  (top of 1)  sim=0.939
+18:38:42 [INFO ] SAM3: mask obtained (score=0.965, area=214687 px)
+18:38:42 [INFO ] MaskTracker: anchor locked (IoU streak=42, last IoU=0.967)
+18:38:43 [INFO ] Servo: err=(+4,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(366,-139,-88)  [calibrated]
+18:38:43 [INFO ] frame=56 state=NEAR      c=(644,355) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=56 state=NEAR      c=(644,355) z=- tilt=- tilt_corr=False
+18:38:43 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:43 [INFO ] SAM3: 'box' score=0.96 @ [466  18 820 691]  (top of 1)  sim=0.942
+18:38:43 [INFO ] SAM3: mask obtained (score=0.964, area=222168 px)
+18:38:43 [INFO ] MaskTracker: anchor locked (IoU streak=43, last IoU=0.966)
+18:38:43 [INFO ] Servo: err=(+5,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(371,-139,-89)  [calibrated]
+18:38:43 [INFO ] frame=57 state=NEAR      c=(645,354) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=57 state=NEAR      c=(645,354) z=- tilt=- tilt_corr=False
+18:38:44 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:44 [INFO ] SAM3: 'box' score=0.96 @ [463  10 824 694]  (top of 1)  sim=0.942
+18:38:44 [INFO ] SAM3: mask obtained (score=0.962, area=229789 px)
+18:38:44 [INFO ] MaskTracker: anchor locked (IoU streak=44, last IoU=0.967)
+18:38:44 [INFO ] Servo: err=(+6,-8)px r=10  Δ=(+5.0,-1.9,+2.5)mm  pos=(376,-141,-87)  [calibrated]
+18:38:44 [INFO ] frame=58 state=NEAR      c=(646,352) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=58 state=NEAR      c=(646,352) z=- tilt=- tilt_corr=False
+18:38:45 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:45 [INFO ] SAM3: 'box' score=0.97 @ [455  10 823 706]  (top of 1)  sim=0.940
+18:38:45 [INFO ] SAM3: mask obtained (score=0.966, area=237429 px)
+18:38:45 [INFO ] MaskTracker: anchor locked (IoU streak=45, last IoU=0.957)
+18:38:45 [INFO ] Servo: err=(+3,-5)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(381,-141,-88)  [calibrated]
+18:38:45 [INFO ] frame=59 state=NEAR      c=(643,355) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=59 state=NEAR      c=(643,355) z=- tilt=- tilt_corr=False
+18:38:46 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:46 [INFO ] SAM3: 'box' score=0.97 @ [451   2 826 710]  (top of 1)  sim=0.941
+18:38:46 [INFO ] SAM3: mask obtained (score=0.966, area=246462 px)
+18:38:46 [INFO ] MaskTracker: anchor locked (IoU streak=46, last IoU=0.963)
+18:38:46 [INFO ] Servo: err=(+2,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(386,-141,-89)  [calibrated]
+18:38:46 [INFO ] frame=60 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=60 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+18:38:47 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:47 [INFO ] SAM3: 'box' score=0.97 @ [449   0 830 712]  (top of 1)  sim=0.940
+18:38:47 [INFO ] SAM3: mask obtained (score=0.966, area=254022 px)
+18:38:47 [INFO ] MaskTracker: anchor locked (IoU streak=47, last IoU=0.970)
+18:38:47 [INFO ] Servo: err=(+2,-6)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(391,-141,-90)  [calibrated]
+18:38:47 [INFO ] frame=61 state=NEAR      c=(642,354) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=61 state=NEAR      c=(642,354) z=- tilt=- tilt_corr=False
+18:38:48 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:48 [INFO ] SAM3: 'box' score=0.95 @ [445   0 834 714]  (top of 1)  sim=0.937
+18:38:48 [INFO ] SAM3: mask obtained (score=0.953, area=260057 px)
+18:38:48 [INFO ] MaskTracker: anchor locked (IoU streak=48, last IoU=0.976)
+18:38:48 [INFO ] Servo: err=(+2,-5)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(396,-141,-91)  [calibrated]
+18:38:48 [INFO ] frame=62 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=62 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+18:38:48 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:48 [INFO ] SAM3: 'box' score=0.95 @ [442   1 838 716]  (top of 1)  sim=0.936
+18:38:48 [INFO ] SAM3: mask obtained (score=0.954, area=266386 px)
+18:38:49 [INFO ] MaskTracker: anchor locked (IoU streak=49, last IoU=0.976)
+18:38:49 [INFO ] Servo: err=(+2,-5)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(401,-141,-92)  [calibrated]
+18:38:49 [INFO ] frame=63 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=63 state=NEAR      c=(642,355) z=- tilt=- tilt_corr=False
+18:38:49 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:49 [INFO ] SAM3: 'box' score=0.95 @ [439   2 842 717]  (top of 1)  sim=0.931
+18:38:49 [INFO ] SAM3: mask obtained (score=0.946, area=272299 px)
+18:38:49 [INFO ] MaskTracker: anchor locked (IoU streak=50, last IoU=0.978)
+18:38:50 [INFO ] Servo: err=(+3,-4)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(406,-141,-93)  [calibrated]
+18:38:50 [INFO ] frame=64 state=NEAR      c=(643,356) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=64 state=NEAR      c=(643,356) z=- tilt=- tilt_corr=False
+18:38:50 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:50 [INFO ] SAM3: 'box' score=0.94 @ [434   1 847 717]  (top of 1)  sim=0.935
+18:38:50 [INFO ] SAM3: mask obtained (score=0.941, area=277932 px)
+18:38:50 [INFO ] MaskTracker: anchor locked (IoU streak=51, last IoU=0.979)
+18:38:51 [INFO ] Servo: err=(+3,-3)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(411,-141,-94)  [calibrated]
+18:38:51 [INFO ] frame=65 state=NEAR      c=(643,357) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=65 state=NEAR      c=(643,357) z=- tilt=- tilt_corr=False
+18:38:51 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:51 [INFO ] SAM3: 'box' score=0.92 @ [432   2 851 719]  (top of 1)  sim=0.932
+18:38:51 [INFO ] SAM3: mask obtained (score=0.919, area=283527 px)
+18:38:51 [INFO ] MaskTracker: anchor locked (IoU streak=52, last IoU=0.979)
+18:38:52 [INFO ] Servo: err=(+4,-3)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(416,-141,-95)  [calibrated]
+18:38:52 [INFO ] frame=66 state=NEAR      c=(644,357) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=66 state=NEAR      c=(644,357) z=- tilt=- tilt_corr=False
+18:38:52 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:52 [INFO ] SAM3: 'box' score=0.90 @ [427   1 853 717]  (top of 1)  sim=0.929
+18:38:52 [INFO ] SAM3: mask obtained (score=0.904, area=289156 px)
+18:38:52 [INFO ] MaskTracker: anchor locked (IoU streak=53, last IoU=0.977)
+18:38:53 [INFO ] Servo: err=(+4,-2)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(421,-141,-96)  [calibrated]
+18:38:53 [INFO ] frame=67 state=NEAR      c=(644,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=67 state=NEAR      c=(644,358) z=- tilt=- tilt_corr=False
+18:38:53 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:53 [INFO ] SAM3: 'box' score=0.91 @ [425   1 857 718]  (top of 1)  sim=0.925
+18:38:53 [INFO ] SAM3: mask obtained (score=0.912, area=295750 px)
+18:38:53 [INFO ] MaskTracker: anchor locked (IoU streak=54, last IoU=0.977)
+18:38:54 [INFO ] Servo: err=(+5,-2)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(426,-141,-97)  [calibrated]
+18:38:54 [INFO ] frame=68 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=68 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+18:38:54 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:54 [INFO ] SAM3: 'box' score=0.91 @ [421   2 862 718]  (top of 1)  sim=0.928
+18:38:54 [INFO ] SAM3: mask obtained (score=0.909, area=302177 px)
+18:38:54 [INFO ] MaskTracker: anchor locked (IoU streak=55, last IoU=0.979)
+18:38:55 [INFO ] Servo: err=(+5,-2)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(431,-141,-98)  [calibrated]
+18:38:55 [INFO ] frame=69 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=69 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+18:38:55 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:55 [INFO ] SAM3: 'box' score=0.88 @ [417   2 867 718]  (top of 1)  sim=0.924
+18:38:55 [INFO ] SAM3: mask obtained (score=0.883, area=307828 px)
+18:38:55 [INFO ] MaskTracker: anchor locked (IoU streak=56, last IoU=0.980)
+18:38:56 [INFO ] Servo: err=(+5,-2)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(436,-141,-99)  [calibrated]
+18:38:56 [INFO ] frame=70 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=70 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+18:38:56 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:56 [INFO ] SAM3: 'box' score=0.86 @ [412   2 872 719]  (top of 1)  sim=0.928
+18:38:56 [INFO ] SAM3: mask obtained (score=0.864, area=314582 px)
+18:38:56 [INFO ] MaskTracker: anchor locked (IoU streak=57, last IoU=0.977)
+18:38:57 [INFO ] Servo: err=(+5,-2)px r=5  Δ=(+5.0,+0.0,-1.0)mm  pos=(441,-141,-100)  [calibrated]
+18:38:57 [INFO ] frame=71 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=71 state=NEAR      c=(645,358) z=- tilt=- tilt_corr=False
+18:38:57 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:57 [INFO ] SAM3: 'box' score=0.90 @ [407   3 878 720]  (top of 1)  sim=0.922
+18:38:57 [INFO ] SAM3: mask obtained (score=0.904, area=321340 px)
+18:38:57 [INFO ] MaskTracker: anchor locked (IoU streak=58, last IoU=0.976)
+18:38:57 [INFO ] Servo: err=(+6,-1)px r=6  Δ=(+5.0,+0.0,-1.0)mm  pos=(446,-141,-101)  [calibrated]
+18:38:57 [INFO ] frame=72 state=NEAR      c=(646,359) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=72 state=NEAR      c=(646,359) z=- tilt=- tilt_corr=False
+18:38:58 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:58 [INFO ] SAM3: 'box' score=0.91 @ [403   2 883 719]  (top of 1)  sim=0.915
+18:38:58 [INFO ] SAM3: mask obtained (score=0.910, area=328533 px)
+18:38:58 [INFO ] MaskTracker: anchor locked (IoU streak=59, last IoU=0.977)
+18:38:58 [INFO ] Servo: err=(+7,-2)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(451,-141,-102)  [calibrated]
+18:38:58 [INFO ] frame=73 state=NEAR      c=(647,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=73 state=NEAR      c=(647,358) z=- tilt=- tilt_corr=False
+18:38:59 [INFO ] SAM3: 1 detection(s) for 'box'
+18:38:59 [INFO ] SAM3: 'box' score=0.90 @ [398   0 889 718]  (top of 1)  sim=0.911
+18:38:59 [INFO ] SAM3: mask obtained (score=0.897, area=336119 px)
+18:38:59 [INFO ] MaskTracker: anchor locked (IoU streak=60, last IoU=0.976)
+18:38:59 [INFO ] Servo: err=(+7,-2)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(456,-141,-103)  [calibrated]
+18:38:59 [INFO ] frame=74 state=NEAR      c=(647,358) z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=74 state=NEAR      c=(647,358) z=- tilt=- tilt_corr=False
+18:39:00 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:00 [INFO ] SAM3: 'box' score=0.89 @ [392   1 896 719]  (top of 1)  sim=0.920
+18:39:00 [INFO ] SAM3: mask obtained (score=0.886, area=344278 px)
+18:39:00 [INFO ] MaskTracker: anchor locked (IoU streak=61, last IoU=0.974)
+18:39:00 [INFO ] Servo: err=(+8,-2)px r=8  Δ=(+5.0,-6.1,+0.5)mm  pos=(461,-147,-102)  [calibrated]
+18:39:00 [INFO ] frame=75 state=NEAR      c=(648,358) z=- tilt=38.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=75 state=NEAR      c=(648,358) z=- tilt=38.2° tilt_corr=False
+18:39:01 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:01 [INFO ] SAM3: 'box' score=0.89 @ [366   1 880 719]  (top of 1)  sim=0.922
+18:39:01 [INFO ] SAM3: mask obtained (score=0.890, area=353237 px)
+18:39:01 [INFO ] MaskTracker: anchor locked (IoU streak=62, last IoU=0.912)
+18:39:01 [INFO ] Servo: err=(-7,-2)px r=7  Δ=(+5.0,+0.0,-1.0)mm  pos=(466,-147,-103)  [calibrated]
+18:39:01 [INFO ] frame=76 state=NEAR      c=(633,358) z=- tilt=35.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=76 state=NEAR      c=(633,358) z=- tilt=35.3° tilt_corr=False
+18:39:02 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:02 [INFO ] SAM3: 'box' score=0.92 @ [358   0 885 718]  (top of 1)  sim=0.913
+18:39:02 [INFO ] SAM3: mask obtained (score=0.915, area=361380 px)
+18:39:02 [INFO ] MaskTracker: anchor locked (IoU streak=63, last IoU=0.975)
+18:39:02 [INFO ] Servo: err=(-12,-2)px r=12  Δ=(+5.0,+10.9,+0.7)mm  pos=(471,-136,-103)  [calibrated]
+18:39:02 [INFO ] frame=77 state=NEAR      c=(628,358) z=- tilt=28.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=77 state=NEAR      c=(628,358) z=- tilt=28.2° tilt_corr=False
+18:39:03 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:03 [INFO ] SAM3: 'box' score=0.89 @ [389   0 931 717]  (top of 1)  sim=0.910
+18:39:03 [INFO ] SAM3: mask obtained (score=0.893, area=371653 px)
+18:39:03 [INFO ] MaskTracker: anchor locked (IoU streak=64, last IoU=0.860)
+18:39:04 [INFO ] Servo: err=(+13,-2)px r=13  Δ=(+5.0,-10.2,+0.5)mm  pos=(476,-147,-102)  [calibrated]
+18:39:04 [INFO ] frame=78 state=NEAR      c=(653,358) z=- tilt=78.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=78 state=NEAR      c=(653,358) z=- tilt=78.2° tilt_corr=False
+18:39:04 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:04 [INFO ] SAM3: 'box' score=0.90 @ [348  -1 902 716]  (top of 1)  sim=0.907
+18:39:04 [INFO ] SAM3: mask obtained (score=0.903, area=381402 px)
+18:39:04 [INFO ] MaskTracker: anchor locked (IoU streak=65, last IoU=0.879)
+18:39:04 [INFO ] Servo: err=(-3,-2)px r=4  Δ=(+5.0,+0.0,-1.0)mm  pos=(481,-147,-103)  [calibrated]
+18:39:04 [INFO ] frame=79 state=NEAR      c=(637,358) z=- tilt=59.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=79 state=NEAR      c=(637,358) z=- tilt=59.9° tilt_corr=False
+18:39:05 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:05 [INFO ] SAM3: 'box' score=0.94 @ [340   1 909 719]  (top of 1)  sim=0.911
+18:39:05 [INFO ] SAM3: mask obtained (score=0.937, area=391097 px)
+18:39:05 [INFO ] MaskTracker: anchor locked (IoU streak=66, last IoU=0.974)
+18:39:06 [INFO ] Servo: err=(-9,-2)px r=9  Δ=(+5.0,+8.5,+0.8)mm  pos=(486,-138,-103)  [calibrated]
+18:39:06 [INFO ] frame=80 state=NEAR      c=(631,358) z=- tilt=34.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=80 state=NEAR      c=(631,358) z=- tilt=34.8° tilt_corr=False
+18:39:06 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:06 [INFO ] SAM3: 'box' score=0.90 @ [363   2 948 719]  (top of 1)  sim=0.904
+18:39:06 [INFO ] SAM3: mask obtained (score=0.905, area=403121 px)
+18:39:06 [INFO ] MaskTracker: anchor locked (IoU streak=67, last IoU=0.893)
+18:39:07 [INFO ] Servo: err=(+11,-2)px r=11  Δ=(+5.0,-8.3,+0.5)mm  pos=(491,-147,-102)  [calibrated]
+18:39:07 [INFO ] frame=81 state=NEAR      c=(651,358) z=- tilt=66.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=81 state=NEAR      c=(651,358) z=- tilt=66.1° tilt_corr=False
+18:39:07 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:07 [INFO ] SAM3: 'box' score=0.93 @ [327   2 927 719]  (top of 1)  sim=0.904
+18:39:07 [INFO ] SAM3: mask obtained (score=0.935, area=414207 px)
+18:39:07 [INFO ] MaskTracker: anchor locked (IoU streak=68, last IoU=0.904)
+18:39:08 [INFO ] Servo: err=(-3,-2)px r=4  Δ=(+5.0,+0.0,-1.0)mm  pos=(496,-147,-103)  [calibrated]
+18:39:08 [INFO ] frame=82 state=NEAR      c=(637,358) z=- tilt=54.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=82 state=NEAR      c=(637,358) z=- tilt=54.3° tilt_corr=False
+18:39:08 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:08 [INFO ] SAM3: 'box' score=0.93 @ [315   2 933 719]  (top of 1)  sim=0.904
+18:39:08 [INFO ] SAM3: mask obtained (score=0.932, area=426055 px)
+18:39:08 [INFO ] MaskTracker: anchor locked (IoU streak=69, last IoU=0.971)
+18:39:09 [INFO ] Servo: err=(-9,-2)px r=9  Δ=(+5.0,+8.4,+0.8)mm  pos=(501,-138,-102)  [calibrated]
+18:39:09 [INFO ] frame=83 state=NEAR      c=(631,358) z=- tilt=4.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=83 state=NEAR      c=(631,358) z=- tilt=4.1° tilt_corr=False
+18:39:09 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:09 [INFO ] SAM3: 'box' score=0.92 @ [342   2 977 719]  (top of 1)  sim=0.911
+18:39:09 [INFO ] SAM3: mask obtained (score=0.918, area=440394 px)
+18:39:09 [INFO ] MaskTracker: anchor locked (IoU streak=70, last IoU=0.886)
+18:39:10 [INFO ] Servo: err=(+14,-2)px r=14  Δ=(+5.0,-11.2,+0.5)mm  pos=(506,-149,-102)  [calibrated]
+18:39:10 [INFO ] frame=84 state=NEAR      c=(654,358) z=- tilt=34.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=84 state=NEAR      c=(654,358) z=- tilt=34.6° tilt_corr=False
+18:39:10 [INFO ] SAM3: 1 detection(s) for 'box'
+18:39:10 [INFO ] SAM3: 'box' score=0.93 @ [286   2 939 719]  (top of 1)  sim=0.898
+18:39:10 [INFO ] SAM3: mask obtained (score=0.931, area=453605 px)
+18:39:10 [INFO ] MaskTracker: anchor locked (IoU streak=71, last IoU=0.858)
+18:39:11 [INFO ] Servo: err=(-12,-2)px r=12  Δ=(+5.0,+10.7,+0.8)mm  pos=(511,-139,-101)  [calibrated]
+18:39:11 [INFO ] frame=85 state=TERMINAL  c=(628,358) z=- tilt=28.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=85 state=TERMINAL  c=(628,358) z=- tilt=28.5° tilt_corr=False
+18:39:12 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(516,-139,-102)  [calibrated]
+18:39:12 [INFO ] frame=86 state=TERMINAL  c=(640,360) z=- tilt=46.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=86 state=TERMINAL  c=(640,360) z=- tilt=46.7° tilt_corr=False
+18:39:12 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(521,-139,-103)  [calibrated]
+18:39:12 [INFO ] frame=87 state=TERMINAL  c=(640,360) z=- tilt=80.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=87 state=TERMINAL  c=(640,360) z=- tilt=80.5° tilt_corr=False
+18:39:13 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(526,-139,-104)  [calibrated]
+18:39:13 [INFO ] frame=88 state=TERMINAL  c=(640,360) z=- tilt=24.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=88 state=TERMINAL  c=(640,360) z=- tilt=24.7° tilt_corr=False
+18:39:13 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(531,-139,-105)  [calibrated]
+18:39:13 [INFO ] frame=89 state=TERMINAL  c=(640,360) z=- tilt=23.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=89 state=TERMINAL  c=(640,360) z=- tilt=23.0° tilt_corr=False
+18:39:14 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(536,-139,-106)  [calibrated]
+18:39:14 [INFO ] frame=90 state=TERMINAL  c=(640,360) z=- tilt=30.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=90 state=TERMINAL  c=(640,360) z=- tilt=30.0° tilt_corr=False
+18:39:14 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(541,-139,-107)  [calibrated]
+18:39:14 [INFO ] frame=91 state=TERMINAL  c=(640,360) z=- tilt=3.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=91 state=TERMINAL  c=(640,360) z=- tilt=3.0° tilt_corr=False
+18:39:15 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(546,-139,-108)  [calibrated]
+18:39:15 [INFO ] frame=92 state=TERMINAL  c=(640,360) z=- tilt=45.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=92 state=TERMINAL  c=(640,360) z=- tilt=45.4° tilt_corr=False
+18:39:15 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(551,-139,-109)  [calibrated]
+18:39:15 [INFO ] frame=93 state=TERMINAL  c=(640,360) z=- tilt=45.9° tilt_corr=False
+INFO:lastmile_v2_ext:frame=93 state=TERMINAL  c=(640,360) z=- tilt=45.9° tilt_corr=False
+18:39:16 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(556,-139,-110)  [calibrated]
+18:39:16 [INFO ] frame=94 state=TERMINAL  c=(640,360) z=- tilt=36.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=94 state=TERMINAL  c=(640,360) z=- tilt=36.7° tilt_corr=False
+18:39:16 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(561,-139,-111)  [calibrated]
+18:39:16 [INFO ] frame=95 state=TERMINAL  c=(640,360) z=- tilt=49.0° tilt_corr=False
+INFO:lastmile_v2_ext:frame=95 state=TERMINAL  c=(640,360) z=- tilt=49.0° tilt_corr=False
+18:39:17 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(566,-139,-112)  [calibrated]
+18:39:17 [INFO ] frame=96 state=TERMINAL  c=(640,360) z=- tilt=50.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=96 state=TERMINAL  c=(640,360) z=- tilt=50.7° tilt_corr=False
+18:39:17 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(571,-139,-113)  [calibrated]
+18:39:18 [INFO ] frame=97 state=TERMINAL  c=(640,360) z=- tilt=32.8° tilt_corr=False
+INFO:lastmile_v2_ext:frame=97 state=TERMINAL  c=(640,360) z=- tilt=32.8° tilt_corr=False
+18:39:18 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(576,-139,-114)  [calibrated]
+18:39:18 [INFO ] frame=98 state=TERMINAL  c=(640,360) z=- tilt=30.5° tilt_corr=False
+INFO:lastmile_v2_ext:frame=98 state=TERMINAL  c=(640,360) z=- tilt=30.5° tilt_corr=False
+18:39:19 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(581,-139,-115)  [calibrated]
+18:39:19 [INFO ] frame=99 state=TERMINAL  c=(640,360) z=- tilt=16.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=99 state=TERMINAL  c=(640,360) z=- tilt=16.4° tilt_corr=False
+18:39:19 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(586,-139,-116)  [calibrated]
+18:39:19 [INFO ] frame=100 state=TERMINAL  c=(640,360) z=- tilt=42.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=100 state=TERMINAL  c=(640,360) z=- tilt=42.4° tilt_corr=False
+18:39:20 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(591,-139,-117)  [calibrated]
+18:39:20 [INFO ] frame=101 state=TERMINAL  c=(640,360) z=- tilt=17.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=101 state=TERMINAL  c=(640,360) z=- tilt=17.3° tilt_corr=False
+18:39:20 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(596,-139,-118)  [calibrated]
+18:39:20 [INFO ] frame=102 state=TERMINAL  c=(640,360) z=- tilt=40.7° tilt_corr=False
+INFO:lastmile_v2_ext:frame=102 state=TERMINAL  c=(640,360) z=- tilt=40.7° tilt_corr=False
+18:39:21 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(601,-139,-119)  [calibrated]
+18:39:21 [INFO ] frame=103 state=TERMINAL  c=(640,360) z=- tilt=19.4° tilt_corr=False
+INFO:lastmile_v2_ext:frame=103 state=TERMINAL  c=(640,360) z=- tilt=19.4° tilt_corr=False
+18:39:21 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(606,-139,-120)  [calibrated]
+18:39:21 [INFO ] frame=104 state=TERMINAL  c=(640,360) z=- tilt=25.6° tilt_corr=False
+INFO:lastmile_v2_ext:frame=104 state=TERMINAL  c=(640,360) z=- tilt=25.6° tilt_corr=False
+18:39:22 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(611,-139,-121)  [calibrated]
+18:39:22 [INFO ] frame=105 state=TERMINAL  c=(640,360) z=- tilt=65.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=105 state=TERMINAL  c=(640,360) z=- tilt=65.3° tilt_corr=False
+18:39:22 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(616,-139,-122)  [calibrated]
+18:39:22 [INFO ] frame=106 state=TERMINAL  c=(640,360) z=- tilt=31.2° tilt_corr=False
+INFO:lastmile_v2_ext:frame=106 state=TERMINAL  c=(640,360) z=- tilt=31.2° tilt_corr=False
+18:39:23 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(621,-139,-123)  [calibrated]
+18:39:23 [INFO ] frame=107 state=TERMINAL  c=(640,360) z=- tilt=39.3° tilt_corr=False
+INFO:lastmile_v2_ext:frame=107 state=TERMINAL  c=(640,360) z=- tilt=39.3° tilt_corr=False
+18:39:23 [INFO ] Servo: err=(+0,+0)px r=0  Δ=(+5.0,+0.0,-1.0)mm  pos=(626,-139,-124)  [calibrated]
+18:39:23 [INFO ] frame=108 state=TERMINAL  c=(640,360) z=- tilt=40.1° tilt_corr=False
+INFO:lastmile_v2_ext:frame=108 state=TERMINAL  c=(640,360) z=- tilt=40.1° tilt_corr=False
+18:39:23 [INFO ] frame=109 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=109 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:23 [INFO ] frame=110 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=110 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:23 [INFO ] frame=111 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=111 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:23 [INFO ] frame=112 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=112 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:23 [INFO ] frame=113 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=113 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=114 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=114 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=115 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=115 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=116 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=116 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=117 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=117 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=118 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=118 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=119 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=119 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=120 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=120 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=121 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=121 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=122 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=122 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=123 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=123 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=124 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=124 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=125 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=125 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=126 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=126 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=127 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=127 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=128 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=128 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=129 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=129 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=130 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=130 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=131 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=131 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=132 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=132 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=133 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=133 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=134 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=134 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=135 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=135 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=136 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=136 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=137 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=137 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=138 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=138 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=139 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=139 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=140 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=140 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=141 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=141 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=142 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=142 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:24 [INFO ] frame=143 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=143 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=144 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=144 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=145 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=145 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=146 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=146 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=147 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=147 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=148 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=148 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=149 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=149 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=150 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=150 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=151 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=151 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=152 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=152 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=153 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=153 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=154 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=154 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=155 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=155 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=156 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=156 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=157 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=157 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=158 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=158 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=159 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=159 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=160 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=160 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=161 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=161 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=162 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=162 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=163 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=163 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=164 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=164 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=165 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=165 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=166 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=166 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=167 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=167 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=168 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=168 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=169 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=169 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=170 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=170 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=171 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=171 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=172 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=172 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:25 [INFO ] frame=173 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=173 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=174 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=174 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=175 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=175 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=176 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=176 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=177 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=177 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=178 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=178 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=179 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=179 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=180 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=180 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=181 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=181 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=182 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=182 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=183 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=183 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=184 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=184 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=185 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=185 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=186 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=186 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=187 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=187 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=188 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=188 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=189 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=189 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=190 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=190 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=191 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=191 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=192 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=192 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=193 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=193 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=194 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=194 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=195 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=195 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=196 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=196 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=197 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=197 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=198 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=198 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=199 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=199 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=200 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=200 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=201 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=201 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] frame=202 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=202 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:26 [INFO ] Quit requested via window key.
+INFO:lastmile_v2_ext:Quit requested via window key.
+18:39:26 [INFO ] frame=203 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+INFO:lastmile_v2_ext:frame=203 state=TERMINAL  c=- z=- tilt=- tilt_corr=False
+18:39:27 [INFO ] Returning to home position [181.3, -7.5, -48.6] mm ...
+INFO:lastmile_v2_ext:Returning to home position [181.3, -7.5, -48.6] mm ...
+18:39:36 [INFO ] Home position reached.
+INFO:lastmile_v2_ext:Home position reached.
+[set_state], xArm is not ready to move
+INFO:origin.print:[set_state], xArm is not ready to move
+18:39:36 [INFO ] Robot stopped.
+18:39:36 [INFO ] Done.
+INFO:lastmile_v2_ext:Done.

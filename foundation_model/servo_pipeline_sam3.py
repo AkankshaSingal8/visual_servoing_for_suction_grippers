@@ -131,6 +131,13 @@ VS_APPROACH  = 5.0   # +X is toward the box (confirmed from uFactory Studio visu
 VS_DEAD_ZONE = 8
 VS_DESCENT   = -1.0  # mm/step Z correction in dead zone (small to avoid oscillation)
 VS_DESCENT_Y = 0.0   # disabled — Y movement causes B/D tracking drift
+# Proportional fallback gain (mm per pixel) when J_yz calibration is unavailable.
+# Sign convention (tested on protein-bar setup):
+#   ex > 0 (target right of centre) → dy < 0 moves camera left → ex decreases
+# Z is NOT corrected in proportional fallback — without a calibrated Jacobian column
+# the pixel→Z mapping is unreliable and drives the robot into its joint limit.
+PROP_GAIN_MM_PER_PX = 0.05   # conservative — flip Y_sign if robot diverges laterally
+PROP_Y_SIGN = -1              # confirmed: +1 caused runaway (ex grew from +30 to +334px)
 MAX_YZ_STEP  = 12.0
 MAX_JUMP_PX  = 80
 VS_SPEED     = 150
@@ -152,7 +159,7 @@ CAL_MVACC    = 100
 # (noise-dominated) and will cause runaway via its enormous inverse. Zero it.
 CAL_MIN_FLOW_PX = 1.0
 
-MIN_Z_MM     = -300.0  # robot home is Z=-52.9mm; descent goes negative — allow down to -300mm
+MIN_Z_MM     = -55.0   # observed joint limit ~-59mm; stop 4mm above to avoid error state
 
 # Mask propagation / tracking parameters
 TRACKER_WARMUP_FRAMES = 10
@@ -1184,6 +1191,7 @@ class RobotController:
         self.cal_status       = "uncalibrated"
         self._last_centroid   = None
         self._last_centroid_t = 0.0
+        self._home_rpy        = None  # locked orientation — set once at calibration start
 
     def _get_pos(self):
         ret = self._arm.get_position()
@@ -1245,7 +1253,9 @@ class RobotController:
             self.enabled    = True
             return
 
-        log.info("Home: [%.1f, %.1f, %.1f] mm", pos0[0], pos0[1], pos0[2])
+        log.info("Home: [%.1f, %.1f, %.1f] mm  rpy=[%.2f, %.2f, %.2f] deg",
+                 pos0[0], pos0[1], pos0[2], pos0[3], pos0[4], pos0[5])
+        self._home_rpy = [pos0[3], pos0[4], pos0[5]]  # freeze orientation for all servo commands
         J_yz = np.zeros((2, 2), dtype=np.float64)
 
         for col, (robot_idx, ax) in enumerate([(1, "Y"), (2, "Z")]):
@@ -1352,26 +1362,38 @@ class RobotController:
         ex    = centroid[0] - ic_x
         ey    = centroid[1] - ic_y
         err_r = float(np.hypot(ex, ey))
+        # Always approach — do not hold on centroid error.
+        # Holding approach while trying to center caused Z to hit joint limit.
         dx_mm = VS_APPROACH
 
+        # Full calibration: J_yz rank=2 (both Y and Z axes calibrated).
+        _jac_rank = (int(np.linalg.matrix_rank(self._jac_yz))
+                     if self._jac_yz is not None else 0)
+        _full_cal    = self._jac_yz_inv is not None and _jac_rank == 2
+        _partial_cal = self._jac_yz_inv is not None and _jac_rank == 1
+
         if err_r <= VS_DEAD_ZONE:
-            # Box centred — no lateral Z correction needed.
-            # Small Z nudge (VS_DESCENT) avoids oscillation from overshoot.
+            # Centred — hold lateral position, small Z nudge only.
             dy_mm = 0.0
             dz_mm = VS_DESCENT
-        elif self._jac_yz_inv is not None:
+        elif _full_cal:
+            # Both axes calibrated — use Jacobian.
             err   = np.array([ex, ey], dtype=np.float64)
             yz    = -CTRL_GAIN * (self._jac_yz_inv @ err)
             dy_mm = float(np.clip(yz[0], -MAX_YZ_STEP, MAX_YZ_STEP))
             dz_mm = float(np.clip(yz[1], -MAX_YZ_STEP, MAX_YZ_STEP))
+        elif _partial_cal:
+            # Rank-1: only Z is calibrated but robot has insufficient Z travel
+            # (~6mm from home to joint limit) to make meaningful corrections.
+            # Use proportional Y only; leave Z at zero.
+            dy_mm = float(np.clip(PROP_Y_SIGN * PROP_GAIN_MM_PER_PX * ex,
+                                  -MAX_YZ_STEP, MAX_YZ_STEP))
+            dz_mm = 0.0
         else:
-            dy_mm = 0.0
-            dz_mm = VS_DESCENT
-
-        # Y is the true approach axis (camera optical axis ≈ robot −Y direction).
-        # Apply a constant descent in Y every step regardless of centroid error,
-        # so the robot actually closes the distance to the box.
-        dy_mm += VS_DESCENT_Y
+            # No calibration at all — proportional Y only, no Z correction.
+            dy_mm = float(np.clip(PROP_Y_SIGN * PROP_GAIN_MM_PER_PX * ex,
+                                  -MAX_YZ_STEP, MAX_YZ_STEP))
+            dz_mm = 0.0
 
         with self._lock:
             try:
@@ -1388,10 +1410,21 @@ class RobotController:
                                 new_z, MIN_Z_MM)
                     new_z = MIN_Z_MM
 
-                self._arm.set_position(
+                # Lock orientation to home RPY — prevents IK drift accumulation.
+                rpy = self._home_rpy if self._home_rpy is not None else pos[3:6]
+                ret = self._arm.set_position(
                     x=new_x, y=new_y, z=new_z,
-                    roll=pos[3], pitch=pos[4], yaw=pos[5],
+                    roll=rpy[0], pitch=rpy[1], yaw=rpy[2],
                     speed=VS_SPEED, mvacc=VS_MVACC, wait=True)
+                # Recover from error state (e.g. after hitting a joint limit).
+                if isinstance(ret, (list, tuple)) and ret[0] not in (0, None):
+                    log.warning("set_position code=%s — clearing arm error", ret[0])
+                    try:
+                        self._arm.clean_error()
+                        self._arm.motion_enable(True)
+                        self._arm.set_state(0)
+                    except Exception:
+                        pass
                 log.info("Servo: err=(%+.0f,%+.0f)px r=%.0f  "
                          "Δ=(%+.1f,%+.1f,%+.1f)mm  "
                          "pos=(%.0f,%.0f,%.0f)  [%s]",

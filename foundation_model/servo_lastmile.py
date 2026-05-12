@@ -1646,7 +1646,6 @@ def _make_overlay(frame: np.ndarray, res: dict) -> np.ndarray:
         cv2.drawMarker(img, gp, (0, 0, 255), cv2.MARKER_CROSS, 26, 2)
         cv2.putText(img, "GRASP", (gp[0] + 22, gp[1] - 8),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
-        cv2.arrowedLine(img, ic, gp, (0, 220, 255), 2, tipLength=0.12)
 
     z = res.get("z_mm")
     if z is not None:

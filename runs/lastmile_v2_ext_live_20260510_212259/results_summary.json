@@ -1,0 +1,6 @@
+{
+  "detector": "sam3",
+  "ref_image": "masked_objects/protein_bar.png",
+  "gt_pose_file": "gt/gt_pose_protein_bar.json",
+  "terminal_error": null
+}

@@ -1,0 +1,10 @@
+00:17:44.516 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260429_001744.log
+00:17:44.516 [INFO ] ======================================================================
+00:17:44.516 [INFO ] servo_lastmile_v2_ext starting
+00:17:44.516 [INFO ]   detector=gdino  prompt=box  ref=assets/objects/protein_bar.jpeg  hand-eye=None
+00:17:44.516 [INFO ]   offline=True  debug=False  dry-run=False  no-robot=False
+00:17:44.516 [INFO ] ======================================================================
+00:17:44.517 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+00:17:44.522 [INFO ] LastMilePipelineV2Ext: detector_name=gdino
+00:17:59.017 [INFO ] Wrote 103 frame summaries to runs/smoketest_gdino/frames.jsonl
+00:17:59.022 [INFO ] Done.

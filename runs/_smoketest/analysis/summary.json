@@ -1,0 +1,12 @@
+{
+  "n_frames": 103,
+  "n_far": 2,
+  "n_near_sam3": 46,
+  "n_near_track": 29,
+  "n_terminal": 26,
+  "mean_z_at_terminal": 890.9545288085938,
+  "mean_tilt_at_terminal": 34.4380545303122,
+  "mean_centroid_err_at_terminal": 3.963113119465727,
+  "final_centroid_err_px": 98.69460817901552,
+  "watchdog_alarms_count": 0
+}

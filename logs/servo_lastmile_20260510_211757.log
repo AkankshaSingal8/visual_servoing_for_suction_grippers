@@ -1,0 +1,13 @@
+21:17:57.630 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260510_211757.log
+21:17:57.630 [INFO ] ======================================================================
+21:17:57.630 [INFO ] servo_lastmile_v2_ext starting
+21:17:57.630 [INFO ]   detector=sam3  prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+21:17:57.630 [INFO ]   offline=False  debug=False  dry-run=False  no-robot=False
+21:17:57.630 [INFO ] ======================================================================
+21:17:57.646 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+21:17:57.646 [INFO ] Ground truth XYZ loaded: [634.121, 3.494, -86.965] mm
+21:17:58.113 [ERROR] Robot connect failed: connect socket failed
+21:17:58.113 [WARNING] Could not capture home position: 'NoneType' object has no attribute 'get_position'
+21:17:58.119 [INFO ] Processing reference image ...
+21:18:02.519 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+21:18:03.039 [INFO ] Done.

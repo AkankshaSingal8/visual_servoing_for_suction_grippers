@@ -1,0 +1,408 @@
+21:22:54.786 [INFO ] Logging to /data/user/akanksha/repo/visual_servoing_for_suction_grippers/logs/servo_lastmile_20260510_212254.log
+21:22:54.786 [INFO ] ======================================================================
+21:22:54.786 [INFO ] servo_lastmile_v2_ext starting
+21:22:54.786 [INFO ]   detector=sam3  prompt=box  ref=masked_objects/protein_bar.png  hand-eye=None
+21:22:54.786 [INFO ]   offline=False  debug=False  dry-run=False  no-robot=False
+21:22:54.786 [INFO ] ======================================================================
+21:22:54.804 [INFO ] PyZED available - will use ZED SDK for capture and SVO recording
+21:22:54.804 [INFO ] Ground truth XYZ loaded: [634.121, 3.494, -86.965] mm
+21:22:55.855 [ERROR] Robot connect failed: connect socket failed
+21:22:55.855 [WARNING] Could not capture home position: 'NoneType' object has no attribute 'get_position'
+21:22:55.862 [INFO ] Processing reference image ...
+21:22:59.190 [INFO ] SAM3 loaded: facebook/sam3 on cuda
+21:22:59.663 [INFO ] SAM3: 1 detection(s) for 'box'
+21:22:59.663 [INFO ] Ref image: detected 'box' score=0.96 @ [  2   1 423 715]
+21:22:59.741 [INFO ] Feature extractor (ResNet-18) loaded
+21:22:59.764 [INFO ] Ref features: 512-d vector (norm=1.000)
+21:22:59.765 [WARNING] Hand-eye: no path supplied; using identity. Signal A (locked-3D projection) will be unreliable. Run a one-time calibrateHandEye to populate.
+21:22:59.765 [INFO ] LastMilePipelineV2Ext: detector_name=sam3
+21:23:01.557 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:01.805 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:01.807 [DEBUG]   det conf=0.97 sim=0.921 pos=0.42 prox=0.00 -> 0.621
+21:23:01.809 [INFO ] SAM3: 'box' score=0.97 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:01.809 [INFO ] SAM3: mask obtained (score=0.965, area=84159 px)
+21:23:02.003 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:02.005 [DEBUG] Servo: arm not connected
+21:23:02.005 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:02.016 [INFO ] frame=0 state=FAR       c=(670,413) depth=476.9mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:02.017 [INFO ] Calibration thread: starting Y/Z Jacobian calibration.
+21:23:02.018 [INFO ] === Calibration: waiting for camera frame ===
+21:23:02.018 [ERROR] Calibration failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 461, in _calibration_runner
+    robot.calibrate(get_frame_for_calibration)
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1249, in calibrate
+    pos0 = self._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:02.022 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:02.272 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:02.274 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+21:23:02.276 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:02.276 [INFO ] SAM3: mask obtained (score=0.964, area=84153 px)
+21:23:02.304 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:02.305 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:02.315 [INFO ] frame=1 state=FAR       c=(670,413) depth=477.3mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:02.321 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:02.571 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:02.574 [DEBUG]   det conf=0.96 sim=0.923 pos=0.42 prox=1.00 -> 0.871
+21:23:02.575 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.923
+21:23:02.575 [INFO ] SAM3: mask obtained (score=0.964, area=84162 px)
+21:23:02.604 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:05.609 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:05.620 [INFO ] frame=2 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:05.625 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:05.871 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:05.873 [DEBUG]   det conf=0.96 sim=0.922 pos=0.42 prox=1.00 -> 0.870
+21:23:05.874 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.922
+21:23:05.874 [INFO ] SAM3: mask obtained (score=0.962, area=84167 px)
+21:23:05.903 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:05.905 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:05.915 [INFO ] frame=3 state=NEAR      c=(670,413) depth=476.8mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:05.921 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.168 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:06.171 [DEBUG]   det conf=0.96 sim=0.924 pos=0.42 prox=1.00 -> 0.871
+21:23:06.172 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.924
+21:23:06.172 [INFO ] SAM3: mask obtained (score=0.961, area=84172 px)
+21:23:06.201 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:06.203 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.213 [INFO ] frame=4 state=NEAR      c=(670,413) depth=476.9mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:06.218 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.468 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:06.471 [DEBUG]   det conf=0.96 sim=0.923 pos=0.42 prox=1.00 -> 0.870
+21:23:06.472 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.923
+21:23:06.472 [INFO ] SAM3: mask obtained (score=0.959, area=84184 px)
+21:23:06.501 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:06.501 [INFO ] MaskTracker: anchor locked (IoU streak=5, last IoU=0.999)
+21:23:06.503 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.512 [INFO ] frame=5 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:06.518 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.769 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:06.771 [DEBUG]   det conf=0.96 sim=0.922 pos=0.42 prox=1.00 -> 0.871
+21:23:06.773 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.922
+21:23:06.773 [INFO ] SAM3: mask obtained (score=0.964, area=84132 px)
+21:23:06.802 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:06.803 [INFO ] MaskTracker: anchor locked (IoU streak=6, last IoU=0.999)
+21:23:06.804 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:06.813 [INFO ] frame=6 state=NEAR      c=(670,413) depth=476.8mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:06.819 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.070 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:07.073 [DEBUG]   det conf=0.96 sim=0.920 pos=0.42 prox=1.00 -> 0.870
+21:23:07.074 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.920
+21:23:07.075 [INFO ] SAM3: mask obtained (score=0.965, area=84169 px)
+21:23:07.104 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:07.104 [INFO ] MaskTracker: anchor locked (IoU streak=7, last IoU=0.999)
+21:23:07.105 [DEBUG] Servo: arm not connected
+21:23:07.105 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.115 [INFO ] frame=7 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:07.121 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.371 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:07.374 [DEBUG]   det conf=0.96 sim=0.923 pos=0.42 prox=1.00 -> 0.870
+21:23:07.375 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.923
+21:23:07.376 [INFO ] SAM3: mask obtained (score=0.962, area=84151 px)
+21:23:07.405 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:07.405 [INFO ] MaskTracker: anchor locked (IoU streak=8, last IoU=0.999)
+21:23:07.406 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.416 [INFO ] frame=8 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:07.422 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.672 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:07.674 [DEBUG]   det conf=0.96 sim=0.922 pos=0.42 prox=1.00 -> 0.870
+21:23:07.676 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.922
+21:23:07.676 [INFO ] SAM3: mask obtained (score=0.962, area=84139 px)
+21:23:07.704 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:07.704 [INFO ] MaskTracker: anchor locked (IoU streak=9, last IoU=0.999)
+21:23:07.706 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.715 [INFO ] frame=9 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:07.721 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:07.971 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:07.973 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+21:23:07.975 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:07.975 [INFO ] SAM3: mask obtained (score=0.961, area=84120 px)
+21:23:08.004 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:08.005 [INFO ] MaskTracker: anchor locked (IoU streak=10, last IoU=0.999)
+21:23:08.006 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.016 [INFO ] frame=10 state=NEAR      c=(670,413) depth=477.1mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:08.022 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.272 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:08.274 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+21:23:08.276 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:08.276 [INFO ] SAM3: mask obtained (score=0.961, area=84154 px)
+21:23:08.304 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:08.305 [INFO ] MaskTracker: anchor locked (IoU streak=11, last IoU=0.999)
+21:23:08.306 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.315 [INFO ] frame=11 state=NEAR      c=(670,413) depth=477.1mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:08.321 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.573 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:08.575 [DEBUG]   det conf=0.96 sim=0.920 pos=0.42 prox=1.00 -> 0.870
+21:23:08.577 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.920
+21:23:08.577 [INFO ] SAM3: mask obtained (score=0.964, area=84138 px)
+21:23:08.605 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:08.605 [INFO ] MaskTracker: anchor locked (IoU streak=12, last IoU=0.999)
+21:23:08.607 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.617 [INFO ] frame=12 state=NEAR      c=(670,413) depth=477.1mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:08.623 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.871 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:08.873 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+21:23:08.875 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:08.875 [INFO ] SAM3: mask obtained (score=0.962, area=84140 px)
+21:23:08.904 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:08.904 [INFO ] MaskTracker: anchor locked (IoU streak=13, last IoU=0.999)
+21:23:08.905 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:08.916 [INFO ] frame=13 state=NEAR      c=(670,413) depth=477.1mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:08.922 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.169 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:09.172 [DEBUG]   det conf=0.96 sim=0.922 pos=0.42 prox=1.00 -> 0.871
+21:23:09.173 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.922
+21:23:09.173 [INFO ] SAM3: mask obtained (score=0.965, area=84166 px)
+21:23:09.203 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:09.203 [INFO ] MaskTracker: anchor locked (IoU streak=14, last IoU=0.999)
+21:23:09.204 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.214 [INFO ] frame=14 state=NEAR      c=(670,413) depth=477.2mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:09.220 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.471 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:09.473 [DEBUG]   det conf=0.96 sim=0.921 pos=0.42 prox=1.00 -> 0.870
+21:23:09.475 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.921
+21:23:09.475 [INFO ] SAM3: mask obtained (score=0.965, area=84149 px)
+21:23:09.504 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:09.504 [INFO ] MaskTracker: anchor locked (IoU streak=15, last IoU=0.999)
+21:23:09.506 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.515 [INFO ] frame=15 state=NEAR      c=(670,413) depth=477.2mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:09.521 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.770 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:09.772 [DEBUG]   det conf=0.96 sim=0.918 pos=0.42 prox=1.00 -> 0.869
+21:23:09.774 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.918
+21:23:09.774 [INFO ] SAM3: mask obtained (score=0.964, area=84157 px)
+21:23:09.803 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:09.804 [INFO ] MaskTracker: anchor locked (IoU streak=16, last IoU=0.999)
+21:23:09.805 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:09.815 [INFO ] frame=16 state=NEAR      c=(670,413) depth=477.0mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:09.822 [WARNING] Pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 353, in perception_loop_for_frame
+    pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:10.070 [INFO ] SAM3: 1 detection(s) for 'box'
+21:23:10.073 [DEBUG]   det conf=0.96 sim=0.923 pos=0.42 prox=1.00 -> 0.871
+21:23:10.074 [INFO ] SAM3: 'box' score=0.96 @ [563 209 775 619]  (top of 1)  sim=0.923
+21:23:10.074 [INFO ] SAM3: mask obtained (score=0.960, area=84139 px)
+21:23:10.104 [DEBUG] Grasp point: robust centroid (669, 414)
+21:23:10.104 [INFO ] MaskTracker: anchor locked (IoU streak=17, last IoU=0.999)
+21:23:10.106 [WARNING] Post-servo pose read failed: 'NoneType' object has no attribute 'get_position'
+Traceback (most recent call last):
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/full_system_pipeline/pipeline/servo_lastmile_v2_ext.py", line 372, in perception_loop_for_frame
+    post_pos = robot._get_pos()
+  File "/data/user/akanksha/repo/visual_servoing_for_suction_grippers/foundation_model/servo_pipeline_sam3.py", line 1197, in _get_pos
+    ret = self._arm.get_position()
+AttributeError: 'NoneType' object has no attribute 'get_position'
+21:23:10.109 [INFO ] Quit requested via window key.
+21:23:10.114 [INFO ] frame=17 state=NEAR      c=(670,413) depth=477.1mm  robot xyz=(nan, nan, nan)mm  tilt=-
+21:23:10.179 [INFO ] Results summary written to runs/lastmile_v2_ext_live_20260510_212259/results_summary.json
+21:23:10.179 [WARNING] GT pose provided but TERMINAL was never reached — no error computed.
+21:23:10.183 [INFO ] Done.

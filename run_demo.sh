@@ -157,4 +157,4 @@ echo " output -> $OUT_DIR"
 echo "======================================================="
 echo ""
 
-conda run -n "$CONDA_ENV" python -m foundation_model.servo_lastmile_v2 $ARGS
+conda run -n "$CONDA_ENV" python -m full_system_pipeline.pipeline.servo_lastmile_v2_ext $ARGS

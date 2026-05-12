@@ -502,6 +502,22 @@ class LastMilePipelineV2(LastMilePipeline):
         # Weight EMA for tracking phase only
         self._ema_weights: dict[str, float] = {}
 
+        # Monotonic depth filter: during approach, depth should only decrease.
+        # Readings that jump back up (ZED measuring background through the object)
+        # are clamped to the last valid reading.
+        self._last_valid_z_mm: float | None = None
+
+        # Transition debug: buffer raw frames around the sam3→track switch
+        self._pre_trans_buf: list[np.ndarray] = []   # ring buffer of raw frames
+        self._PRE_TRANS_BUF_SIZE = 5
+        self.transition_debug_dir: str | None = None  # set externally by runner
+        self._post_trans_save_remaining: int = 0
+        self._POST_TRANS_SAVE_N = 5
+
+        # Frames elapsed since entering track phase (for SAM3 mask warmup)
+        self._track_frame_count: int = 0
+        self._SAM3_MASK_WARMUP = 3  # use last SAM3 mask while SAM2 warms up
+
     def _smooth_weight(self, name: str, w: float, alpha: float = 0.5) -> float:
         prev = self._ema_weights.get(name, w)
         smoothed = alpha * w + (1 - alpha) * prev
@@ -513,6 +529,11 @@ class LastMilePipelineV2(LastMilePipeline):
         Process a single frame. Adds surface-normal and EE-masking outputs
         on top of the base pipeline's result dict.
         """
+        # Ring-buffer raw frames so we can flush pre-transition frames on switch
+        if len(self._pre_trans_buf) >= self._PRE_TRANS_BUF_SIZE:
+            self._pre_trans_buf.pop(0)
+        self._pre_trans_buf.append(frame_bgr.copy())
+
         res = _empty_result_v2()
         h, w = frame_bgr.shape[:2]
         self.fsm.frame_idx += 1
@@ -529,6 +550,9 @@ class LastMilePipelineV2(LastMilePipeline):
             if mask is not None and mask.any():
                 ys, xs = np.where(mask > 0)
                 cx_cy = (float(xs.mean()), float(ys.mean()))
+            # Fall back to runner-provided centroid (e.g. GDINO bbox centre, no mask)
+            if cx_cy is None:
+                cx_cy = sam3_res.get("best_centroid")
             res["best_centroid"] = cx_cy
 
             z_mm = self._depth_at_px(depth_map, cx_cy) if cx_cy else None
@@ -545,6 +569,7 @@ class LastMilePipelineV2(LastMilePipeline):
                     self._sam3_handoff = None
                     self._sam3_ema = None
                     self._last_sam3_mask = None
+                    self._last_valid_z_mm = None
                     res["state"] = State.NEAR
                     res["best_centroid"] = lock.centroid_px
             return res
@@ -572,9 +597,14 @@ class LastMilePipelineV2(LastMilePipeline):
                     box_visible = (
                         s_box is not None and s_mask is not None
                         and s_score >= 0.50
+                        and bbox_area_fraction(np.asarray(s_box), w, h) < 0.45
                         and not bbox_touches_border(np.asarray(s_box), w, h)
-                        and bbox_area_fraction(np.asarray(s_box), w, h) < 0.70
                     )
+                    # Switch to track when box fills >45% of frame OR bbox touches
+                    # the frame border — empirically the protein bar reaches ~49%
+                    # area at closest approach, so 0.45 triggers the handoff in time.
+                    # Border touch also triggers: once any edge is clipped, SAM3
+                    # mask centroid drifts toward the visible portion.
 
                     if box_visible:
                         ys, xs = np.where(s_mask > 0)
@@ -613,6 +643,17 @@ class LastMilePipelineV2(LastMilePipeline):
                                      bbox_touches_border(np.asarray(s_box), w, h)
                                      if s_box is not None else False))
                         self._near_phase = 'track'
+                        self._track_frame_count = 0
+                        # Save pre-transition raw frames for debugging mask quality
+                        if self.transition_debug_dir is not None:
+                            os.makedirs(self.transition_debug_dir, exist_ok=True)
+                            for _i, _f in enumerate(self._pre_trans_buf):
+                                cv2.imwrite(
+                                    os.path.join(self.transition_debug_dir,
+                                                 f"pre_{_i:02d}.png"), _f)
+                            log.info("Transition debug: saved %d pre frames to %s",
+                                     len(self._pre_trans_buf), self.transition_debug_dir)
+                            self._post_trans_save_remaining = self._POST_TRANS_SAVE_N
                         # Handoff anchor: mean of last N SAM3 centroids
                         if self._sam3_buffer:
                             xs_buf = [p[0] for p in self._sam3_buffer]
@@ -664,11 +705,18 @@ class LastMilePipelineV2(LastMilePipeline):
             # providing a stable grounded starting point for the tracker.
             # -----------------------------------------------------------------
             if self._near_phase == 'track':
+                self._track_frame_count += 1
                 c_A = self.signal_A.predict(lock, T_base_ee_now)
                 c_B, w_B, pts_now, vis = self.signal_B.step(frame_bgr)
                 c_C, _, mask_C = self.signal_C.step(frame_bgr)
                 if mask_C is not None:
                     res["mask_np"] = mask_C
+                elif (self._track_frame_count <= self._SAM3_MASK_WARMUP
+                      and self._last_sam3_mask is not None):
+                    # SAM2 needs a few frames to propagate re-seeded logits;
+                    # reuse the last clean SAM3 mask during warmup so the
+                    # green overlay doesn't go blank or glitch at the switch.
+                    res["mask_np"] = self._last_sam3_mask
 
                 # CoTracker3 is the primary signal in track phase.
                 # Its all-points mean (including off-frame extrapolated points)
@@ -705,30 +753,19 @@ class LastMilePipelineV2(LastMilePipeline):
             res["_near_phase"] = self._near_phase
 
             z_mm = self._depth_at_px(depth_map, best_centroid)
+            # During approach depth must only decrease. Reject readings that
+            # jump upward by >50% vs the last valid reading (ZED background bleed).
+            if z_mm is not None:
+                if (self._last_valid_z_mm is not None
+                        and z_mm > self._last_valid_z_mm * 1.5):
+                    log.debug("z_mm %.0f filtered (last valid %.0f) — background bleed",
+                              z_mm, self._last_valid_z_mm)
+                    z_mm = None
+                else:
+                    self._last_valid_z_mm = z_mm
             res["z_mm"] = z_mm
 
-            # Surface normal (tilt) in NEAR
-            if depth_map is not None and best_centroid is not None:
-                tilt_near = estimate_near_tilt(
-                    depth_map, self.K, best_centroid,
-                    patch_half=NEAR_PLANE_PATCH_HALF,
-                    min_pts=NEAR_PLANE_MIN_PTS,
-                    thresh_mm=NEAR_PLANE_THRESH_MM,
-                    max_iter=NEAR_PLANE_MAX_ITER,
-                    rng=self._rng,
-                )
-                if tilt_near is not None:
-                    tilt = tilt_near
-                    res["tilt_deg"]  = tilt_near.tilt_deg
-                    res["roll_deg"]  = tilt_near.roll_deg
-                    res["pitch_deg"] = tilt_near.pitch_deg
-                    res["near_plane_normal"]    = tilt_near.normal.tolist()
-                    res["near_plane_n_inliers"] = tilt_near.n_inliers
-                    log.debug("NEAR plane: tilt=%.1f° roll=%.1f° pitch=%.1f°",
-                              tilt_near.tilt_deg, tilt_near.roll_deg,
-                              tilt_near.pitch_deg)
-
-            res["_tilt"] = tilt
+            res["_tilt"] = None
 
             ic = (w / 2.0, h / 2.0)
             # Position-based TERMINAL fallback: z_mm is unreliable at close range
@@ -748,41 +785,11 @@ class LastMilePipelineV2(LastMilePipeline):
                          f"{z_mm:.1f}mm" if z_mm else "n/a")
             return res
 
-        # ============ TERMINAL (plane fit still runs; tilt added) ============
+        # ============ TERMINAL ============
         if self.fsm.state == State.TERM:
             res["state"] = State.TERM
             ic = (w / 2.0, h / 2.0)
-
-            if depth_map is not None:
-                fit = terminal_plane_fit(depth_map, self.K, ic)
-                if fit is not None:
-                    normal, centroid = fit
-                    res["plane_normal"] = normal.tolist()
-                    res["best_centroid"] = ic
-
-                    tilt_term = TiltEstimate(
-                        normal=normal,
-                        centroid_cam=centroid,
-                        tilt_deg=float(math.degrees(math.acos(
-                            abs(float(np.clip(normal @ np.array([0., 0., -1.]),
-                                              -1., 1.)))))),
-                        roll_deg=float(math.degrees(math.atan2(
-                            float(normal[1]), abs(float(normal[2]))))),
-                        pitch_deg=float(math.degrees(math.atan2(
-                            float(normal[0]), abs(float(normal[2]))))),
-                        n_inliers=0,
-                    )
-                    res["tilt_deg"]  = tilt_term.tilt_deg
-                    res["roll_deg"]  = tilt_term.roll_deg
-                    res["pitch_deg"] = tilt_term.pitch_deg
-                    res["near_plane_normal"] = normal.tolist()
-                    res["_tilt"] = tilt_term
-
-                    log.info("TERM: tilt=%.1f° roll=%.1f° pitch=%.1f° "
-                             "normal=%s",
-                             tilt_term.tilt_deg, tilt_term.roll_deg,
-                             tilt_term.pitch_deg,
-                             np.round(normal, 3).tolist())
+            res["best_centroid"] = ic
 
             T_base_ee_now = self.ee_pose_provider()
             c_A = self.signal_A.predict(self.fsm.lock_state, T_base_ee_now)
@@ -798,56 +805,47 @@ class LastMilePipelineV2(LastMilePipeline):
 
 def _make_overlay_v2(frame: np.ndarray, res: dict) -> np.ndarray:
     """Build the v2 overlay. Adds tilt/roll/pitch HUD, normal arrow, EE circle."""
-    # Suppress Signal A from overlay — without hand-eye calibration it shows
-    # a drifting wrong position that confuses the visualization.
+    phase = res.get("_near_phase")
+    c_E = res.get("c_E")
+    c_B = res.get("c_B")
+
     res_display = dict(res)
     res_display["c_A"] = None
+
+    # In track phase: suppress the base overlay's red GRASP cross — we redraw
+    # both points explicitly below with distinct colours.
+    track_best = res.get("best_centroid") if phase == "track" else None
+    if phase == "track":
+        res_display["best_centroid"] = None
+
     img = _make_overlay(frame, res_display)
     h, w = img.shape[:2]
 
-    # Signal E (SAM3 re-anchor) — orange square marker.
-    # Only draw in 'track' phase; in 'sam3' phase c_E == best_centroid and
-    # drawing both produces a redundant orange box inside the red grasp cross.
-    c_E = res.get("c_E")
-    if c_E is not None and res.get("_near_phase") == "track":
-        ex, ey = int(c_E[0]), int(c_E[1])
-        cv2.rectangle(img, (ex - 8, ey - 8), (ex + 8, ey + 8), (0, 128, 255), 2)
-        cv2.putText(img, "E", (ex + 10, ey - 8),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 128, 255), 1)
+    if phase == "track":
+        # Original SAM3 grasp point (frozen at phase-switch) — RED, same style
+        # as the base overlay's GRASP marker so it reads as the reference.
+        if c_E is not None:
+            ex_, ey_ = int(c_E[0]), int(c_E[1])
+            cv2.circle(img, (ex_, ey_), 18, (0, 0, 255), 2)
+            cv2.drawMarker(img, (ex_, ey_), (0, 0, 255), cv2.MARKER_CROSS, 26, 2)
+            cv2.putText(img, "SAM3", (ex_ + 22, ey_ - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
 
-    tilt = res.get("_tilt")  # TiltEstimate or None
+        # Current tracked/predicted grasp point — CYAN, distinct from SAM3 red.
+        if track_best is not None:
+            tx, ty = int(track_best[0]), int(track_best[1])
+            cv2.circle(img, (tx, ty), 18, (255, 255, 0), 2)
+            cv2.drawMarker(img, (tx, ty), (255, 255, 0), cv2.MARKER_CROSS, 26, 2)
+            cv2.putText(img, "LASTMILE", (tx + 22, ty - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (255, 255, 0), 2)
 
-    # Surface normal arrow from fused centroid
-    cf = res.get("best_centroid") or res.get("c_fused")
-    if tilt is not None and cf is not None:
-        n = tilt.normal
-        # Project normal vector as a 50-px arrow in image space.
-        # We visualise the XY components of the normal (in-plane tilt).
-        arrow_len = 60
-        nx_img = float(n[0]) * arrow_len
-        ny_img = float(n[1]) * arrow_len
-        start = (int(cf[0]), int(cf[1]))
-        end = (int(cf[0] + nx_img), int(cf[1] + ny_img))
-        cv2.arrowedLine(img, start, end, (0, 255, 255), 2, tipLength=0.25)
+        # CoTracker3 raw position — orange dot (sub-signal, not the controller target).
+        if c_B is not None:
+            bx, by = int(c_B[0]), int(c_B[1])
+            cv2.circle(img, (bx, by), 7, (0, 165, 255), 2)
+            cv2.putText(img, "B", (bx + 9, by - 6),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.40, (0, 165, 255), 1)
 
-    # Tilt HUD: top-right corner
-    tilt_deg  = res.get("tilt_deg")
-    roll_deg  = res.get("roll_deg")
-    pitch_deg = res.get("pitch_deg")
-    n_inliers = res.get("near_plane_n_inliers")
-    if tilt_deg is not None:
-        color = (0, 255, 0) if tilt_deg < 2.0 else (
-                 (0, 165, 255) if tilt_deg < 5.0 else (0, 0, 255))
-        lines = [
-            f"tilt  {tilt_deg:+.1f}°",
-            f"roll  {roll_deg:+.1f}°",
-            f"pitch {pitch_deg:+.1f}°",
-        ]
-        if n_inliers is not None:
-            lines.append(f"inlrs {n_inliers}")
-        for i, txt in enumerate(lines):
-            cv2.putText(img, txt, (w - 180, 28 + i * 22),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
 
     # EE mask outline (cyan dashed circle)
     ee_mask = res.get("ee_mask")
@@ -937,6 +935,7 @@ def run_offline_v2(args: argparse.Namespace, debug_dir: str | None = None) -> No
     )
 
     recorder = VideoRecorder(out_dir, fps=getattr(args, "fps", 15.0))
+    pipeline.transition_debug_dir = os.path.join(out_dir, "transition_debug")
 
     frames_iter = []
     if args.input_video:
@@ -998,6 +997,15 @@ def _process_offline_frame_v2(pipeline: LastMilePipelineV2,
     if not getattr(args, "no_overlays", False):
         overlay_path = os.path.join(out_dir, f"overlay_{n:06d}.png")
         cv2.imwrite(overlay_path, overlay)
+
+    # Save post-transition overlay frames to transition_debug dir
+    if (pipeline._post_trans_save_remaining > 0
+            and pipeline.transition_debug_dir is not None):
+        post_idx = pipeline._POST_TRANS_SAVE_N - pipeline._post_trans_save_remaining
+        cv2.imwrite(
+            os.path.join(pipeline.transition_debug_dir, f"post_{post_idx:02d}.png"),
+            overlay)
+        pipeline._post_trans_save_remaining -= 1
 
     if debug_dir is not None:
         _dump_debug_frame(debug_dir, n, frame, res, overlay, source)
@@ -1118,16 +1126,19 @@ def run_live_v2(args: argparse.Namespace, debug_dir: str | None = None) -> None:
             log.info("Pipeline reset by user.")
 
     def perception_loop_for_frame(frame_bgr: np.ndarray) -> dict:
+        current_robot_pos = None
         if not (args.dry_run or args.no_robot) and hasattr(robot, "_get_pos"):
             try:
                 pos = robot._get_pos()
                 if pos is not None:
+                    current_robot_pos = pos
                     with shared_lock:
                         shared["latest_pose"] = _xarm_pose_to_T(pos)
             except Exception as e:
                 log.debug("Pose read failed: %s", e)
 
         res = pipeline.step(frame_bgr)
+        res["robot_pos"] = current_robot_pos  # [x,y,z,roll,pitch,yaw] mm/deg or None
 
         if (not args.dry_run and not args.no_robot
                 and robot is not None
