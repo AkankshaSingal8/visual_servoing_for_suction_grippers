@@ -152,8 +152,22 @@ class LastMilePipelineV2Ext(LastMilePipelineV2):
         return lock
 
     def step(self, frame_bgr: np.ndarray) -> dict:
+        prev_phase = self._near_phase  # read before super() may flip it
         res = super().step(frame_bgr)
         res["detector_used"] = self.detector_name
+
+        # Reseed CoTracker3 with more points immediately after the SAM3→track
+        # phase switch. super().step() already called reset_from_mask with 80
+        # points; we redo it with EXT_COTRACKER_INIT_POINTS Gaussian points so
+        # the tracker has denser coverage as the object exits the frame border.
+        if prev_phase == "sam3" and self._near_phase == "track":
+            if self._last_sam3_mask is not None:
+                self.signal_B.reset_from_mask(
+                    self._last_sam3_mask, frame_bgr,
+                    n_points=EXT_COTRACKER_INIT_POINTS,
+                )
+                log.info("Handoff: reseeded CoTracker3 with %d gaussian points",
+                         EXT_COTRACKER_INIT_POINTS)
 
         # In track phase, use only CoTracker3 (Signal B) — no SAM3 anchor fallback.
         # If CoTracker3 returns None, best_centroid is None (servo pauses naturally).
