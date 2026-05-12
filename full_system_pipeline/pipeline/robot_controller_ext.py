@@ -34,7 +34,7 @@ class RobotControllerExt(RobotController):
 
     def __init__(self, ip: str):
         super().__init__(ip)
-        self.tilt_correction_enabled = True
+        self.tilt_correction_enabled = False  # tilt correction disabled; XY-only servoing
 
     def correct_tilt(self, roll_deg: float, pitch_deg: float, n_inliers: int) -> bool:
         """
