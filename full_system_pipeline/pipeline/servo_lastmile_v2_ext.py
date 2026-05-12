@@ -50,6 +50,7 @@ try:
         _run_opencv_loop,
         DEFAULT_INTRINSICS,
         gaussian_mask_samples,
+        _make_overlay,
     )
 except ImportError:
     from servo_lastmile_v2 import (
@@ -71,6 +72,7 @@ except ImportError:
         _run_opencv_loop,
         DEFAULT_INTRINSICS,
         gaussian_mask_samples,
+        _make_overlay,
     )
 
 try:
@@ -117,6 +119,64 @@ def _compute_xyz_error(robot_pos: list, gt_xyz: np.ndarray) -> dict:
         "error_z_mm": float(diff[2]),
         "error_xyz_mm": float(np.linalg.norm(diff)),
     }
+
+
+# ---------------------------------------------------------------------------
+# Overlay helper — replaces _make_overlay_v2 in both offline and live runners
+# ---------------------------------------------------------------------------
+
+_TILT_KEYS = ("tilt_deg", "roll_deg", "pitch_deg",
+              "near_plane_normal", "near_plane_n_inliers", "_tilt")
+
+
+def _make_overlay_ext(frame_bgr: np.ndarray, res: dict) -> np.ndarray:
+    """
+    Ext-pipeline overlay:
+      SAM3 phase  -> RED cross + circle at best_centroid, label "SAM3 GRASP"
+      track phase -> ORANGE cross + circle at best_centroid (c_B),
+                     dim-red reference circle at c_E (frozen SAM3 anchor)
+    All other elements (green mask, bbox, image-centre crosshair, depth HUD)
+    come from the base _make_overlay() call.
+    """
+    phase = res.get("_near_phase")
+    best  = res.get("best_centroid")
+    c_E   = res.get("c_E")
+
+    # Strip tilt keys and suppress best_centroid so base _make_overlay does
+    # not draw its own red GRASP cross — we draw it ourselves below.
+    res_base = {k: v for k, v in res.items()
+                if k not in _TILT_KEYS and k != "best_centroid"}
+    res_base["c_A"] = None  # suppress Signal A sub-dot; not meaningful in ext
+
+    img = _make_overlay(frame_bgr, res_base)
+
+    if phase == "track":
+        # Frozen SAM3 anchor — dim red reference circle (no cross)
+        if c_E is not None:
+            ex, ey = int(c_E[0]), int(c_E[1])
+            cv2.circle(img, (ex, ey), 10, (0, 0, 180), 2)
+            cv2.putText(img, "SAM3 ref", (ex + 13, ey - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.40, (0, 0, 180), 1)
+
+        # CoTracker3 tracked grasp point — ORANGE cross
+        if best is not None:
+            bx, by = int(best[0]), int(best[1])
+            cv2.circle(img, (bx, by), 18, (0, 165, 255), 2)
+            cv2.drawMarker(img, (bx, by), (0, 165, 255),
+                           cv2.MARKER_CROSS, 26, 2)
+            cv2.putText(img, "CoTracker3 GRASP", (bx + 22, by - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 165, 255), 2)
+    else:
+        # SAM3 phase (or FAR / TERMINAL) — RED cross labeled "SAM3 GRASP"
+        if best is not None:
+            gx, gy = int(best[0]), int(best[1])
+            cv2.circle(img, (gx, gy), 18, (0, 0, 255), 2)
+            cv2.drawMarker(img, (gx, gy), (0, 0, 255),
+                           cv2.MARKER_CROSS, 26, 2)
+            cv2.putText(img, "SAM3 GRASP", (gx + 22, gy - 8),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 0, 255), 2)
+
+    return img
 
 
 # ---------------------------------------------------------------------------
