@@ -14,7 +14,7 @@ All 7 planned implementation tasks were completed on 2026-06-28:
 |------|-------------|-------------|
 | Task 1 | Batch analysis pipeline — processes all v2_* run dirs, outputs batch_summary.csv | `full_system_pipeline/evaluation/batch_analyze.py` |
 | Task 2 | Tilt/surface-normal fix — RANSAC plane fit in NEAR state (was hardcoded None) | `foundation_model/servo_lastmile_v2.py` |
-| Task 3 | Unit tests — fusion logic, centroid error, weighted geometric median | `full_system_pipeline/tests/` |
+| Task 3 | Unit tests — fusion logic, centroid error, weighted geometric median | `tests/` |
 | Task 4 | Offline detector ablation — SAM3 vs GDINO+SAM2 vs GDINO on recorded frames | `full_system_pipeline/evaluation/offline_detector_ablation.py` |
 | Task 5 | Signal subset ablation — isolates contribution of each tracking signal A–E | `full_system_pipeline/evaluation/signal_ablation.py` |
 | Task 6 | GT centroid annotation tool — click-based annotation, outputs gt_summary.csv | `full_system_pipeline/evaluation/annotate_gt.py` |
@@ -124,8 +124,9 @@ Tool built: `full_system_pipeline/evaluation/offline_detector_ablation.py`
 Run command:
 ```bash
 python full_system_pipeline/evaluation/offline_detector_ablation.py \
-  --run-dir runs/v2_proteinbar_servo12 \
-  --output-dir /tmp/detector_ablation
+  --video runs/v2_proteinbar_servo12/raw.mp4 \
+  --ref-image assets/objects/protein_bar.jpeg \
+  --out-dir /tmp/detector_ablation
 ```
 Results pending robot-session data with sufficient FAR-state frames.
 

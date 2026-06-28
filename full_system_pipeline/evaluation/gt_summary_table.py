@@ -65,7 +65,8 @@ def main() -> None:
             # Load GT centroid
             with (run_dir / "gt_centroid.json").open() as fh_gt:
                 gt_data = json.load(fh_gt)
-            gt_centroid = (float(gt_data["x"]), float(gt_data["y"]))
+            gt = gt_data["gt_centroid"]
+            gt_centroid = (float(gt[0]), float(gt[1]))
 
             # Load frames
             frames = load_frames(str(run_dir))
