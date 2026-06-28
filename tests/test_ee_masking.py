@@ -2,10 +2,6 @@
 import numpy as np
 import pytest
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from foundation_model.servo_lastmile_v2 import EEOcclusionMasker
 
 
@@ -40,27 +36,25 @@ def test_masker_returns_mask_shape():
     # EE directly in front of camera at 300mm
     T_base_ee = _make_T_base_ee(z=-300.0)
     mask = masker.get_mask(frame, T_base_ee)
-    # May be None if EE projects behind camera — that's fine
-    if mask is not None:
-        assert mask.shape == (480, 640)
-        assert mask.dtype == np.uint8
+    assert mask is not None
+    assert mask.shape == (480, 640)
+    assert mask.dtype == np.uint8
 
 
 def test_masker_apply_zeros_ee_region():
     """apply_to_frame should zero out EE pixels."""
-    K = _make_K()
+    K = _make_K(fx=600.0, fy=600.0, cx=320.0, cy=240.0)
+    # Identity T_ee_cam → T_cam_ee = identity → tip_cam = [0, 0, tip_offset_mm]
+    # With tip_offset_mm=160.0, tip_cam[2] = 160 > 1.0 so get_mask returns a mask.
     T_ee_cam = _make_identity_hand_eye()
     masker = EEOcclusionMasker(T_ee_cam=T_ee_cam, K=K,
-                               tip_offset_mm=0.0, body_radius_mm=50.0)
+                               tip_offset_mm=160.0, body_radius_mm=35.0)
     frame = np.ones((480, 640, 3), dtype=np.uint8) * 255
     T_base_ee = np.eye(4)
-    T_base_ee[2, 3] = 300.0  # EE 300mm in front
     masked_frame, ee_mask = masker.apply_to_frame(frame, T_base_ee)
     assert masked_frame.shape == frame.shape
-    # masked_frame should differ from frame if mask was applied
-    # (some pixels zeroed)
-    if ee_mask is not None:
-        assert not np.array_equal(masked_frame, frame)
+    assert ee_mask is not None, "get_mask must return a mask (EE tip is in front of camera)"
+    assert not np.array_equal(masked_frame, frame), "EE region must be zeroed out"
 
 
 def test_masker_behind_camera_returns_none():

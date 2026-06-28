@@ -2,13 +2,7 @@
 import numpy as np
 import pytest
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from foundation_model.servo_lastmile import (
-    weighted_geometric_median, SignalReading
-)
+from foundation_model.servo_lastmile import weighted_geometric_median
 
 
 def test_weighted_geomed_single_point():
