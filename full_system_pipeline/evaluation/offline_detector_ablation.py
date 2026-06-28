@@ -17,7 +17,7 @@ Usage:
         --existing-dirs runs/ablation_sam3,runs/ablation_gdino,runs/ablation_gdino_sam2
 
 Runs: sam3, gdino+sam2, gdino — each gets its own frames.jsonl.
-Outputs: detector_comparison.png + per-detector frames.jsonl + summary.json
+Outputs: detector_comparison.png + per-detector frames.jsonl + detector_ablation_summary.json
 
 Note: This script tests *perception* only (detector backend selection), not
 closed-loop control.  Raw.mp4 files were recorded with the robot moving, but the
@@ -389,7 +389,7 @@ def main() -> None:
         "image_center": list(IMAGE_CENTER),
         "per_detector": run_metadata,
     }
-    summary_path = out_dir / "summary.json"
+    summary_path = out_dir / "detector_ablation_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2))
     print(f"Saved summary JSON: {summary_path}")
 
