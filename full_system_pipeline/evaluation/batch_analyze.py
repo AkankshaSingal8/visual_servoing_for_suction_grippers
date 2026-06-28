@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import math
 import sys
 from pathlib import Path
 
@@ -27,8 +26,6 @@ from full_system_pipeline.evaluation.analyze_run import (
     plot_signal_dominance, IMAGE_CENTER,
 )
 
-IMAGE_W, IMAGE_H = 1280, 720
-
 FIELDNAMES = [
     "run_dir", "n_frames", "n_far", "n_near_sam3", "n_near_track", "n_terminal",
     "reached_terminal", "mean_z_at_terminal", "mean_tilt_at_terminal",
@@ -39,7 +36,7 @@ FIELDNAMES = [
 def _find_runs(runs_dir: Path) -> list[Path]:
     return sorted(
         d for d in runs_dir.iterdir()
-        if d.is_dir() and (d / "frames.jsonl").exists()
+        if d.is_dir() and d.name.startswith("v2_") and (d / "frames.jsonl").exists()
     )
 
 
