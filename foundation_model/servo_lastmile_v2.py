@@ -765,7 +765,20 @@ class LastMilePipelineV2(LastMilePipeline):
                     self._last_valid_z_mm = z_mm
             res["z_mm"] = z_mm
 
-            res["_tilt"] = None
+            # --- Surface normal feedback in NEAR (Improvement 1) ---
+            # estimate_near_tilt() is defined above; depth_map is from self.depth_provider()
+            # called at the top of step(). In offline mode depth_map is None → tilt stays null.
+            tilt = None
+            if depth_map is not None and best_centroid is not None:
+                tilt = estimate_near_tilt(
+                    depth_map, self.K, best_centroid, rng=self._rng)
+            if tilt is not None:
+                res["tilt_deg"]             = tilt.tilt_deg
+                res["roll_deg"]             = tilt.roll_deg
+                res["pitch_deg"]            = tilt.pitch_deg
+                res["near_plane_normal"]    = tilt.normal.tolist()
+                res["near_plane_n_inliers"] = tilt.n_inliers
+            res["_tilt"] = tilt
 
             ic = (w / 2.0, h / 2.0)
             # Position-based TERMINAL fallback: z_mm is unreliable at close range
