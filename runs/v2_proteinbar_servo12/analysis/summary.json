@@ -8,5 +8,7 @@
   "mean_tilt_at_terminal": 34.4380545303122,
   "mean_centroid_err_at_terminal": 3.963113119465727,
   "final_centroid_err_px": 98.69460817901552,
-  "watchdog_alarms_count": 0
+  "watchdog_alarms_count": 0,
+  "run_dir": "v2_proteinbar_servo12",
+  "reached_terminal": 1
 }

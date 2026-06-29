@@ -92,8 +92,67 @@ EXT_COTRACKER_INIT_POINTS = 150
 
 
 # ---------------------------------------------------------------------------
-# Ground-truth helpers
+# Ground-truth helpers + error plotting
 # ---------------------------------------------------------------------------
+
+def _plot_xyz_error(jsonl_path: str, out_dir: str) -> None:
+    """Read frames.jsonl and save absolute per-frame X/Y/Z error vs time as PNG."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        log.warning("matplotlib not installed; skipping error plot.")
+        return
+
+    times, ex, ey, ez = [], [], [], []
+    t0 = None
+    try:
+        with open(jsonl_path) as f:
+            for line in f:
+                try:
+                    d = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if d.get("error_x_mm") is None:
+                    continue
+                ts = d.get("frame_timestamp")
+                if ts is None:
+                    continue
+                if t0 is None:
+                    t0 = ts
+                times.append(ts - t0)
+                ex.append(d["error_x_mm"])
+                ey.append(d["error_y_mm"])
+                ez.append(d["error_z_mm"])
+    except FileNotFoundError:
+        log.warning("JSONL not found at %s; skipping error plot.", jsonl_path)
+        return
+
+    if not times:
+        log.info("No per-frame error data in JSONL (robot offline?); skipping plot.")
+        return
+
+    fig, axes = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+    for ax, vals, label, color in zip(
+            axes,
+            [ex, ey, ez],
+            ["Error X (mm)", "Error Y (mm)", "Error Z (mm)"],
+            ["#e74c3c", "#2ecc71", "#3498db"]):
+        ax.plot(times, vals, color=color, linewidth=1.2)
+        ax.set_ylabel(label)
+        ax.grid(True, alpha=0.3)
+        ax.set_ylim(bottom=0)
+
+    axes[-1].set_xlabel("Time (s)")
+    fig.suptitle("Per-frame absolute XYZ error vs ground truth")
+    fig.tight_layout()
+
+    out_path = os.path.join(out_dir, "error_xyz_over_time.png")
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+    log.info("Error plot saved → %s", out_path)
+
 
 def _load_gt_pose(path: str) -> np.ndarray:
     """Load gt_pose JSON and return xyz as a (3,) float64 array in mm."""
@@ -514,6 +573,23 @@ def run_live_v2_ext(args: argparse.Namespace,
                     terminal_error["error_xyz_mm"],
                 )
 
+        # Stamp per-frame absolute XYZ error into res so it lands in JSONL
+        res["frame_timestamp"] = time.time()
+        if gt_xyz is not None:
+            rp = res.get("robot_pos")
+            if rp is not None:
+                pos = np.array(rp[:3], dtype=np.float64)
+                err = np.abs(pos - gt_xyz)
+                res["error_x_mm"] = float(err[0])
+                res["error_y_mm"] = float(err[1])
+                res["error_z_mm"] = float(err[2])
+                res["error_xyz_mm"] = float(np.linalg.norm(pos - gt_xyz))
+            else:
+                res["error_x_mm"] = None
+                res["error_y_mm"] = None
+                res["error_z_mm"] = None
+                res["error_xyz_mm"] = None
+
         overlay = _make_overlay_ext(frame_bgr, res)
 
         if show_window:
@@ -596,6 +672,7 @@ def run_live_v2_ext(args: argparse.Namespace,
         with open(summary_path, "w") as f:
             json.dump(summary, f, indent=2)
         log.info("Results summary written to %s", summary_path)
+        _plot_xyz_error(jsonl_path, out_dir)
         if terminal_error is not None:
             log.info("Final XYZ error: %.3f mm", terminal_error["error_xyz_mm"])
         elif gt_xyz is not None:

@@ -1,0 +1,14 @@
+{
+  "n_frames": 69,
+  "n_far": 2,
+  "n_near_sam3": 27,
+  "n_near_track": 40,
+  "n_terminal": 0,
+  "mean_z_at_terminal": null,
+  "mean_tilt_at_terminal": null,
+  "mean_centroid_err_at_terminal": null,
+  "final_centroid_err_px": 162.5789076941172,
+  "watchdog_alarms_count": 10,
+  "run_dir": "trial_01_protein_bar",
+  "reached_terminal": 0
+}

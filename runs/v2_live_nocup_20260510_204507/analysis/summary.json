@@ -1,0 +1,14 @@
+{
+  "n_frames": 168,
+  "n_far": 2,
+  "n_near_sam3": 37,
+  "n_near_track": 129,
+  "n_terminal": 0,
+  "mean_z_at_terminal": null,
+  "mean_tilt_at_terminal": null,
+  "mean_centroid_err_at_terminal": null,
+  "final_centroid_err_px": 112.42540503946964,
+  "watchdog_alarms_count": 103,
+  "run_dir": "v2_live_nocup_20260510_204507",
+  "reached_terminal": 0
+}

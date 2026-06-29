@@ -1,0 +1,14 @@
+{
+  "n_frames": 65,
+  "n_far": 2,
+  "n_near_sam3": 63,
+  "n_near_track": 0,
+  "n_terminal": 0,
+  "mean_z_at_terminal": null,
+  "mean_tilt_at_terminal": null,
+  "mean_centroid_err_at_terminal": null,
+  "final_centroid_err_px": null,
+  "watchdog_alarms_count": 20,
+  "run_dir": "v2_servo9",
+  "reached_terminal": 0
+}

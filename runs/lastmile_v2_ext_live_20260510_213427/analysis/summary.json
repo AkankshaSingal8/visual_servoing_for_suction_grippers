@@ -1,0 +1,14 @@
+{
+  "n_frames": 35,
+  "n_far": 2,
+  "n_near_sam3": 33,
+  "n_near_track": 0,
+  "n_terminal": 0,
+  "mean_z_at_terminal": null,
+  "mean_tilt_at_terminal": null,
+  "mean_centroid_err_at_terminal": null,
+  "final_centroid_err_px": null,
+  "watchdog_alarms_count": 0,
+  "run_dir": "lastmile_v2_ext_live_20260510_213427",
+  "reached_terminal": 0
+}
